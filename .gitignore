@@ -1,0 +1,22 @@
+# Local env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Dependency directories
+node_modules/
+Template next js/nextjs/node_modules/
+
+# Next.js build output
+.next/
+Template next js/nextjs/.next/
+
+# IDE files
+.vscode/
+.idea/
+
+# Misc
+.DS_Store
+Thumbs.db

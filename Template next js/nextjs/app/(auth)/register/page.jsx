@@ -26,8 +26,19 @@ export default function RegisterPage() {
 
     useEffect(() => {
         const urlRole = searchParams.get('role');
+        const urlEmail = searchParams.get('email');
+        const urlError = searchParams.get('error');
+
         if (urlRole && ['client', 'proprietaire', 'prestataire', 'agent'].includes(urlRole)) {
             setFormData(prev => ({ ...prev, role: urlRole }));
+        }
+
+        if (urlEmail) {
+            setFormData(prev => ({ ...prev, email: urlEmail }));
+        }
+
+        if (urlError === 'no_account') {
+            setErrorMsg("Aucun compte n'est lié à cette adresse. Créez votre compte en quelques secondes !");
         }
     }, [searchParams]);
 
@@ -83,16 +94,14 @@ export default function RegisterPage() {
                 const nom = nameParts.slice(1).join(' ') || prenom;
 
                 const { error: dbError } = await supabase
-                    .from('users')
+                    .from('profiles')
                     .insert([
                         {
-                            nom: nom,
-                            prenom: prenom,
+                            id: authData.user.id,
+                            display_name: formData.nom_complet,
                             email: formData.email,
-                            telephone: formData.telephone,
-                            password: 'SUPABASE_AUTH',
                             role: formData.role,
-                            created_at: new Date().toISOString()
+                            updated_at: new Date().toISOString()
                         }
                     ]);
 

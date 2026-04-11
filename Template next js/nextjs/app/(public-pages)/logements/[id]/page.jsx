@@ -1,0 +1,281 @@
+'use client';
+
+import { useParams, useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
+import {
+    MapPin, Star, BedDouble, Users, ArrowLeft,
+    Wifi, Car, Coffee, Shield, Calendar, ChevronRight
+} from 'lucide-react';
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
+
+// Mock function to get property by ID (simulating database call)
+const getPropertyById = (id) => {
+    const properties = [
+        {
+            id: '1', title: "Villa Saly Exception", location: "Saly, Sénégal",
+            price: 85000, image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop",
+            beds: 4, guests: 8, rating: 4.9, type: "Villa",
+            description: "Une villa d'exception située au cœur de Saly, offrant un luxe inégalé et une intimité totale. Parfaite pour les familles ou les groupes d'amis cherchant une expérience haut de gamme.",
+            amenities: ["Piscine privée", "Wi-Fi haut débit", "Parking gratuit", "Climatisation", "Cuisine équipée"]
+        },
+        {
+            id: '2', title: "Appartement Cosy Plateau", location: "Dakar Plateau",
+            price: 50000, image: "https://images.unsplash.com/photo-1502672260266-1c1db2dba659?q=80&w=1936&auto=format&fit=crop",
+            beds: 2, guests: 4, rating: 4.8, type: "Appartement",
+            description: "Un appartement moderne et chaleureux au centre-ville de Dakar. Idéal pour les voyageurs d'affaires ou les couples.",
+            amenities: ["Wi-Fi", "Ascenseur", "Sécurité 24/7", "Machine à laver"]
+        }
+    ];
+    return properties.find(p => p.id === id) || properties[0];
+};
+
+export default function PropertyDetailPage() {
+    const { id } = useParams();
+    const router = useRouter();
+    const property = getPropertyById(id);
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
+    }, []);
+
+    const [bookingData, setBookingData] = useState({
+        startDate: '',
+        endDate: '',
+        guests: 1
+    });
+
+    const calculateTotal = () => {
+        if (!bookingData.startDate || !bookingData.endDate) return 0;
+        const start = new Date(bookingData.startDate);
+        const end = new Date(bookingData.endDate);
+        const nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+        return nights > 0 ? nights * property.price : 0;
+    };
+
+    const handleBooking = async () => {
+        if (!user) {
+            router.push(`/login?redirect=/logements/${id}`);
+            return;
+        }
+        // Redirect to a placeholder payment page
+        window.location.href = '#';
+        alert("En tant que client connecté, vous allez être redirigé vers le paiement sécurisé.");
+    };
+
+    const handleContact = async () => {
+        if (!user) {
+            router.push(`/login?redirect=/logements/${id}`);
+            return;
+        }
+
+        // Pour la démo, on utilise un ID fixe pour le propriétaire ou on simule
+        // Dans une vraie app, property.owner_id viendrait de la DB
+        const ownerId = "7670e62f-3ae3-4b0c-9d94-3d400df4228c"; // ID de démo
+
+        // Chercher si une conversation existe déjà
+        const { data: existing } = await supabase
+            .from('conversations')
+            .select('id')
+            .or(`and(participant_1.eq.${user.id},participant_2.eq.${ownerId}),and(participant_1.eq.${ownerId},participant_2.eq.${user.id})`)
+            .maybeSingle();
+
+        if (existing) {
+            router.push(`/dashboard/client/messages?id=${existing.id}`);
+        } else {
+            const { data: newConv } = await supabase
+                .from('conversations')
+                .insert({
+                    participant_1: user.id < ownerId ? user.id : ownerId,
+                    participant_2: user.id < ownerId ? ownerId : user.id,
+                    last_message_at: new Date()
+                })
+                .select()
+                .single();
+
+            if (newConv) {
+                router.push(`/dashboard/client/messages?id=${newConv.id}`);
+            }
+        }
+    };
+
+    return (
+        <div className="min-h-screen bg-slate-50 pt-24 pb-24">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+                {/* Back Button */}
+                <Link href="/logements" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-900 mb-8 font-medium transition-colors">
+                    <ArrowLeft className="w-4 h-4" /> Retour au catalogue
+                </Link>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+
+                    {/* Left Content: Image & Details */}
+                    <div className="lg:col-span-2">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="rounded-[2.5rem] overflow-hidden shadow-2xl mb-10 h-[300px] sm:h-[400px] lg:h-[500px]"
+                        >
+                            <img src={property.image} alt={property.title} className="w-full h-full object-cover" />
+                        </motion.div>
+
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">{property.title}</h1>
+                            <div className="flex items-center gap-1.5 bg-white px-4 py-2 rounded-2xl shadow-sm border border-slate-100 text-slate-800 font-bold">
+                                <Star className="w-5 h-5 fill-amber-400 text-amber-400" /> {property.rating}
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-6 text-slate-500 mb-10 pb-10 border-b border-slate-200">
+                            <div className="flex items-center gap-2">
+                                <MapPin className="w-5 h-5 text-indigo-500" /> <span className="font-medium text-slate-900">{property.location}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <BedDouble className="w-5 h-5 text-slate-400" /> <span>{property.beds} Lits</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Users className="w-5 h-5 text-slate-400" /> <span>{property.guests} Voyageurs max</span>
+                            </div>
+                        </div>
+
+                        <div className="mb-12">
+                            <h2 className="text-2xl font-bold text-slate-900 mb-4 tracking-tight">À propos de ce logement</h2>
+                            <p className="text-slate-600 leading-relaxed text-lg">
+                                {property.description}
+                                <br /><br />
+                                Situé dans un quartier calme et sécurisé, ce bien a été sélectionné par nos experts pour sa qualité exceptionnelle et son confort de haut niveau.
+                            </p>
+                        </div>
+
+                        <div className="mb-12">
+                            <h2 className="text-2xl font-bold text-slate-900 mb-6 tracking-tight">Ce que propose ce lieu</h2>
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                                {property.amenities.map((amenity, idx) => (
+                                    <div key={idx} className="flex items-center gap-3 text-slate-600 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+                                        <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                                        <span className="font-medium">{amenity}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Right Content: Booking Card */}
+                    <div className="lg:col-span-1">
+                        <div className="sticky top-32">
+                            <motion.div
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.2 }}
+                                className="bg-white rounded-[2.5rem] p-8 shadow-[0_20px_60px_rgb(0,0,0,0.08)] border border-slate-100"
+                            >
+                                <div className="flex items-center justify-between mb-8">
+                                    <div className="text-2xl font-black text-[#D4AF37]">{property.price.toLocaleString()} FCFA <span className="text-sm font-normal text-slate-400">/nuit</span></div>
+                                </div>
+
+                                <div className="space-y-4 mb-8">
+                                    <div className="grid grid-cols-2 gap-0 rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                                        <div className="p-4 border-r border-slate-200 bg-slate-50/30">
+                                            <label className="block text-[10px] uppercase font-black text-slate-400 tracking-widest mb-1">Arrivée</label>
+                                            <input
+                                                type="date"
+                                                className="bg-transparent text-sm font-bold text-slate-900 outline-none w-full cursor-pointer"
+                                                onChange={(e) => setBookingData({ ...bookingData, startDate: e.target.value })}
+                                            />
+                                        </div>
+                                        <div className="p-4 bg-slate-50/30">
+                                            <label className="block text-[10px] uppercase font-black text-slate-400 tracking-widest mb-1">Départ</label>
+                                            <input
+                                                type="date"
+                                                className="bg-transparent text-sm font-bold text-slate-900 outline-none w-full cursor-pointer"
+                                                onChange={(e) => setBookingData({ ...bookingData, endDate: e.target.value })}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="p-4 rounded-2xl border border-slate-200 shadow-sm bg-slate-50/30">
+                                        <label className="block text-[10px] uppercase font-black text-slate-400 tracking-widest mb-1">Voyageurs</label>
+                                        <select
+                                            className="bg-transparent text-sm font-bold text-slate-900 outline-none w-full cursor-pointer"
+                                            onChange={(e) => setBookingData({ ...bookingData, guests: e.target.value })}
+                                        >
+                                            {[...Array(property.guests)].map((_, i) => (
+                                                <option key={i} value={i + 1}>{i + 1} voyageur{i > 0 ? 's' : ''}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={handleBooking}
+                                    className="w-full py-5 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-bold text-lg shadow-xl shadow-slate-200 transition-all hover:scale-[1.02] active:scale-95 mb-4"
+                                >
+                                    Réserver maintenant
+                                </button>
+
+                                <button
+                                    onClick={handleContact}
+                                    className="w-full py-4 bg-white border-2 border-slate-900 text-slate-900 hover:bg-slate-50 rounded-2xl font-bold transition-all active:scale-95 mb-6"
+                                >
+                                    Contacter le propriétaire
+                                </button>
+
+                                {calculateTotal() > 0 && (
+                                    <div className="space-y-3 pt-6 border-t border-slate-100">
+                                        <div className="flex justify-between text-slate-500 font-medium">
+                                            <span>{property.price.toLocaleString()} FCFA x {Math.ceil((new Date(bookingData.endDate) - new Date(bookingData.startDate)) / (1000 * 60 * 60 * 24))} nuits</span>
+                                            <span>{calculateTotal().toLocaleString()} FCFA</span>
+                                        </div>
+                                        <div className="flex justify-between text-slate-500 font-medium pb-2">
+                                            <span>Frais de service (HOLA)</span>
+                                            <span>0 FCFA</span>
+                                        </div>
+                                        <div className="flex justify-between text-xl font-black text-slate-900 pt-4 border-t border-slate-100">
+                                            <span>Total</span>
+                                            <span>{calculateTotal().toLocaleString()} FCFA</span>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <p className="text-center text-slate-400 text-xs mt-6 font-medium italic">Vous ne serez pas débité immédiatement.</p>
+                            </motion.div>
+
+                            <div className="mt-8 bg-white/50 backdrop-blur-sm rounded-3xl p-6 border border-white flex items-center gap-4 shadow-sm">
+                                <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shrink-0">
+                                    <Shield className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest leading-none mb-1">Paiement Sécurisé</p>
+                                    <p className="text-xs font-bold text-slate-700 leading-tight">Wave, Orange Money, PayPal & Carte bancaire</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// Small helper component
+function CheckCircle2(props) {
+    return (
+        <svg
+            {...props}
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        >
+            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+            <path d="m9 12 2 2 4-4" />
+        </svg>
+    );
+}

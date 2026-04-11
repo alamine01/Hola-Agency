@@ -1,12 +1,28 @@
 'use client';
 
-import { MenuIcon, XIcon, Home, UserCircle2 } from 'lucide-react';
+import { MenuIcon, XIcon, Home, UserCircle2, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        const getUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            setUser(user);
+        };
+        getUser();
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user ?? null);
+        });
+
+        return () => subscription.unsubscribe();
+    }, []);
 
     const links = [
         { name: 'Accueil', href: '/' },
@@ -32,13 +48,22 @@ export default function Navbar() {
                 </div>
 
                 <div className='hidden md:flex items-center gap-4'>
-                    <Link href='/login' className='text-sm font-medium text-slate-600 hover:text-[#D4AF37] transition'>
-                        Connexion
-                    </Link>
-                    <Link href='/register' className='flex items-center gap-2 rounded-full bg-slate-900 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800 hover:shadow-lg'>
-                        <UserCircle2 className="w-4 h-4" />
-                        S'inscrire
-                    </Link>
+                    {user ? (
+                        <Link href='/dashboard' className='flex items-center gap-2 rounded-full bg-slate-900 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-slate-800 hover:shadow-lg active:scale-95'>
+                            <LayoutDashboard className="w-4 h-4" />
+                            Mon Tableau de Bord
+                        </Link>
+                    ) : (
+                        <>
+                            <Link href='/login' className='text-sm font-medium text-slate-600 hover:text-[#D4AF37] transition'>
+                                Connexion
+                            </Link>
+                            <Link href='/register' className='flex items-center gap-2 rounded-full bg-slate-900 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800 hover:shadow-lg'>
+                                <UserCircle2 className="w-4 h-4" />
+                                S'inscrire
+                            </Link>
+                        </>
+                    )}
                 </div>
 
                 <button onClick={() => setIsOpen(true)} className='transition active:scale-90 md:hidden text-slate-800'>
@@ -86,20 +111,32 @@ export default function Navbar() {
                             </div>
 
                             <div className="mt-auto pt-8 border-t border-slate-100 space-y-4">
-                                <Link
-                                    href="/login"
-                                    className="block w-full py-4 text-center text-slate-900 font-bold hover:bg-slate-50 rounded-2xl transition-colors"
-                                    onClick={() => setIsOpen(false)}
-                                >
-                                    Connexion
-                                </Link>
-                                <Link
-                                    href="/register"
-                                    className="block w-full py-4 text-center bg-slate-900 text-white font-bold rounded-2xl shadow-lg shadow-slate-200"
-                                    onClick={() => setIsOpen(false)}
-                                >
-                                    S'inscrire
-                                </Link>
+                                {user ? (
+                                    <Link
+                                        href="/dashboard"
+                                        className="block w-full py-4 text-center bg-slate-900 text-white font-bold rounded-2xl shadow-lg shadow-slate-200"
+                                        onClick={() => setIsOpen(false)}
+                                    >
+                                        Mon Tableau de Bord
+                                    </Link>
+                                ) : (
+                                    <>
+                                        <Link
+                                            href="/login"
+                                            className="block w-full py-4 text-center text-slate-900 font-bold hover:bg-slate-50 rounded-2xl transition-colors"
+                                            onClick={() => setIsOpen(false)}
+                                        >
+                                            Connexion
+                                        </Link>
+                                        <Link
+                                            href="/register"
+                                            className="block w-full py-4 text-center bg-slate-900 text-white font-bold rounded-2xl shadow-lg shadow-slate-200"
+                                            onClick={() => setIsOpen(false)}
+                                        >
+                                            S'inscrire
+                                        </Link>
+                                    </>
+                                )}
                             </div>
                         </motion.div>
                     </>

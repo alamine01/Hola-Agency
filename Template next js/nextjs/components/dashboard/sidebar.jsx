@@ -14,7 +14,10 @@ import {
     Home,
     Briefcase,
     Settings,
-    Bell
+    Bell,
+    Heart,
+    History,
+    CreditCard
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
@@ -33,7 +36,9 @@ const Sidebar = ({ role }) => {
     const menuItems = {
         client: [
             { id: 'overview', label: 'Tableau de bord', icon: LayoutDashboard, href: '/dashboard/client' },
-            { id: 'bookings', label: 'Mes réservations', icon: Calendar, href: '/dashboard/client/reservations' },
+            { id: 'catalogue', label: 'Découvrir / Réserver', icon: Home, href: '/dashboard/client/explorer' },
+            { id: 'activity', label: 'Mon activité', icon: History, href: '/dashboard/client/reservations' },
+            { id: 'invoices', label: 'Mes factures', icon: Briefcase, href: '/dashboard/client/factures' },
             { id: 'messages', label: 'Messages', icon: MessageSquare, href: '/dashboard/client/messages' },
             { id: 'profile', label: 'Mon profil', icon: User, href: '/dashboard/client/profil' },
         ],
@@ -41,26 +46,51 @@ const Sidebar = ({ role }) => {
             { id: 'overview', label: 'Tableau de bord', icon: LayoutDashboard, href: '/dashboard/proprietaire' },
             { id: 'villas', label: 'Mes villas', icon: Home, href: '/dashboard/proprietaire/villas' },
             { id: 'reservations', label: 'Réservations reçues', icon: Calendar, href: '/dashboard/proprietaire/reservations' },
+            { id: 'revenue', label: 'Portefeuille', icon: CreditCard, href: '/dashboard/proprietaire/revenus' },
             { id: 'messages', label: 'Messages', icon: MessageSquare, href: '/dashboard/proprietaire/messages' },
+            { id: 'profile', label: 'Mon profil', icon: User, href: '/dashboard/proprietaire/profil' },
         ],
         prestataire: [
             { id: 'overview', label: 'Tableau de bord', icon: LayoutDashboard, href: '/dashboard/prestataire' },
             { id: 'services', label: 'Mes services', icon: Briefcase, href: '/dashboard/prestataire/services' },
             { id: 'requests', label: 'Demandes', icon: MessageSquare, href: '/dashboard/prestataire/demandes' },
+            { id: 'revenue', label: 'Portefeuille', icon: CreditCard, href: '/dashboard/prestataire/revenus' },
+            { id: 'profile', label: 'Mon profil', icon: User, href: '/dashboard/prestataire/profil' },
+        ],
+        admin: [
+            { id: 'overview', label: 'Tableau de bord', icon: LayoutDashboard, href: '/dashboard/admin' },
+            { id: 'revenue', label: 'Validation Paiements', icon: CreditCard, href: '/dashboard/admin/revenus' },
+            { id: 'users', label: 'Utilisateurs', icon: User, href: '/dashboard/admin/utilisateurs' },
+            { id: 'profile', label: 'Mon profil', icon: User, href: '/dashboard/admin/profil' },
         ]
     };
 
-    const currentMenu = menuItems[role] || menuItems.client;
+    const normalizeRole = (r) => {
+        if (!r) return 'client';
+        return r.toLowerCase()
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9]/g, "");
+    };
+
+    const normalized = normalizeRole(role);
+    const currentMenu = menuItems[normalized] || menuItems.client;
+
+    console.log("SIDEBAR DEBUG:", {
+        role,
+        normalized,
+        hasMenu: !!menuItems[normalized],
+        menuCount: currentMenu.length
+    });
 
     const SidebarContent = () => (
         <div className="flex flex-col h-full py-8 px-6 bg-white border-r border-slate-100">
             {/* Logo */}
-            <div className="flex items-center gap-3 mb-10">
-                <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
+            <Link href="/" className="flex items-center gap-3 mb-10 group cursor-pointer hover:opacity-80 transition-opacity">
+                <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center group-hover:bg-indigo-600 transition-colors">
                     <Home className="text-white w-6 h-6" />
                 </div>
                 <span className="text-xl font-bold tracking-tight text-slate-900">HOLA <span className="text-indigo-600 underline decoration-indigo-200">DASH</span></span>
-            </div>
+            </Link>
 
             {/* Navigation */}
             <nav className="flex-1 space-y-1">

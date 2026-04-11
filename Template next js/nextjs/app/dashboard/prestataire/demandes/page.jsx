@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
     Clock,
     CheckCircle2,
@@ -15,12 +16,17 @@ import {
     CreditCard,
     Info,
     Check,
-    AlertCircle
+    AlertCircle,
+    Loader2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { supabase } from '@/lib/supabase';
 
-const RequestDetailsModal = ({ isOpen, onClose, request }) => {
+const RequestDetailsModal = ({ isOpen, onClose, request, onStatusUpdate }) => {
     if (!isOpen || !request) return null;
+
+    const details = request.metadata || {};
+    const netPayout = Math.floor(request.amount * 0.85);
 
     return (
         <AnimatePresence>
@@ -45,66 +51,45 @@ const RequestDetailsModal = ({ isOpen, onClose, request }) => {
                     <div className="mb-10">
                         <div className="flex items-center gap-4 mb-4">
                             <div className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-indigo-100">
-                                Demande #{request.id || '842'}
+                                Demande #{request.id.slice(0, 5)}
                             </div>
-                            <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${request.status === 'nouveau' ? 'bg-amber-50 text-amber-600 border-amber-100 animate-pulse' : 'bg-emerald-50 text-emerald-600 border-emerald-100'
+                            <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${request.status === 'en_attente' ? 'bg-amber-50 text-amber-600 border-amber-100 animate-pulse' : 'bg-emerald-50 text-emerald-600 border-emerald-100'
                                 }`}>
                                 {request.status}
                             </div>
                         </div>
-                        <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Détails de l'intervention</h2>
+                        <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">{details.title || 'Service'}</h2>
                         <p className="text-slate-400 font-medium text-sm mt-1">"Vérifiez les informations avant d'accepter la mission."</p>
                     </div>
 
                     <div className="space-y-8">
-                        {/* Client Info */}
                         <div className="flex items-center gap-5 p-5 bg-slate-50/50 rounded-3xl border border-slate-100">
                             <div className="w-14 h-14 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-black text-xl">
-                                {request.name.charAt(0)}
+                                <User className="w-6 h-6" />
                             </div>
                             <div>
-                                <h3 className="font-black text-slate-900">{request.name}</h3>
-                                <p className="text-xs text-slate-500 font-medium">Client HOLA Privilège</p>
-                            </div>
-                            <div className="ml-auto flex items-center gap-2">
-                                <button className="p-3 bg-white text-slate-600 rounded-xl border border-slate-100 hover:bg-indigo-50 hover:text-indigo-600 transition-all shadow-sm">
-                                    <Phone className="w-4 h-4" />
-                                </button>
-                                <button className="p-3 bg-white text-slate-600 rounded-xl border border-slate-100 hover:bg-indigo-50 hover:text-indigo-600 transition-all shadow-sm">
-                                    <MessageSquare className="w-4 h-4" />
-                                </button>
+                                <h3 className="font-black text-slate-900">Utilisateur HOLA</h3>
+                                <p className="text-xs text-slate-500 font-medium">{details.guests || 1} Personne(s)</p>
                             </div>
                         </div>
 
-                        {/* Event Details */}
                         <div className="grid grid-cols-2 gap-5">
                             <div className="p-5 bg-white rounded-3xl border border-slate-100 shadow-sm group hover:border-indigo-100 transition-colors">
                                 <Calendar className="w-5 h-5 text-indigo-500 mb-3 group-hover:scale-110 transition-transform" />
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Date & Heure</p>
-                                <p className="text-sm font-black text-slate-900">{request.date}</p>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Date souhaitée</p>
+                                <p className="text-sm font-black text-slate-900">{request.start_date ? new Date(request.start_date).toLocaleDateString() : 'Non précisé'}</p>
                             </div>
                             <div className="p-5 bg-white rounded-3xl border border-slate-100 shadow-sm group hover:border-indigo-100 transition-colors">
                                 <MapPin className="w-5 h-5 text-emerald-500 mb-3 group-hover:scale-110 transition-transform" />
                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Lieu</p>
-                                <p className="text-sm font-black text-slate-900">Saly, Villa Eden</p>
+                                <p className="text-sm font-black text-slate-900">{details.location || 'Sénégal'}</p>
                             </div>
                         </div>
 
-                        {/* Service Logic */}
-                        <div className="space-y-3">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] pl-1 block">Description du besoin</label>
-                            <div className="p-5 bg-indigo-50/20 rounded-3xl border border-indigo-50">
-                                <p className="text-slate-700 text-sm font-medium leading-relaxed italic">
-                                    "Bonjour, j'ai réservé la villa pour un anniversaire. Nous aurions besoin du service {request.service} pour un groupe de 6 personnes."
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Financials (Net PHP logic) */}
                         <div className="p-6 bg-slate-900 rounded-[2rem] text-white flex items-center justify-between shadow-2xl shadow-slate-200">
                             <div>
                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Votre Gain Net (-15%)</p>
-                                <p className="text-2xl font-black">{request.netPrice || '38,250'} <span className="text-xs">FCFA</span></p>
+                                <p className="text-2xl font-black">{netPayout.toLocaleString()} <span className="text-xs">FCFA</span></p>
                             </div>
                             <div className="text-right">
                                 <CreditCard className="w-8 h-8 text-indigo-400 mb-1 ml-auto opacity-50" />
@@ -112,13 +97,16 @@ const RequestDetailsModal = ({ isOpen, onClose, request }) => {
                             </div>
                         </div>
 
-                        {/* Actions */}
-                        {request.status === 'nouveau' && (
+                        {request.status === 'en_attente' && (
                             <div className="grid grid-cols-2 gap-4">
-                                <button className="py-4 bg-slate-100 text-slate-600 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-red-50 hover:text-red-600 transition-all flex items-center justify-center gap-2">
+                                <button
+                                    onClick={() => onStatusUpdate(request.id, 'annulee')}
+                                    className="py-4 bg-slate-100 text-slate-600 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-red-50 hover:text-red-600 transition-all flex items-center justify-center gap-2">
                                     <XCircle className="w-4 h-4" /> Refuser
                                 </button>
-                                <button className="py-4 bg-indigo-600 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-900 transition-all shadow-xl shadow-indigo-100 flex items-center justify-center gap-2">
+                                <button
+                                    onClick={() => onStatusUpdate(request.id, 'confirmee')}
+                                    className="py-4 bg-indigo-600 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-900 transition-all shadow-xl shadow-indigo-100 flex items-center justify-center gap-2">
                                     <CheckCircle2 className="w-4 h-4" /> Accepter
                                 </button>
                             </div>
@@ -130,40 +118,41 @@ const RequestDetailsModal = ({ isOpen, onClose, request }) => {
     );
 };
 
-const RequestCard = ({ name, service, date, status, onDetails }) => {
+const RequestCard = ({ request, onDetails, onChat }) => {
+    const details = request.metadata || {};
     const statusStyles = {
-        nouveau: "bg-indigo-100 text-indigo-700 border-indigo-200 animate-pulse",
-        accepté: "bg-emerald-100 text-emerald-700 border-emerald-200",
-        refusé: "bg-red-100 text-red-700 border-red-200",
+        en_attente: "bg-indigo-100 text-indigo-700 border-indigo-200 animate-pulse",
+        confirmee: "bg-emerald-100 text-emerald-700 border-emerald-200",
+        annulee: "bg-red-100 text-red-700 border-red-200",
     };
 
     return (
         <div className="bg-white rounded-[2rem] border border-slate-100 p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:shadow-xl transition-all group shadow-sm">
             <div className="flex items-center gap-6">
-                <div className="w-16 h-16 rounded-3xl bg-slate-900 text-white flex items-center justify-center font-black text-xl group-hover:scale-105 transition-transform shadow-lg relative">
-                    {name.charAt(0)}
-                    {status === 'nouveau' && <div className="absolute -top-1 -right-1 w-4 h-4 bg-indigo-500 rounded-full border-2 border-white"></div>}
+                <div className="w-16 h-16 rounded-3xl bg-slate-900 text-white flex items-center justify-center font-black text-xl group-hover:scale-105 transition-transform shadow-lg relative overflow-hidden">
+                    {details.image ? <img src={details.image} className="w-full h-full object-cover" /> : <User className="w-8 h-8" />}
                 </div>
                 <div>
-                    <h3 className="text-xl font-black text-slate-900 mb-1 tracking-tight">{name}</h3>
+                    <h3 className="text-xl font-black text-slate-900 mb-1 tracking-tight">{details.title || 'Service'}</h3>
                     <p className="text-slate-500 text-[11px] font-black uppercase tracking-[0.1em] flex items-center gap-2">
-                        <span className="text-indigo-600">{service}</span> • {date}
+                        <span className="text-indigo-600">{request.item_type}</span> • {request.start_date ? new Date(request.start_date).toLocaleDateString() : 'Date à fixer'}
                     </p>
                     <div className="flex items-center gap-2 mt-3">
-                        <span className={`text-[9px] uppercase font-black tracking-widest px-3 py-1 rounded-lg border ${statusStyles[status]}`}>
-                            {status}
+                        <span className={`text-[9px] uppercase font-black tracking-widest px-3 py-1 rounded-lg border ${statusStyles[request.status] || 'bg-slate-50 text-slate-400 border-slate-100'}`}>
+                            {request.status.replace('_', ' ')}
                         </span>
-                        {status === 'nouveau' && <span className="text-[9px] font-black text-indigo-500 uppercase tracking-tighter">Nouveau message client</span>}
                     </div>
                 </div>
             </div>
 
             <div className="flex items-center gap-3">
-                <div className="hidden sm:flex items-center gap-2">
-                    <button className="p-3 bg-slate-50 text-slate-600 rounded-xl hover:bg-slate-100 transition-all border border-slate-50"><Phone className="w-4 h-4" /></button>
-                    <button className="p-3 bg-slate-50 text-slate-600 rounded-xl hover:bg-slate-100 transition-all border border-slate-50"><MessageSquare className="w-4 h-4" /></button>
-                </div>
-                <div className="w-px h-8 bg-slate-50 mx-2 hidden md:block"></div>
+                <button
+                    onClick={onChat}
+                    className="p-3.5 bg-slate-100 text-slate-400 hover:bg-slate-900 hover:text-white rounded-xl transition-all active:scale-95 group"
+                    title="Contacter le client"
+                >
+                    <MessageSquare className="w-5 h-5" />
+                </button>
                 <button
                     onClick={onDetails}
                     className="px-8 py-3.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-indigo-600 transition-all shadow-xl active:scale-95 shrink-0"
@@ -176,14 +165,99 @@ const RequestCard = ({ name, service, date, status, onDetails }) => {
 };
 
 export default function DemandesPage() {
+    const router = useRouter();
     const [selectedRequest, setSelectedRequest] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [requests, setRequests] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const requests = [
-        { id: '842', name: "Fatou Diop", service: "Chef à domicile", date: "15 Avril 19h00", status: "nouveau", netPrice: "38,250" },
-        { id: '841', name: "Moussa Sarr", service: "Excursion Quad", date: "18 Avril 10h00", status: "accepté", netPrice: "29,750" },
-        { id: '839', name: "Awa Ndiaye", service: "Massage Relaxant", date: "20 Avril 15h00", status: "accepté", netPrice: "21,250" },
-    ];
+    useEffect(() => {
+        fetchRequests();
+    }, []);
+
+    const handleOpenChat = async (clientId, clientName) => {
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            // 1. Check if conversation already exists
+            const { data: existing } = await supabase
+                .from('conversations')
+                .select('id')
+                .or(`participant_1.eq.${user.id},participant_2.eq.${user.id}`)
+                .or(`participant_1.eq.${clientId},participant_2.eq.${clientId}`)
+                .maybeSingle();
+
+            if (existing) {
+                router.push(`/dashboard/prestataire/messages?id=${existing.id}`);
+            } else {
+                // 2. Create new conversation
+                const { data: newConv, error } = await supabase
+                    .from('conversations')
+                    .insert({
+                        participant_1: user.id,
+                        participant_2: clientId,
+                        last_message: "Nouvelle demande de service",
+                        display_name: clientName || "Client HOLA"
+                    })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+                router.push(`/dashboard/prestataire/messages?id=${newConv.id}`);
+            }
+        } catch (error) {
+            console.error("Chat error:", error);
+            alert("Impossible d'ouvrir la discussion.");
+        }
+    };
+
+    const fetchRequests = async () => {
+        setLoading(true);
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                setLoading(false);
+                return;
+            }
+
+            const { data, error } = await supabase
+                .from('bookings')
+                .select('*')
+                .eq('owner_id', user.id)
+                .eq('item_type', 'Service')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error("Fetch error full details:", error);
+                if (error.code === '42703') {
+                    alert("Erreur base de données : La colonne 'owner_id' semble manquer dans la table 'bookings'.");
+                } else {
+                    alert("Erreur de récupération : " + (error.message || "Erreur inconnue"));
+                }
+            } else {
+                setRequests(data || []);
+            }
+        } catch (err) {
+            console.error("Unexpected error:", err);
+            alert("Une erreur inattendue est survenue.");
+        }
+        setLoading(false);
+    };
+
+    const handleStatusUpdate = async (id, newStatus) => {
+        const { error } = await supabase
+            .from('bookings')
+            .update({ status: newStatus })
+            .eq('id', id);
+
+        if (error) {
+            alert("Erreur : " + error.message);
+        } else {
+            setRequests(prev => prev.map(r => r.id === id ? { ...r, status: newStatus } : r));
+            setIsModalOpen(false);
+        }
+    };
 
     const handleOpenDetails = (request) => {
         setSelectedRequest(request);
@@ -192,19 +266,34 @@ export default function DemandesPage() {
 
     return (
         <div className="max-w-5xl mx-auto px-4 md:px-0">
-            <div className="mb-12">
-                <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-2 tracking-tight">Demandes de services</h1>
-                <p className="text-slate-500 font-medium italic opacity-80">Gérez vos demandes entrantes et planifiez vos interventions HOLA.</p>
+            <div className="mb-12 flex items-center justify-between">
+                <div>
+                    <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-2 tracking-tight">Demandes de services</h1>
+                    <p className="text-slate-500 font-medium italic opacity-80">Gérez vos demandes entrantes et planifiez vos interventions HOLA.</p>
+                </div>
+                {loading && <Loader2 className="w-6 h-6 animate-spin text-indigo-500" />}
             </div>
 
             <div className="space-y-5 mb-16">
-                {requests.map((req, idx) => (
-                    <RequestCard
-                        key={idx}
-                        {...req}
-                        onDetails={() => handleOpenDetails(req)}
-                    />
-                ))}
+                {requests.length > 0 ? (
+                    requests.map((req, idx) => (
+                        <RequestCard
+                            key={req.id}
+                            request={req}
+                            onDetails={() => handleOpenDetails(req)}
+                            onChat={() => handleOpenChat(req.user_id, req.metadata?.client_name || "Client HOLA")}
+                        />
+                    ))
+                ) : !loading ? (
+                    <div className="bg-white rounded-[3rem] border-2 border-dashed border-slate-100 py-20 text-center">
+                        <Clock className="w-12 h-12 text-slate-100 mx-auto mb-4" />
+                        <p className="text-slate-400 font-bold italic">Aucune demande pour le moment.</p>
+                    </div>
+                ) : (
+                    <div className="space-y-4">
+                        {[1, 2].map(i => <div key={i} className="h-32 bg-slate-50 animate-pulse rounded-[2rem]" />)}
+                    </div>
+                )}
             </div>
 
             <div className="bg-slate-900 rounded-[3rem] p-10 md:p-14 text-white relative overflow-hidden shadow-2xl shadow-slate-200">
@@ -230,6 +319,7 @@ export default function DemandesPage() {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 request={selectedRequest}
+                onStatusUpdate={handleStatusUpdate}
             />
         </div>
     );

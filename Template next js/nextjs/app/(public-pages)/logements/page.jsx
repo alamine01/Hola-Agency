@@ -1,9 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { MapPin, Star, BedDouble, Users, Search, SlidersHorizontal, ArrowRight } from 'lucide-react';
-import { useState } from 'react';
+import { MapPin, Star, BedDouble, Users, Search, SlidersHorizontal, ArrowRight, Heart, Loader2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
 
 // Mock data pour le catalogue
 const allProperties = [
@@ -40,8 +41,68 @@ const allProperties = [
 ];
 
 export default function CatalogPage() {
+    const [favorites, setFavorites] = useState(new Set());
+    const [user, setUser] = useState(null);
+    const [loadingFavs, setLoadingFavs] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [typeFilter, setTypeFilter] = useState('Tous');
+
+    useEffect(() => {
+        const fetchUserAndFavs = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                setUser(user);
+                const { data } = await supabase
+                    .from('favorites')
+                    .select('item_id')
+                    .eq('user_id', user.id);
+                if (data) {
+                    setFavorites(new Set(data.map(f => f.item_id.toString())));
+                }
+            }
+            setLoadingFavs(false);
+        };
+        fetchUserAndFavs();
+    }, []);
+
+    const toggleFavorite = async (property) => {
+        if (!user) {
+            alert("Connectez-vous pour ajouter des favoris !");
+            return;
+        }
+
+        const isFav = favorites.has(property.id.toString());
+        const newFavs = new Set(favorites);
+
+        if (isFav) {
+            newFavs.delete(property.id.toString());
+            const { error } = await supabase
+                .from('favorites')
+                .delete()
+                .eq('user_id', user.id)
+                .eq('item_id', property.id.toString());
+            if (error) {
+                alert("Erreur lors de la suppression du favori.");
+                console.error(error);
+            }
+        } else {
+            newFavs.add(property.id.toString());
+            const { error } = await supabase
+                .from('favorites')
+                .insert([{
+                    user_id: user.id,
+                    item_id: property.id.toString(),
+                    item_type: 'villa',
+                    metadata: { title: property.title, image: property.image, price: property.price, location: property.location }
+                }]);
+            if (error) {
+                alert("Erreur : La table 'favorites' n'existe pas ou les droits RLS sont manquants.");
+                console.error(error);
+                return; // Don't update state if DB failed
+            }
+        }
+        setFavorites(newFavs);
+    };
 
     // Filtrage simple (pour la démo)
     const filteredProperties = allProperties.filter(p => {
@@ -60,7 +121,7 @@ export default function CatalogPage() {
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center max-w-3xl mx-auto"
                 >
-                    <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">Trouvez l'exceptionnel.</h1>
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 mb-6">Trouvez l'exceptionnel.</h1>
                     <p className="text-lg text-slate-500 mb-10">
                         Explorez l'intégralité de nos biens vérifiés. Des villas luxueuses sur la Petite Côte aux appartements modernes au cœur de Dakar.
                     </p>
@@ -127,9 +188,17 @@ export default function CatalogPage() {
                                     alt={property.title}
                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out"
                                 />
-                                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm text-sm font-semibold text-slate-800">
-                                    <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                                    {property.rating}
+                                <div className="absolute top-4 right-4 flex flex-col gap-2">
+                                    <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm text-sm font-semibold text-slate-800">
+                                        <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                                        {property.rating}
+                                    </div>
+                                    <button
+                                        onClick={(e) => { e.preventDefault(); toggleFavorite(property); }}
+                                        className={`p-2 rounded-full transition-all border ${favorites.has(property.id.toString()) ? 'bg-red-500 border-red-500 text-white' : 'bg-white/90 backdrop-blur-sm border-white text-slate-400 hover:text-red-500'}`}
+                                    >
+                                        <Heart className={`w-4 h-4 ${favorites.has(property.id.toString()) ? 'fill-current' : ''}`} />
+                                    </button>
                                 </div>
                                 <div className="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-semibold text-white tracking-widest uppercase">
                                     {property.type}
@@ -159,9 +228,9 @@ export default function CatalogPage() {
                                         <div className="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-1">Prix par nuit</div>
                                         <div className="text-lg font-bold text-[#D4AF37]">{property.price}</div>
                                     </div>
-                                    <button className="w-12 h-12 rounded-full bg-slate-50 group-hover:bg-slate-900 flex items-center justify-center transition-colors">
+                                    <Link href={`/logements/${property.id}`} className="w-12 h-12 rounded-full bg-slate-50 group-hover:bg-slate-900 flex items-center justify-center transition-colors">
                                         <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-white transition-colors" />
-                                    </button>
+                                    </Link>
                                 </div>
                             </div>
                         </motion.div>

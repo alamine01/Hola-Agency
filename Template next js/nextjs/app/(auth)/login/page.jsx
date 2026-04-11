@@ -44,22 +44,38 @@ export default function LoginPage() {
 
             if (error) throw error;
 
-            // 2. Récupérer le rôle de l'utilisateur dans la table publique 'users'
-            const { data: userData, error: userError } = await supabase
-                .from('users')
+            // 2. Récupérer le rôle de l'utilisateur dans la table publique 'profiles'
+            const { data: profileData, error: profileError } = await supabase
+                .from('profiles')
                 .select('role')
-                .eq('email', email)
+                .eq('id', data.user.id)
                 .single();
 
-            if (userError && userError.code !== 'PGRST116') {
-                console.error("Erreur récupération rôle:", userError);
+            if (profileError && profileError.code !== 'PGRST116') {
+                console.error("Erreur récupération rôle:", profileError);
             }
 
             // 3. Rediriger selon le rôle (par défaut client)
-            const role = userData?.role || 'client';
+            const rawRole = profileData?.role || 'client';
+            const role = rawRole.toLowerCase()
+                .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-z0-9]/g, "");
             router.push(`/dashboard/${role}`);
 
         } catch (error) {
+            if (error.message === 'Invalid login credentials') {
+                // Vérifier si un compte existe avec cet email
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('id')
+                    .eq('email', email.trim())
+                    .single();
+
+                if (!profile) {
+                    router.push(`/register?email=${encodeURIComponent(email)}&error=no_account`);
+                    return;
+                }
+            }
             setErrorMsg(error.message || "Identifiants incorrects.");
         } finally {
             setLoading(false);

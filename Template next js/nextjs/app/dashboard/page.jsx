@@ -17,18 +17,21 @@ export default function DashboardRootPage() {
                 return;
             }
 
-            // Récupérer le rôle de l'utilisateur
-            const { data: userData, error } = await supabase
-                .from('users')
+            // Récupérer le rôle de l'utilisateur dans la table profiles
+            const { data: profileData, error } = await supabase
+                .from('profiles')
                 .select('role')
-                .eq('email', user.email)
+                .eq('id', user.id)
                 .single();
 
-            if (error || !userData) {
-                // Par défaut on redirige vers client si pas de rôle trouvé (nouvel utilisateur Google)
+            if (error || !profileData) {
+                // Par défaut on redirige vers client si pas de rôle trouvé 
                 router.push('/dashboard/client');
             } else {
-                router.push(`/dashboard/${userData.role}`);
+                const normalizedRole = (profileData.role || 'client').toLowerCase()
+                    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                    .replace(/[^a-z0-9]/g, "");
+                router.push(`/dashboard/${normalizedRole}`);
             }
         };
 
