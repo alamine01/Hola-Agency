@@ -235,3 +235,29 @@ BEGIN
     END IF;
 END ;
 
+
+-- Table des paiements pour le suivi multi-canal
+CREATE TABLE IF NOT EXISTS payments (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    booking_id UUID REFERENCES bookings(id),
+    user_id UUID REFERENCES auth.users(id),
+    amount INTEGER NOT NULL,
+    provider TEXT, -- 'paytech', 'stripe', 'paypal'
+    provider_id TEXT, -- ID de session ou transaction du fournisseur
+    status TEXT DEFAULT 'pending', -- 'pending', 'completed', 'failed', 'refunded'
+    metadata JSONB DEFAULT '{}'::jsonb
+);
+
+-- RLS pour les paiements
+ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
+
+DO  
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can view their own payments') THEN
+        CREATE POLICY "Users can view their own payments" ON payments FOR SELECT USING (auth.uid() = user_id);
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Admins can view all payments') THEN
+        CREATE POLICY "Admins can view all payments" ON payments FOR SELECT USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
+    END IF;
+END ;

@@ -48,52 +48,97 @@ function PaymentContent() {
         setIsProcessing(true);
 
         const ownerId = searchParams.get('owner_id');
-
-        // Simulation de délai de paiement
-        await new Promise(resolve => setTimeout(resolve, 2500));
-
         const clientName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || "Utilisateur HOLA";
 
-        // Enregistrement en base de données
-        const { error } = await supabase.from('bookings').insert([{
-            user_id: user.id,
-            item_id: itemId,
-            item_type: itemType,
-            owner_id: ownerId,
-            amount: parseFloat(amount),
-            status: 'en_attente',
-            start_date: startDate ? new Date(startDate) : null,
-            end_date: endDate ? new Date(endDate) : null,
-            metadata: { title, guests, image, location, client_name: clientName }
-        }]);
+        try {
+            // 1. Créer la réservation avec statut "en attente de paiement"
+            console.log("Démarrage de la réservation Supabase...");
+            const { data: booking, error: bookingError } = await supabase
+                .from('bookings')
+                .insert([{
+                    user_id: user.id,
+                    item_id: itemId,
+                    item_type: itemType,
+                    owner_id: ownerId,
+                    amount: parseFloat(amount),
+                    status: 'en_attente_paiement',
+                    start_date: startDate ? new Date(startDate) : null,
+                    end_date: endDate ? new Date(endDate) : null,
+                    metadata: { title, guests, image, location, client_name: clientName }
+                }])
+                .select()
+                .single();
 
-        if (error) {
-            console.error("Erreur enregistrement :", error);
-            alert("Erreur lors de la validation : " + error.message);
-            setIsProcessing(false);
-            return;
-        }
+            if (bookingError) {
+                console.error("Booking Error:", bookingError);
+                throw new Error("Erreur base de données: " + bookingError.message);
+            }
+            console.log("Réservation créée:", booking.id);
 
-        // Envoyer une notification au propriétaire
-        if (ownerId) {
-            await supabase
-                .from('notifications')
-                .insert({
+            // 2. Choisir le fournisseur selon le mode de paiement
+            const isPaytech = method === 'wave' || method === 'orange';
+            const isStripe = method === 'card';
+            const isPaypal = method === 'paypal';
+
+            const apiRoute = isPaytech
+                ? '/api/payments/paytech'
+                : isStripe
+                    ? '/api/payments/stripe'
+                    : '/api/payments/paypal';
+
+            console.log("Appel de l'API:", apiRoute);
+
+            // 3. Appeler l'API de paiement avec timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+
+            const res = await fetch(apiRoute, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    bookingId: booking.id,
+                    amount: parseFloat(amount),
+                    title: title || 'Réservation HOLA'
+                }),
+                signal: controller.signal
+            });
+            clearTimeout(timeoutId);
+
+            console.log("Réponse API reçue, status:", res.status);
+
+            const contentType = res.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+                const text = await res.text();
+                console.error("Réponse non-JSON reçue:", text);
+                throw new Error("Le serveur a renvoyé une erreur non-standard. Vérifiez les logs serveurs.");
+            }
+
+            const result = await res.json();
+            console.log("Résultat API:", result);
+
+            if (!result.success || !result.redirect_url) {
+                throw new Error(result.error || "Impossible de contacter le fournisseur de paiement.");
+            }
+
+            // 4. Notifier le propriétaire (en attente de paiement)
+            if (ownerId) {
+                await supabase.from('notifications').insert({
                     user_id: ownerId,
-                    title: "Nouvelle réservation",
-                    text: `${clientName} a réservé "${title}"`,
+                    title: "Réservation en attente",
+                    text: `${clientName} a initié une réservation pour "${title}" (paiement en cours)`,
                     type: "reservation",
-                    metadata: { booking_id: itemId, item_type: itemType, client_id: user.id }
+                    metadata: { booking_id: booking.id, item_type: itemType, client_id: user.id }
                 });
+            }
+
+            // 5. Rediriger vers le fournisseur (Stripe, PayTech, PayPal)
+            window.location.href = result.redirect_url;
+
+        } catch (error) {
+            console.error("Payment Error:", error);
+            alert("Erreur : " + error.message);
+            setIsProcessing(false);
         }
-
-        setIsProcessing(false);
-        setIsSuccess(true);
-
-        // Redirection après succès
-        setTimeout(() => {
-            router.push('/dashboard/client/reservations');
-        }, 3000);
     };
 
     if (isSuccess) {

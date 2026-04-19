@@ -60,9 +60,59 @@ export default function PropertyDetailPage() {
             router.push(`/login?redirect=/logements/${id}`);
             return;
         }
-        // Redirect to a placeholder payment page
-        window.location.href = '#';
-        alert("En tant que client connecté, vous allez être redirigé vers le paiement sécurisé.");
+
+        if (calculateTotal() <= 0) {
+            alert("Veuillez sélectionner des dates valides.");
+            return;
+        }
+
+        try {
+            // Création de la réservation en attente de paiement
+            const { data: booking, error } = await supabase
+                .from('bookings')
+                .insert({
+                    user_id: user.id,
+                    owner_id: "7670e62f-3ae3-4b0c-9d94-3d400df4228c", // À remplacer par property.owner_id quand dispo
+                    item_id: id,
+                    item_type: property.type,
+                    start_date: bookingData.startDate,
+                    end_date: bookingData.endDate,
+                    amount: calculateTotal(),
+                    status: 'en_attente_paiement',
+                    metadata: {
+                        title: property.title,
+                        image: property.image,
+                        location: property.location
+                    }
+                })
+                .select()
+                .single();
+
+            if (error) throw error;
+
+            // Envoi des emails de notification et de confirmation
+            fetch('/api/emails/booking', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    clientEmail: user.email,
+                    clientName: user.user_metadata?.full_name || user.email?.split('@')[0],
+                    ownerId: "7670e62f-3ae3-4b0c-9d94-3d400df4228c", // À remplacer par property.owner_id
+                    bookingDetails: {
+                        title: property.title,
+                        startDate: bookingData.startDate,
+                        endDate: bookingData.endDate,
+                        amount: calculateTotal()
+                    }
+                })
+            }).catch(e => console.error("Email API init failed:", e));
+
+            // Redirection vers la page de paiement
+            router.push(`/dashboard/client/paiement/${booking.id}`);
+        } catch (error) {
+            console.error(error);
+            alert("Erreur lors de la réservation : " + error.message);
+        }
     };
 
     const handleContact = async () => {
@@ -210,16 +260,16 @@ export default function PropertyDetailPage() {
 
                                 <button
                                     onClick={handleBooking}
-                                    className="w-full py-5 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-bold text-lg shadow-xl shadow-slate-200 transition-all hover:scale-[1.02] active:scale-95 mb-4"
+                                    className="w-full py-4 sm:py-5 px-2 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black text-[13px] sm:text-base shadow-xl shadow-slate-200 transition-all hover:scale-[1.02] active:scale-95 mb-4 uppercase tracking-widest flex items-center justify-center whitespace-nowrap"
                                 >
-                                    Réserver maintenant
+                                    {property.type === 'Service' ? 'Réserver la prestation' : 'Réserver maintenant'}
                                 </button>
 
                                 <button
                                     onClick={handleContact}
-                                    className="w-full py-4 bg-white border-2 border-slate-900 text-slate-900 hover:bg-slate-50 rounded-2xl font-bold transition-all active:scale-95 mb-6"
+                                    className="w-full py-4 px-2 bg-white border-2 border-slate-900 text-slate-900 hover:bg-slate-50 rounded-2xl font-black text-[13px] sm:text-base transition-all active:scale-95 mb-6 uppercase tracking-widest flex items-center justify-center whitespace-nowrap"
                                 >
-                                    Contacter le propriétaire
+                                    {property.type === 'Service' ? 'Contacter le professionnel' : 'Contacter le propriétaire'}
                                 </button>
 
                                 {calculateTotal() > 0 && (

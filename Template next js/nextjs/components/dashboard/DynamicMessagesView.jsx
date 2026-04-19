@@ -323,16 +323,18 @@ function MessagesContent({ role }) {
                             </button>
                         </div>
 
-                        <div className="flex-1 overflow-y-auto p-6 flex flex-col min-h-0">
-                            {messages.map((msg, idx) => (
-                                <MessageItem
-                                    key={msg.id || idx}
-                                    text={msg.content}
-                                    time={msg.created_at}
-                                    sent={msg.sender_id === currentUser.id}
-                                />
-                            ))}
-                            <div ref={messagesEndRef} />
+                        <div className="flex-1 overflow-y-auto p-6 min-h-0 scroll-smooth touch-pan-y" style={{ WebkitOverflowScrolling: 'touch' }}>
+                            <div className="flex flex-col">
+                                {messages.map((msg, idx) => (
+                                    <MessageItem
+                                        key={msg.id || idx}
+                                        text={msg.content}
+                                        time={msg.created_at}
+                                        sent={msg.sender_id === currentUser.id}
+                                    />
+                                ))}
+                                <div ref={messagesEndRef} />
+                            </div>
                         </div>
 
                         <div className="p-6 bg-white border-t border-slate-100">

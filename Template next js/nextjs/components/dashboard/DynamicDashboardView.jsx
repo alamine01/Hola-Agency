@@ -195,8 +195,6 @@ export default function DynamicDashboardView({ role = 'client' }) {
                 const totalGain = (bookingsData.data || []).reduce((acc, curr) => acc + curr.amount, 0);
                 const netGain = Math.floor(totalGain * 0.85);
                 const formatRevenue = (val) => {
-                    if (val >= 1000000) return `${(val / 1000000).toFixed(2)}M FCFA`;
-                    if (val >= 1000) return `${Math.floor(val / 1000)}k FCFA`;
                     return `${val.toLocaleString()} FCFA`;
                 };
 
@@ -218,7 +216,7 @@ export default function DynamicDashboardView({ role = 'client' }) {
                 const netGain = Math.floor(totalGain * 0.85);
 
                 dashboardStats = [
-                    { title: "Gains de Service", value: `${(netGain / 1000).toFixed(0)}k FCFA`, change: null, icon: TrendingUp, color: "bg-emerald-600", subtitle: "Après commission HOLA (-15%)" },
+                    { title: "Gains de Service", value: `${netGain.toLocaleString()} FCFA`, change: null, icon: TrendingUp, color: "bg-emerald-600", subtitle: "Après commission HOLA (-15%)" },
                     { title: "Mes Prestations", value: servicesCount.count || 0, change: null, icon: Star, color: "bg-amber-500" },
                     { title: "Demandes", value: (bookingsData.data || []).length, change: null, icon: Users, color: "bg-slate-900" },
                 ];
@@ -318,9 +316,13 @@ export default function DynamicDashboardView({ role = 'client' }) {
                                 </div>
                                 <div className="flex items-center justify-between sm:flex-col sm:items-end border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-50 gap-2">
                                     <p className="font-black text-slate-900 text-base sm:text-lg">{(act.amount || 0).toLocaleString()} <span className="text-[10px] font-bold">FCFA</span></p>
-                                    <span className={`text-[9px] uppercase font-black tracking-widest px-3 py-1.5 rounded-lg inline-block border ${act.status === 'en_attente' ? 'bg-amber-50 text-amber-600 border-amber-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'
+                                    <span className={`text-[9px] uppercase font-black tracking-widest px-3 py-1.5 rounded-lg inline-block border ${act.status === 'payee' || act.status === 'confirmee'
+                                            ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
+                                            : act.status === 'en_attente_paiement'
+                                                ? 'bg-indigo-50 text-indigo-600 border-indigo-100'
+                                                : 'bg-amber-50 text-amber-600 border-amber-100'
                                         }`}>
-                                        {(act.status || '...').replace('_', ' ')}
+                                        {(act.status || '...').replace(/_/g, ' ')}
                                     </span>
                                 </div>
                             </div>

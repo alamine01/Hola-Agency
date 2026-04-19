@@ -24,11 +24,11 @@ export default function DashboardRootPage() {
                 .eq('id', user.id)
                 .single();
 
-            if (error || !profileData) {
-                // Par défaut on redirige vers client si pas de rôle trouvé 
-                router.push('/dashboard/client');
+            if (error || !profileData || !profileData.role) {
+                // Si pas de rôle, on force le onboarding
+                router.push('/auth/onboarding');
             } else {
-                const normalizedRole = (profileData.role || 'client').toLowerCase()
+                const normalizedRole = profileData.role.toLowerCase()
                     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
                     .replace(/[^a-z0-9]/g, "");
                 router.push(`/dashboard/${normalizedRole}`);

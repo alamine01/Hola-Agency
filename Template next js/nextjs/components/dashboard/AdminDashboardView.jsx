@@ -115,7 +115,7 @@ export default function AdminDashboardView() {
                 <AdminStatCard title="Utilisateurs" value={stats.users} icon={Users} color="bg-indigo-600" trend="+12" />
                 <AdminStatCard title="Hébergements" value={stats.villas} icon={Home} color="bg-slate-900" trend="+5" />
                 <AdminStatCard title="Réservations" value={stats.bookings} icon={CalendarDays} color="bg-emerald-600" trend="+24" />
-                <AdminStatCard title="Chiffre d'Affaire" value={`${(stats.revenue / 1000).toFixed(0)}k`} icon={TrendingUp} color="bg-amber-500" />
+                <AdminStatCard title="Chiffre d'Affaire" value={`${stats.revenue.toLocaleString()} FCFA`} icon={TrendingUp} color="bg-amber-500" />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -161,7 +161,14 @@ export default function AdminDashboardView() {
                                     </div>
                                     <div className="text-right">
                                         <p className="font-black text-slate-900 text-sm">{book.amount.toLocaleString()} FCFA</p>
-                                        <span className={`text-[9px] font-black uppercase tracking-widest ${book.status === 'payee' ? 'text-emerald-600' : 'text-amber-600'}`}>{book.status}</span>
+                                        <span className={`text-[9px] font-black uppercase tracking-widest ${book.status === 'payee' || book.status === 'confirmee'
+                                                ? 'text-emerald-600'
+                                                : book.status === 'en_attente_paiement'
+                                                    ? 'text-indigo-600'
+                                                    : 'text-amber-600'
+                                            }`}>
+                                            {(book.status || '').replace(/_/g, ' ')}
+                                        </span>
                                     </div>
                                 </div>
                             ))}

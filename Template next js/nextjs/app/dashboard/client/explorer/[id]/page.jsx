@@ -315,11 +315,11 @@ export default function DashboardPropertyDetails() {
                                 )}
                             </div>
 
-                            <button onClick={handleBooking} className="w-full py-5 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-bold text-lg shadow-xl shadow-slate-200 transition-all active:scale-95 mb-4 uppercase tracking-tight">
+                            <button onClick={handleBooking} className="w-full py-4 sm:py-5 px-4 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black text-[10px] sm:text-xs md:text-sm shadow-xl shadow-slate-200 transition-all active:scale-95 mb-4 uppercase tracking-wider flex items-center justify-center text-center">
                                 {property.type === 'Service' ? 'Réserver la prestation' : 'Réserver maintenant'}
                             </button>
 
-                            <button onClick={handleContact} className="w-full py-4 bg-white border-2 border-slate-900 text-slate-900 hover:bg-slate-50 rounded-2xl font-bold transition-all active:scale-95 uppercase tracking-tight">
+                            <button onClick={handleContact} className="w-full py-4 px-4 bg-white border-2 border-slate-900 text-slate-900 hover:bg-slate-50 rounded-2xl font-black text-[10px] sm:text-xs md:text-sm transition-all active:scale-95 uppercase tracking-wider flex items-center justify-center text-center">
                                 {property.type === 'Service' ? 'Contacter le professionnel' : 'Contacter le propriétaire'}
                             </button>
 
