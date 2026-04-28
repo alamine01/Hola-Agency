@@ -283,38 +283,42 @@ export default function DynamicProfileView({ role = 'client' }) {
                     </div>
 
                     <div className="text-center md:text-left flex-1 space-y-6">
-                        <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
+                        <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-3 md:gap-4 overflow-hidden">
                             {editMode ? (
                                 <input
                                     type="text"
                                     value={tempProfile.display_name || ''}
                                     onChange={e => setTempProfile({ ...tempProfile, display_name: e.target.value })}
-                                    className="text-3xl font-black text-slate-900 bg-slate-50 border-b-2 border-amber-600 outline-none px-2 max-w-xs focus:bg-white transition-all rounded-t-xl"
+                                    className="text-2xl md:text-3xl font-black text-slate-900 bg-slate-50 border-b-2 border-amber-600 outline-none px-2 w-full md:max-w-xs focus:bg-white transition-all rounded-t-xl text-center md:text-left"
                                     placeholder="Votre nom"
                                 />
                             ) : (
-                                <h3 className="text-3xl font-black text-slate-900 tracking-tight">{profile?.display_name || user?.email?.split('@')[0]}</h3>
+                                <h3 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight truncate">{profile?.display_name || user?.email?.split('@')[0]}</h3>
                             )}
-                            <span className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-full border flex items-center gap-2 ${config.badgeColor}`}>
-                                <config.badgeIcon className="w-3.5 h-3.5" /> {config.badgeLabel}
-                            </span>
+                            <div className="shrink-0">
+                                <span className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-full border flex items-center gap-2 ${config.badgeColor}`}>
+                                    <config.badgeIcon className="w-3.5 h-3.5" /> {config.badgeLabel}
+                                </span>
+                            </div>
                         </div>
 
-                        <div className="flex items-center justify-center md:justify-start gap-2 text-slate-500 font-medium">
-                            <MapPin className="w-4 h-4 text-slate-400" />
-                            {editMode ? (
-                                <input
-                                    type="text"
-                                    value={tempProfile.location || ''}
-                                    onChange={e => setTempProfile({ ...tempProfile, location: e.target.value })}
-                                    className="text-sm border-b border-slate-200 outline-none focus:border-amber-600 bg-transparent"
-                                    placeholder="Votre ville, Pays"
-                                />
-                            ) : (
-                                <span>{profile?.location || config.title}</span>
-                            )}
-                            <span className="text-slate-300 mx-1">•</span>
-                            <span className="text-amber-600">{config.subtitle}</span>
+                        <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-2 md:gap-2 text-slate-500 font-medium text-sm">
+                            <div className="flex items-center gap-2">
+                                <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
+                                {editMode ? (
+                                    <input
+                                        type="text"
+                                        value={tempProfile.location || ''}
+                                        onChange={e => setTempProfile({ ...tempProfile, location: e.target.value })}
+                                        className="text-sm border-b border-slate-200 outline-none focus:border-amber-600 bg-transparent"
+                                        placeholder="Votre ville, Pays"
+                                    />
+                                ) : (
+                                    <span className="truncate">{profile?.location || config.title}</span>
+                                )}
+                            </div>
+                            <span className="hidden md:inline text-slate-300 mx-1">•</span>
+                            <span className="text-amber-600 font-bold px-3 py-1 bg-amber-50 md:bg-transparent rounded-lg text-xs md:text-sm">{config.subtitle}</span>
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-xl">

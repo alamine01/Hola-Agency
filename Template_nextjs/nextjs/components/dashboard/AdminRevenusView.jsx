@@ -274,42 +274,46 @@ export default function AdminRevenusView() {
                             <h2 className="text-xl font-black text-slate-900 tracking-tight uppercase">Demandes de Fonds Partners</h2>
                             <div className="space-y-4">
                                 {payouts.map((p) => (
-                                    <div key={p.id} className="p-6 bg-white rounded-3xl border border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                                        <div className="flex items-center gap-6">
-                                            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg ${p.status === 'valide' ? 'bg-emerald-50 text-emerald-600' : p.status === 'rejete' ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'}`}>
-                                                <ArrowUpLeft className="w-6 h-6" />
+                                    <div key={p.id} className="p-4 md:p-6 bg-white rounded-[2rem] border border-slate-50 hover:border-slate-200 transition-all shadow-sm">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className="flex items-center gap-3 md:gap-6">
+                                                <div className={`w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg ${p.status === 'valide' ? 'bg-emerald-50 text-emerald-600' : p.status === 'rejete' ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'}`}>
+                                                    <ArrowUpLeft className="w-5 h-5 md:w-6 md:h-6" />
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-black text-slate-900 uppercase tracking-tight text-[11px] md:text-sm mb-0.5 md:mb-1 truncate max-w-[120px] md:max-w-none">{p.profiles?.display_name || 'Utilisateur'}</h4>
+                                                    <p className="text-[9px] md:text-[10px] font-black text-amber-600 uppercase tracking-widest">{p.method}</p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <h4 className="font-black text-slate-900 uppercase tracking-tight text-sm mb-1">{p.profiles?.display_name || 'Utilisateur'}</h4>
-                                                <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest">{p.method}</p>
+                                            <div className="text-right">
+                                                <p className="text-base md:text-xl font-black text-slate-900 tracking-tight">{p.amount.toLocaleString()} <span className="text-[10px]">FCFA</span></p>
+                                                <p className="text-[8px] md:text-[10px] font-bold text-slate-400 uppercase">{new Date(p.created_at).toLocaleDateString()}</p>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-6 md:gap-10">
-                                            <div className="text-right">
-                                                <p className="text-xl font-black text-slate-900 tracking-tight">{p.amount.toLocaleString()} FCFA</p>
-                                                <p className="text-[10px] font-bold text-slate-400 uppercase">{new Date(p.created_at).toLocaleDateString()}</p>
+
+                                        <div className="flex items-center justify-between pt-4 border-t border-slate-50 gap-4">
+                                            <div className="flex flex-col">
+                                                <span className={`px-4 py-1.5 rounded-lg text-[8px] md:text-[9px] font-black uppercase tracking-widest ${p.status === 'valide' ? 'bg-emerald-50 text-emerald-600' : p.status === 'rejete' ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'}`}>
+                                                    {p.status.replace(/_/g, ' ')}
+                                                </span>
                                             </div>
-                                            {p.status === 'en_attente' ? (
+                                            {p.status === 'en_attente' && (
                                                 <div className="flex items-center gap-2">
                                                     <button
                                                         onClick={() => handleProcessPayout(p.id, 'valide')}
-                                                        className="p-3 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-600 hover:text-white transition-all"
+                                                        className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
                                                         title="Approuver"
                                                     >
-                                                        <CheckCircle className="w-5 h-5" />
+                                                        <CheckCircle className="w-4 h-4 md:w-5 md:h-5" />
                                                     </button>
                                                     <button
                                                         onClick={() => handleProcessPayout(p.id, 'rejete')}
-                                                        className="p-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all"
+                                                        className="p-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm"
                                                         title="Rejeter"
                                                     >
-                                                        <XCircle className="w-5 h-5" />
+                                                        <XCircle className="w-4 h-4 md:w-5 md:h-5" />
                                                     </button>
                                                 </div>
-                                            ) : (
-                                                <span className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest ${p.status === 'valide' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
-                                                    {p.status}
-                                                </span>
                                             )}
                                         </div>
                                     </div>
