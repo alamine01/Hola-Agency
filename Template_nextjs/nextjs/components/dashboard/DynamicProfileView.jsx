@@ -228,7 +228,7 @@ export default function DynamicProfileView({ role = 'client' }) {
     if (loading) return <div className="h-full flex items-center justify-center p-20 text-slate-400"><Loader2 className="animate-spin" /></div>;
 
     return (
-        <div className="max-w-4xl mx-auto space-y-8 pb-10 px-4 md:px-8 pt-6">
+        <div className="max-w-4xl mx-auto space-y-6 md:space-y-8 pb-10 px-4 md:px-8 pt-6 overflow-x-hidden">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div className="text-center md:text-left">
                     <h1 className="text-3xl font-black text-slate-900 mb-2 tracking-tight uppercase">Mon Profil {role}</h1>
@@ -259,10 +259,10 @@ export default function DynamicProfileView({ role = 'client' }) {
                 )}
             </AnimatePresence>
 
-            <div className="bg-white rounded-[2.5rem] border border-slate-100 p-8 md:p-12 shadow-sm relative overflow-hidden">
+            <div className="bg-white rounded-[1.5rem] md:rounded-[2.5rem] border border-slate-100 p-6 md:p-12 shadow-sm relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl -translate-y-20 translate-x-20"></div>
 
-                <div className="flex flex-col md:flex-row items-center gap-10 relative z-10">
+                <div className="flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-10 relative z-10">
                     <div className="relative group">
                         <div className="w-32 h-32 md:w-40 md:h-40 rounded-[2rem] bg-slate-50 flex items-center justify-center text-slate-200 overflow-hidden border-4 border-white shadow-xl group-hover:shadow-2xl transition-all relative">
                             {tempProfile.avatar_url ? (
@@ -350,7 +350,7 @@ export default function DynamicProfileView({ role = 'client' }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 <div className="bg-white rounded-[2rem] border border-slate-100 p-8 shadow-sm group hover:shadow-md transition-shadow">
                     <div className="flex items-center gap-4 mb-6">
-                        <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white group-hover:scale-105 transition-transform">
+                        <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white group-hover:scale-105 transition-transform shrink-0">
                             <Lock className="w-6 h-6" />
                         </div>
                         <h3 className="text-xl font-bold text-slate-900">Mot de passe</h3>
@@ -368,7 +368,7 @@ export default function DynamicProfileView({ role = 'client' }) {
 
                 <div className="bg-white rounded-[2rem] border border-slate-100 p-8 shadow-sm group hover:shadow-md transition-shadow">
                     <div className="flex items-center gap-4 mb-6">
-                        <div className="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <div className="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
                             <Trash2 className="w-6 h-6" />
                         </div>
                         <h3 className="text-xl font-bold text-slate-900 group-hover:text-red-600 transition-colors">Désactivation</h3>
