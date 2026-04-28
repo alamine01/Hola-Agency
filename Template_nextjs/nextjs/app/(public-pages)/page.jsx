@@ -6,7 +6,7 @@ import ContactSection from '@/sections/contact-section';
 
 export default function Page() {
     return (
-        <main className='min-h-screen bg-slate-50 font-sans selection:bg-[#D4AF37]/30'>
+        <main className='min-h-screen bg-slate-50 font-sans selection:bg-[#D4AF37]/30 overflow-x-hidden'>
             <HeroSection />
             <PartnersSection />
             <FeaturedProperties />

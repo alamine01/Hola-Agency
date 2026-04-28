@@ -126,6 +126,7 @@ export default function AdminDashboardView() {
                         <div className="space-y-3 relative z-10">
                             {[
                                 { label: "Gérer les utilisateurs", icon: Users, link: "/dashboard/admin/utilisateurs" },
+                                { label: "Gérer les logements", icon: Home, link: "/dashboard/admin/logements" },
                                 { label: "Vérifier les revenus", icon: TrendingUp, link: "/dashboard/admin/revenus" }
                             ].map((action, i) => (
                                 <a key={i} href={action.link} className="flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5 transition-all group-hover:translate-x-1">
@@ -162,10 +163,10 @@ export default function AdminDashboardView() {
                                     <div className="text-right">
                                         <p className="font-black text-slate-900 text-sm">{book.amount.toLocaleString()} FCFA</p>
                                         <span className={`text-[9px] font-black uppercase tracking-widest ${book.status === 'payee' || book.status === 'confirmee'
-                                                ? 'text-emerald-600'
-                                                : book.status === 'en_attente_paiement'
-                                                    ? 'text-amber-600'
-                                                    : 'text-amber-600'
+                                            ? 'text-emerald-600'
+                                            : book.status === 'en_attente_paiement'
+                                                ? 'text-amber-600'
+                                                : 'text-amber-600'
                                             }`}>
                                             {(book.status || '').replace(/_/g, ' ')}
                                         </span>

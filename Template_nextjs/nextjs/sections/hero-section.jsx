@@ -80,8 +80,8 @@ export default function HeroSection() {
                 {/* Client Card */}
                 <motion.div variants={fadeUp} whileHover={{ y: -8 }} className="group relative">
                     <div className="absolute inset-0 bg-gradient-to-b from-[#D4AF37]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl blur-xl"></div>
-                    <Link href="/register?role=client" className="relative flex flex-col items-center p-10 bg-white/90 backdrop-blur-xl border border-slate-200/50 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(212,175,55,0.15)] hover:border-[#D4AF37]/50 transition-all duration-300 h-full">
-                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 flex items-center justify-center text-slate-700 group-hover:text-white group-hover:bg-gradient-to-br group-hover:from-[#D4AF37] group-hover:to-amber-500 shadow-sm transition-all duration-500 mb-8">
+                    <Link href="/register?role=client" className="relative flex flex-col items-center p-10 bg-gradient-to-br from-[#D4AF37]/5 to-amber-500/5 backdrop-blur-xl border border-[#D4AF37]/20 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(212,175,55,0.15)] hover:border-[#D4AF37]/50 transition-all duration-300 h-full">
+                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200 flex items-center justify-center text-amber-600 group-hover:text-white group-hover:bg-gradient-to-br group-hover:from-[#D4AF37] group-hover:to-amber-500 shadow-sm transition-all duration-500 mb-8">
                             <User className="w-10 h-10" strokeWidth={1.5} />
                         </div>
                         <h3 className="text-2xl font-bold text-slate-900 mb-3 text-center">Je suis Client</h3>
@@ -97,8 +97,8 @@ export default function HeroSection() {
                 {/* Propriétaire Card */}
                 <motion.div variants={fadeUp} whileHover={{ y: -8 }} className="group relative">
                     <div className="absolute inset-0 bg-gradient-to-b from-slate-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl blur-xl"></div>
-                    <Link href="/register?role=proprietaire" className="relative flex flex-col items-center p-10 bg-white/90 backdrop-blur-xl border border-slate-200/50 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(15,23,42,0.1)] hover:border-slate-800/50 transition-all duration-300 h-full">
-                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 flex items-center justify-center text-slate-700 group-hover:text-white group-hover:bg-gradient-to-br group-hover:from-slate-800 group-hover:to-slate-900 shadow-sm transition-all duration-500 mb-8">
+                    <Link href="/register?role=proprietaire" className="relative flex flex-col items-center p-10 bg-gradient-to-br from-slate-800/5 to-slate-900/5 backdrop-blur-xl border border-slate-800/20 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(15,23,42,0.1)] hover:border-slate-800/50 transition-all duration-300 h-full">
+                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 border border-slate-300 flex items-center justify-center text-slate-800 group-hover:text-white group-hover:bg-gradient-to-br group-hover:from-slate-800 group-hover:to-slate-900 shadow-sm transition-all duration-500 mb-8">
                             <Home className="w-10 h-10" strokeWidth={1.5} />
                         </div>
                         <h3 className="text-2xl font-bold text-slate-900 mb-3 text-center">Propriétaire</h3>
@@ -114,8 +114,8 @@ export default function HeroSection() {
                 {/* Prestataire Card */}
                 <motion.div variants={fadeUp} whileHover={{ y: -8 }} className="group relative">
                     <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl blur-xl"></div>
-                    <Link href="/register?role=prestataire" className="relative flex flex-col items-center p-10 bg-white/90 backdrop-blur-xl border border-slate-200/50 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(99,102,241,0.15)] hover:border-indigo-500/50 transition-all duration-300 h-full">
-                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 flex items-center justify-center text-slate-700 group-hover:text-white group-hover:bg-gradient-to-br group-hover:from-indigo-500 group-hover:to-blue-600 shadow-sm transition-all duration-500 mb-8">
+                    <Link href="/register?role=prestataire" className="relative flex flex-col items-center p-10 bg-gradient-to-br from-indigo-500/5 to-blue-600/5 backdrop-blur-xl border border-indigo-500/20 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(99,102,241,0.15)] hover:border-indigo-500/50 transition-all duration-300 h-full">
+                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-50 to-indigo-100 border border-indigo-200 flex items-center justify-center text-indigo-600 group-hover:text-white group-hover:bg-gradient-to-br group-hover:from-indigo-500 group-hover:to-blue-600 shadow-sm transition-all duration-500 mb-8">
                             <Briefcase className="w-10 h-10" strokeWidth={1.5} />
                         </div>
                         <h3 className="text-2xl font-bold text-slate-900 mb-3 text-center">Prestataire</h3>
