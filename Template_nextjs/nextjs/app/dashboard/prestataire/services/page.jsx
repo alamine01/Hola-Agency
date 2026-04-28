@@ -310,6 +310,8 @@ const AddServiceModal = ({ isOpen, onClose, onRefresh, initialData }) => {
             </motion.div>
         </div>
     );
+};
+
 const TipsModal = ({ isOpen, onClose }) => {
     if (!isOpen) return null;
 

@@ -116,6 +116,8 @@ const RequestDetailsModal = ({ isOpen, onClose, request, onStatusUpdate }) => {
             </div>
         </AnimatePresence>
     );
+};
+
 const GuideModal = ({ isOpen, onClose }) => {
     if (!isOpen) return null;
 
