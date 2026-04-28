@@ -180,13 +180,13 @@ export default function ClientExplorerPage() {
                             <div className="p-6">
                                 <h3 className="text-lg font-black text-slate-900 mb-1 truncate uppercase tracking-tight">{item.title}</h3>
                                 <p className="text-slate-500 text-xs flex items-center gap-1 mb-4 italic">
-                                    <MapPin className="w-3 h-3 text-indigo-500" /> {item.location}
+                                    <MapPin className="w-3 h-3 text-amber-500" /> {item.location}
                                 </p>
 
                                 <div className="flex items-center justify-between pt-6 border-t border-slate-50">
                                     <div>
                                         <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-0.5">Prix</p>
-                                        <p className="text-md font-black text-indigo-600">{item.price}</p>
+                                        <p className="text-md font-black text-amber-600">{item.price}</p>
                                     </div>
                                     <Link
                                         href={`/dashboard/client/explorer/${item.id}`}

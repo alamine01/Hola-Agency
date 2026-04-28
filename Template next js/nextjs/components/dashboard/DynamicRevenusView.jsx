@@ -155,7 +155,7 @@ export default function DynamicRevenusView({ role = 'client' }) {
                 </div>
                 <button
                     onClick={() => setIsWithdrawModalOpen(true)}
-                    className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-indigo-600 transition-all shadow-xl shadow-slate-200 active:scale-95 flex items-center gap-2"
+                    className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-amber-600 transition-all shadow-xl shadow-slate-200 active:scale-95 flex items-center gap-2"
                 >
                     <Plus className="w-4 h-4" /> Demander un retrait
                 </button>
@@ -174,13 +174,13 @@ export default function DynamicRevenusView({ role = 'client' }) {
                     </div>
                 </div>
 
-                <div className="bg-slate-900 p-5 md:p-8 rounded-[1.8rem] md:rounded-[2.5rem] shadow-2xl shadow-indigo-100 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-indigo-500/10 rounded-full -mr-12 -mt-12 md:-mr-16 md:-mt-16 group-hover:scale-110 transition-transform duration-500"></div>
+                <div className="bg-slate-900 p-5 md:p-8 rounded-[1.8rem] md:rounded-[2.5rem] shadow-2xl shadow-amber-100 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-amber-500/10 rounded-full -mr-12 -mt-12 md:-mr-16 md:-mt-16 group-hover:scale-110 transition-transform duration-500"></div>
                     <div className="relative z-10">
-                        <div className="w-10 h-10 md:w-12 md:h-12 bg-indigo-500 text-white rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6 shadow-xl shadow-indigo-500/20">
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-amber-500 text-white rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6 shadow-xl shadow-amber-500/20">
                             <Wallet className="w-5 h-5 md:w-6 md:h-6" />
                         </div>
-                        <p className="text-[8px] md:text-[10px] font-black text-indigo-300 uppercase tracking-widest mb-1">Solde Disponible</p>
+                        <p className="text-[8px] md:text-[10px] font-black text-amber-300 uppercase tracking-widest mb-1">Solde Disponible</p>
                         <h3 className="text-xl md:text-3xl font-black text-white tracking-tight">{(wallet.available || 0).toLocaleString()} <span className="text-[10px] md:text-sm font-bold">FCFA</span></h3>
                         <div className="mt-3 md:mt-4 flex items-center gap-2">
                             <span className="text-[7px] md:text-[9px] font-black text-emerald-400 uppercase tracking-widest px-2 py-0.5 bg-emerald-400/10 rounded-full">Prêt au retrait</span>
@@ -275,7 +275,7 @@ export default function DynamicRevenusView({ role = 'client' }) {
                             </button>
 
                             <div className="mb-10 text-center md:text-left">
-                                <div className="w-16 h-16 bg-indigo-600 text-white rounded-[1.5rem] flex items-center justify-center mb-6 shadow-xl shadow-indigo-200 mx-auto md:mx-0">
+                                <div className="w-16 h-16 bg-amber-600 text-white rounded-[1.5rem] flex items-center justify-center mb-6 shadow-xl shadow-amber-200 mx-auto md:mx-0">
                                     <ArrowUpRight className="w-8 h-8" />
                                 </div>
                                 <h2 className="text-3xl font-black text-slate-900 tracking-tight uppercase mb-2">Retrait de fonds</h2>
@@ -288,7 +288,7 @@ export default function DynamicRevenusView({ role = 'client' }) {
                                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Solde disponible</p>
                                         <p className="text-2xl font-black text-slate-900">{(wallet.available || 0).toLocaleString()} <span className="text-xs">FCFA</span></p>
                                     </div>
-                                    <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-indigo-600 shadow-sm shadow-indigo-100">
+                                    <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-amber-600 shadow-sm shadow-amber-100">
                                         <Wallet className="w-6 h-6" />
                                     </div>
                                 </div>
@@ -300,7 +300,7 @@ export default function DynamicRevenusView({ role = 'client' }) {
                                         placeholder="Min. 5,000 FCFA"
                                         value={withdrawForm.amount}
                                         onChange={e => setWithdrawForm({ ...withdrawForm, amount: e.target.value })}
-                                        className="w-full px-6 py-5 bg-white border-2 border-slate-100 rounded-2xl outline-none focus:border-indigo-600 transition-all font-black text-slate-900 text-lg shadow-sm"
+                                        className="w-full px-6 py-5 bg-white border-2 border-slate-100 rounded-2xl outline-none focus:border-amber-600 transition-all font-black text-slate-900 text-lg shadow-sm"
                                     />
                                 </div>
 
@@ -317,7 +317,7 @@ export default function DynamicRevenusView({ role = 'client' }) {
                                                 key={m.id}
                                                 type="button"
                                                 onClick={() => setWithdrawForm({ ...withdrawForm, method: m.id })}
-                                                className={`py-4 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all border-2 ${withdrawForm.method === m.id ? 'bg-slate-900 text-white border-slate-900 shadow-xl' : 'bg-white text-slate-500 border-slate-100 hover:border-indigo-200'}`}
+                                                className={`py-4 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all border-2 ${withdrawForm.method === m.id ? 'bg-slate-900 text-white border-slate-900 shadow-xl' : 'bg-white text-slate-500 border-slate-100 hover:border-amber-200'}`}
                                             >
                                                 {m.label}
                                             </button>
@@ -329,7 +329,7 @@ export default function DynamicRevenusView({ role = 'client' }) {
                                     <button
                                         onClick={handleWithdrawRequest}
                                         disabled={withdrawLoading || !withdrawForm.amount || parseInt(withdrawForm.amount) > wallet.available}
-                                        className="w-full py-5 bg-indigo-600 text-white rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-xs hover:bg-slate-900 transition-all shadow-2xl shadow-indigo-100 active:scale-95 disabled:opacity-50 disabled:grayscale flex items-center justify-center gap-3"
+                                        className="w-full py-5 bg-amber-600 text-white rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-xs hover:bg-slate-900 transition-all shadow-2xl shadow-amber-100 active:scale-95 disabled:opacity-50 disabled:grayscale flex items-center justify-center gap-3"
                                     >
                                         {withdrawLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Confirmer le retrait"}
                                     </button>
@@ -358,7 +358,7 @@ export default function DynamicRevenusView({ role = 'client' }) {
                         >
                             <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/30">
                                 <div>
-                                    <p className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-1">Détails du mouvement</p>
+                                    <p className="text-[10px] font-black text-amber-600 uppercase tracking-[0.2em] mb-1">Détails du mouvement</p>
                                     <h3 className="text-xl font-black text-slate-900 tracking-tight uppercase">Rçu de transaction</h3>
                                 </div>
                                 <button onClick={() => setSelectedTx(null)} className="p-3 bg-white border border-slate-100 rounded-2xl text-slate-400 hover:text-slate-900 transition-all">
@@ -401,8 +401,8 @@ export default function DynamicRevenusView({ role = 'client' }) {
 
                                 <div className="p-8 bg-slate-900 rounded-[2.5rem] text-white flex items-center justify-between shadow-xl shadow-slate-200">
                                     <div className="space-y-1">
-                                        <p className="text-[10px] font-black text-indigo-300 uppercase tracking-[0.2em]">Montant Total</p>
-                                        <p className="text-xs text-indigo-400 font-medium italic">Commission incluse</p>
+                                        <p className="text-[10px] font-black text-amber-300 uppercase tracking-[0.2em]">Montant Total</p>
+                                        <p className="text-xs text-amber-400 font-medium italic">Commission incluse</p>
                                     </div>
                                     <p className="text-3xl font-black tracking-tighter">
                                         {selectedTx.amount.toLocaleString()} <span className="text-sm font-bold">FCFA</span>

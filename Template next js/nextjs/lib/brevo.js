@@ -17,7 +17,7 @@ export async function sendEmail({ to, subject, htmlText }) {
                 "content-type": "application/json"
             },
             body: JSON.stringify({
-                sender: { name: "HOLA Agency", email: "no-reply@hola-agency.com" }, // Change if needed
+                sender: { name: "Hola Agency", email: "contact@holaluxe.com" },
                 to: [{ email: to }],
                 subject: subject,
                 htmlContent: htmlText,
@@ -38,26 +38,29 @@ export async function sendEmail({ to, subject, htmlText }) {
     }
 }
 
-export async function sendPaymentConfirmation(bookingId) {
-    if (!bookingId) return;
+export async function sendPaymentConfirmation(bookingId, fallbackData = null) {
+    if (!bookingId && !fallbackData) return;
     try {
         const { data: booking } = await supabase.from('bookings').select('*').eq('id', bookingId).maybeSingle();
-        if (!booking || !booking.user_id) return;
 
-        let clientEmail = null;
-        let clientName = "Cher client";
+        let clientEmail = fallbackData?.clientEmail || null;
+        let clientName = fallbackData?.clientName || "Cher client";
+        const amount = fallbackData?.amount || booking?.amount || '---';
+        const title = fallbackData?.title || booking?.metadata?.title || 'du logement';
 
-        const { data: profile } = await supabase.from('profiles').select('email, display_name').eq('id', booking.user_id).maybeSingle();
-        if (profile?.email) {
-            clientEmail = profile.email;
-            clientName = profile.display_name || clientName;
-        }
+        if (!clientEmail && booking?.user_id) {
+            const { data: profile } = await supabase.from('profiles').select('email, display_name').eq('id', booking.user_id).maybeSingle();
+            if (profile?.email) {
+                clientEmail = profile.email;
+                clientName = profile.display_name || clientName;
+            }
 
-        if (!clientEmail) {
-            const { data: user } = await supabase.from('users').select('email, prenom').eq('id', booking.user_id).maybeSingle();
-            if (user?.email) {
-                clientEmail = user.email;
-                clientName = user.prenom || clientName;
+            if (!clientEmail) {
+                const { data: user } = await supabase.from('users').select('email, prenom').eq('id', booking.user_id).maybeSingle();
+                if (user?.email) {
+                    clientEmail = user.email;
+                    clientName = user.prenom || clientName;
+                }
             }
         }
 
@@ -73,7 +76,7 @@ export async function sendPaymentConfirmation(bookingId) {
             subject: "Confirmation de paiement & Facture - HOLA AGENCY",
             htmlText: `
                 <h2>Bonjour ${clientName},</h2>
-                <p>Nous vous confirmons la réception de votre paiement de <strong>${booking.amount || '---'} FCFA</strong> pour la réservation <strong>${booking.metadata?.title || 'du logement'}</strong>.</p>
+                <p>Nous vous confirmons la réception de votre paiement de <strong>${amount} FCFA</strong> pour la réservation <strong>${title}</strong>.</p>
                 <p>Votre réservation est désormais <strong>confirmée</strong>.</p>
                 <p>Vous pouvez consulter et télécharger votre facture complète depuis votre espace client :</p>
                 <p><a href="${invoiceUrl}" style="display:inline-block; padding:10px 20px; background-color:#1e293b; color:#ffffff; text-decoration:none; border-radius:8px;">Voir ma facture</a></p>

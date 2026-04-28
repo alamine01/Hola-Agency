@@ -50,7 +50,7 @@ const RequestDetailsModal = ({ isOpen, onClose, request, onStatusUpdate }) => {
 
                     <div className="mb-10">
                         <div className="flex items-center gap-4 mb-4">
-                            <div className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-indigo-100">
+                            <div className="px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-amber-100">
                                 Demande #{request.id.slice(0, 5)}
                             </div>
                             <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${request.status === 'en_attente' ? 'bg-amber-50 text-amber-600 border-amber-100 animate-pulse' : 'bg-emerald-50 text-emerald-600 border-emerald-100'
@@ -74,12 +74,12 @@ const RequestDetailsModal = ({ isOpen, onClose, request, onStatusUpdate }) => {
                         </div>
 
                         <div className="grid grid-cols-2 gap-5">
-                            <div className="p-5 bg-white rounded-3xl border border-slate-100 shadow-sm group hover:border-indigo-100 transition-colors">
-                                <Calendar className="w-5 h-5 text-indigo-500 mb-3 group-hover:scale-110 transition-transform" />
+                            <div className="p-5 bg-white rounded-3xl border border-slate-100 shadow-sm group hover:border-amber-100 transition-colors">
+                                <Calendar className="w-5 h-5 text-amber-500 mb-3 group-hover:scale-110 transition-transform" />
                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Date souhaitée</p>
                                 <p className="text-sm font-black text-slate-900">{request.start_date ? new Date(request.start_date).toLocaleDateString() : 'Non précisé'}</p>
                             </div>
-                            <div className="p-5 bg-white rounded-3xl border border-slate-100 shadow-sm group hover:border-indigo-100 transition-colors">
+                            <div className="p-5 bg-white rounded-3xl border border-slate-100 shadow-sm group hover:border-amber-100 transition-colors">
                                 <MapPin className="w-5 h-5 text-emerald-500 mb-3 group-hover:scale-110 transition-transform" />
                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Lieu</p>
                                 <p className="text-sm font-black text-slate-900">{details.location || 'Sénégal'}</p>
@@ -92,7 +92,7 @@ const RequestDetailsModal = ({ isOpen, onClose, request, onStatusUpdate }) => {
                                 <p className="text-2xl font-black">{netPayout.toLocaleString()} <span className="text-xs">FCFA</span></p>
                             </div>
                             <div className="text-right">
-                                <CreditCard className="w-8 h-8 text-indigo-400 mb-1 ml-auto opacity-50" />
+                                <CreditCard className="w-8 h-8 text-amber-400 mb-1 ml-auto opacity-50" />
                                 <p className="text-[9px] font-medium text-slate-500 italic">Paiement garanti par HOLA</p>
                             </div>
                         </div>
@@ -106,7 +106,7 @@ const RequestDetailsModal = ({ isOpen, onClose, request, onStatusUpdate }) => {
                                 </button>
                                 <button
                                     onClick={() => onStatusUpdate(request.id, 'confirmee')}
-                                    className="py-4 bg-indigo-600 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-900 transition-all shadow-xl shadow-indigo-100 flex items-center justify-center gap-2">
+                                    className="py-4 bg-amber-600 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-900 transition-all shadow-xl shadow-amber-100 flex items-center justify-center gap-2">
                                     <CheckCircle2 className="w-4 h-4" /> Accepter
                                 </button>
                             </div>
@@ -121,7 +121,7 @@ const RequestDetailsModal = ({ isOpen, onClose, request, onStatusUpdate }) => {
 const RequestCard = ({ request, onDetails, onChat }) => {
     const details = request.metadata || {};
     const statusStyles = {
-        en_attente: "bg-indigo-100 text-indigo-700 border-indigo-200 animate-pulse",
+        en_attente: "bg-amber-100 text-amber-700 border-amber-200 animate-pulse",
         confirmee: "bg-emerald-100 text-emerald-700 border-emerald-200",
         annulee: "bg-red-100 text-red-700 border-red-200",
     };
@@ -135,7 +135,7 @@ const RequestCard = ({ request, onDetails, onChat }) => {
                 <div>
                     <h3 className="text-xl font-black text-slate-900 mb-1 tracking-tight">{details.title || 'Service'}</h3>
                     <p className="text-slate-500 text-[11px] font-black uppercase tracking-[0.1em] flex items-center gap-2">
-                        <span className="text-indigo-600">{request.item_type}</span> • {request.start_date ? new Date(request.start_date).toLocaleDateString() : 'Date à fixer'}
+                        <span className="text-amber-600">{request.item_type}</span> • {request.start_date ? new Date(request.start_date).toLocaleDateString() : 'Date à fixer'}
                     </p>
                     <div className="flex items-center gap-2 mt-3">
                         <span className={`text-[9px] uppercase font-black tracking-widest px-3 py-1 rounded-lg border ${statusStyles[request.status] || 'bg-slate-50 text-slate-400 border-slate-100'}`}>
@@ -155,7 +155,7 @@ const RequestCard = ({ request, onDetails, onChat }) => {
                 </button>
                 <button
                     onClick={onDetails}
-                    className="px-8 py-3.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-indigo-600 transition-all shadow-xl active:scale-95 shrink-0"
+                    className="px-8 py-3.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-amber-600 transition-all shadow-xl active:scale-95 shrink-0"
                 >
                     Détails
                 </button>
@@ -271,7 +271,7 @@ export default function DemandesPage() {
                     <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-2 tracking-tight">Demandes de services</h1>
                     <p className="text-slate-500 font-medium italic opacity-80">Gérez vos demandes entrantes et planifiez vos interventions HOLA.</p>
                 </div>
-                {loading && <Loader2 className="w-6 h-6 animate-spin text-indigo-500" />}
+                {loading && <Loader2 className="w-6 h-6 animate-spin text-amber-500" />}
             </div>
 
             <div className="space-y-5 mb-16">
@@ -297,19 +297,19 @@ export default function DemandesPage() {
             </div>
 
             <div className="bg-slate-900 rounded-[3rem] p-10 md:p-14 text-white relative overflow-hidden shadow-2xl shadow-slate-200">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
                 <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
                     <div className="text-center md:text-left">
                         <div className="flex items-center gap-2 mb-4 justify-center md:justify-start">
                             <AlertCircle className="w-5 h-5 text-amber-400" />
-                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-300">Rappel Important</h3>
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-300">Rappel Important</h3>
                         </div>
                         <h3 className="text-2xl md:text-3xl font-black mb-4 tracking-tight">Réactivité & Excellence</h3>
                         <p className="text-slate-400 text-sm md:text-base font-medium max-w-xl italic leading-relaxed">
                             "Les clients HOLA s'attendent à une réponse sous 2 heures. Une forte réactivité améliore votre classement dans les résultats de recherche."
                         </p>
                     </div>
-                    <button className="px-10 py-4 bg-white text-slate-900 rounded-[1.2rem] font-black uppercase tracking-widest text-[10px] hover:bg-indigo-600 hover:text-white transition-all active:scale-95 shrink-0">
+                    <button className="px-10 py-4 bg-white text-slate-900 rounded-[1.2rem] font-black uppercase tracking-widest text-[10px] hover:bg-amber-600 hover:text-white transition-all active:scale-95 shrink-0">
                         Guide Prestataire
                     </button>
                 </div>

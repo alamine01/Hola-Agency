@@ -21,7 +21,7 @@ const NotificationDropdown = ({ isOpen, onClose, notifications, onMarkAllRead })
 
     const getColor = (type) => {
         switch (type) {
-            case 'reservation': return "text-indigo-600 bg-indigo-50";
+            case 'reservation': return "text-amber-600 bg-amber-50";
             case 'paiement': return "text-emerald-600 bg-emerald-50";
             case 'message': return "text-amber-600 bg-amber-50";
             default: return "text-slate-600 bg-slate-50";
@@ -34,7 +34,7 @@ const NotificationDropdown = ({ isOpen, onClose, notifications, onMarkAllRead })
                 <div className="p-5 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
                     <h3 className="font-black text-slate-900 text-sm uppercase tracking-widest">Notifications</h3>
                     {notifications.filter(n => !n.is_read).length > 0 && (
-                        <span className="px-2 py-0.5 bg-indigo-600 text-white text-[10px] font-black rounded-full">
+                        <span className="px-2 py-0.5 bg-amber-600 text-white text-[10px] font-black rounded-full">
                             {notifications.filter(n => !n.is_read).length} NOUVELLES
                         </span>
                     )}
@@ -45,8 +45,8 @@ const NotificationDropdown = ({ isOpen, onClose, notifications, onMarkAllRead })
                         notifications.map((notif) => {
                             const Icon = getIcon(notif.type);
                             return (
-                                <div key={notif.id} className={`p-4 border-b border-slate-50 hover:bg-slate-50 transition-all cursor-pointer group relative ${!notif.is_read ? 'bg-indigo-50/10' : ''}`}>
-                                    {!notif.is_read && <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-600"></div>}
+                                <div key={notif.id} className={`p-4 border-b border-slate-50 hover:bg-slate-50 transition-all cursor-pointer group relative ${!notif.is_read ? 'bg-amber-50/10' : ''}`}>
+                                    {!notif.is_read && <div className="absolute left-0 top-0 bottom-0 w-1 bg-amber-600"></div>}
                                     <div className="flex gap-4">
                                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${getColor(notif.type)} group-hover:scale-110 transition-transform`}>
                                             <Icon className="w-5 h-5" />
@@ -74,7 +74,7 @@ const NotificationDropdown = ({ isOpen, onClose, notifications, onMarkAllRead })
 
                 <button
                     onClick={onMarkAllRead}
-                    className="w-full py-4 text-xs font-black text-indigo-600 hover:bg-indigo-50 transition-all uppercase tracking-widest bg-slate-50/30 disabled:opacity-50"
+                    className="w-full py-4 text-xs font-black text-amber-600 hover:bg-amber-50 transition-all uppercase tracking-widest bg-slate-50/30 disabled:opacity-50"
                     disabled={!notifications.some(n => !n.is_read)}
                 >
                     Marquer tout comme lu
@@ -191,8 +191,8 @@ export default function DashboardLayoutShell({ children, forcedRole }) {
             <div className="flex-1 lg:ml-[280px] flex flex-col min-h-screen">
                 <header className="h-20 bg-white border-b border-slate-100 flex items-center justify-between px-6 lg:px-10 sticky top-0 z-40">
                     <div className="flex items-center gap-4 flex-1">
-                        <div className="hidden md:flex items-center bg-slate-50 border border-slate-100 rounded-full px-5 py-2.5 w-full max-w-md focus-within:border-indigo-600/30 focus-within:bg-white transition-all group shadow-sm shadow-slate-100">
-                            <Search className="w-4 h-4 text-slate-400 mr-2 group-focus-within:text-indigo-600 transition-colors" />
+                        <div className="hidden md:flex items-center bg-slate-50 border border-slate-100 rounded-full px-5 py-2.5 w-full max-w-md focus-within:border-amber-600/30 focus-within:bg-white transition-all group shadow-sm shadow-slate-100">
+                            <Search className="w-4 h-4 text-slate-400 mr-2 group-focus-within:text-amber-600 transition-colors" />
                             <input
                                 type="text"
                                 placeholder="Rechercher une réservation, un logement..."
@@ -205,7 +205,7 @@ export default function DashboardLayoutShell({ children, forcedRole }) {
                         <div className="relative">
                             <button
                                 onClick={() => setIsNotifOpen(!isNotifOpen)}
-                                className={`p-2.5 rounded-full transition-all relative ${isNotifOpen ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'bg-slate-50 border border-slate-100 text-slate-500 hover:text-indigo-600'}`}
+                                className={`p-2.5 rounded-full transition-all relative ${isNotifOpen ? 'bg-amber-600 text-white shadow-lg shadow-amber-100' : 'bg-slate-50 border border-slate-100 text-slate-500 hover:text-amber-600'}`}
                             >
                                 <Bell className="w-5 h-5" />
                                 {notifications.some(n => !n.is_read) && !isNotifOpen && (
@@ -228,14 +228,14 @@ export default function DashboardLayoutShell({ children, forcedRole }) {
                             className="flex items-center gap-3 pl-2 group cursor-pointer hover:opacity-80 transition-all active:scale-95"
                         >
                             <div className="hidden sm:block text-right">
-                                <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest leading-none mb-1 group-hover:text-indigo-600 transition-colors">
+                                <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest leading-none mb-1 group-hover:text-amber-600 transition-colors">
                                     {profile?.role || 'CLIENT'}
                                 </p>
                                 <p className="text-sm font-bold text-slate-900 leading-none truncate max-w-[120px]">
                                     {profile?.display_name || 'HOLA User'}
                                 </p>
                             </div>
-                            <div className="w-10 h-10 rounded-2xl bg-slate-900 border-2 border-white shadow-xl flex items-center justify-center text-white font-black text-lg group-hover:bg-indigo-600 transition-colors overflow-hidden">
+                            <div className="w-10 h-10 rounded-2xl bg-slate-900 border-2 border-white shadow-xl flex items-center justify-center text-white font-black text-lg group-hover:bg-amber-600 transition-colors overflow-hidden">
                                 {profile?.avatar_url ? (
                                     <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
                                 ) : (

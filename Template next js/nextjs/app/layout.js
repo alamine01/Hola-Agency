@@ -7,6 +7,13 @@ const inter = Inter({
     variable: '--font-sans',
 });
 
+export const metadata = {
+    title: "HOLA Agency",
+    icons: {
+        icon: "/icon.png"
+    }
+};
+
 export default function RootLayout({ children }) {
     return (
         <html lang='en'>

@@ -29,7 +29,7 @@ const StatCard = ({ title, value, change, icon: Icon, color, subtitle, className
         viewport={{ once: true }}
         className={`bg-white p-4 md:p-6 rounded-[1.5rem] md:rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group ${className}`}
     >
-        <div className="absolute top-0 right-0 w-24 h-24 bg-slate-50 rounded-full -mr-12 -mt-12 group-hover:bg-indigo-50 transition-colors"></div>
+        <div className="absolute top-0 right-0 w-24 h-24 bg-slate-50 rounded-full -mr-12 -mt-12 group-hover:bg-amber-50 transition-colors"></div>
 
         <div className="flex items-center justify-between mb-4 md:mb-5 relative z-10">
             <div className={`p-2.5 md:p-3 rounded-xl md:rounded-2xl ${color} shadow-lg shadow-slate-100 group-hover:scale-110 transition-transform`}>
@@ -71,7 +71,7 @@ const RoleHeader = ({ role, name }) => {
                 <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">
                     {name ? `Salut, ${name}` : titles[role]}
                 </h1>
-                <div className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-indigo-100 flex items-center gap-1.5 shadow-sm">
+                <div className="px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-amber-100 flex items-center gap-1.5 shadow-sm">
                     <ShieldCheck className="w-3.5 h-3.5" strokeWidth={3} /> {role?.toUpperCase()} HOLA
                 </div>
             </div>
@@ -110,7 +110,7 @@ const ActivitiesModal = ({ isOpen, onClose, activities }) => (
                         {activities.map((act) => (
                             <div key={act.id} className="flex items-center justify-between p-5 rounded-3xl border border-slate-50 hover:bg-slate-50/50 transition-all group">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-500 group-hover:scale-110 transition-transform shadow-sm">
+                                    <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform shadow-sm">
                                         <ArrowDownLeft className="w-6 h-6" />
                                     </div>
                                     <div>
@@ -128,7 +128,7 @@ const ActivitiesModal = ({ isOpen, onClose, activities }) => (
                     </div>
 
                     <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between">
-                        <button onClick={onClose} className="px-8 py-4 bg-slate-900 text-white rounded-[1.2rem] font-black uppercase tracking-widest text-[10px] hover:bg-indigo-600 transition-all shadow-xl">
+                        <button onClick={onClose} className="px-8 py-4 bg-slate-900 text-white rounded-[1.2rem] font-black uppercase tracking-widest text-[10px] hover:bg-amber-600 transition-all shadow-xl">
                             Fermer le journal
                         </button>
                     </div>
@@ -179,7 +179,7 @@ export default function DynamicDashboardView({ role = 'client' }) {
                 ]);
 
                 dashboardStats = [
-                    { title: "Mes Réservations", value: bookingsCount.count || 0, change: null, icon: Calendar, color: "bg-indigo-600" },
+                    { title: "Mes Réservations", value: bookingsCount.count || 0, change: null, icon: Calendar, color: "bg-amber-600" },
                     { title: "Messages", value: convsCount.count || 0, change: null, icon: MessageCircle, color: "bg-slate-900" },
                     { title: "Mes Favoris", value: favsCount.count || 0, change: null, icon: Heart, color: "bg-pink-500" },
                 ];
@@ -201,7 +201,7 @@ export default function DynamicDashboardView({ role = 'client' }) {
                 dashboardStats = [
                     { title: "Revenu Net Global", value: formatRevenue(netGain), change: null, icon: TrendingUp, color: "bg-emerald-600", subtitle: "Total net versé après commission 15%" },
                     { title: "Mes Villas", value: villasCount.count || 0, change: null, icon: Home, color: "bg-slate-900" },
-                    { title: "Réservations", value: (bookingsData.data || []).length, change: null, icon: Calendar, color: "bg-indigo-600" },
+                    { title: "Réservations", value: (bookingsData.data || []).length, change: null, icon: Calendar, color: "bg-amber-600" },
                 ];
                 recentActivities = lastBookings.data || [];
 
@@ -234,7 +234,7 @@ export default function DynamicDashboardView({ role = 'client' }) {
 
     if (loading) return (
         <div className="h-full flex items-center justify-center p-20">
-            <Loader2 className="w-10 h-10 animate-spin text-indigo-500" />
+            <Loader2 className="w-10 h-10 animate-spin text-amber-500" />
         </div>
     );
 
@@ -302,14 +302,14 @@ export default function DynamicDashboardView({ role = 'client' }) {
                                         {act.metadata?.image ? (
                                             <img src={act.metadata.image} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
                                         ) : (
-                                            <Calendar className="w-6 h-6 text-indigo-400" />
+                                            <Calendar className="w-6 h-6 text-amber-400" />
                                         )}
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="font-black text-slate-900 text-sm sm:text-base truncate">{act.metadata?.title || 'Réservation'}</p>
                                         <div className="flex items-center gap-2 mt-1 opacity-60">
                                             <p className="text-[9px] sm:text-[10px] text-slate-500 font-black uppercase tracking-[0.1em] flex items-center gap-1.5 whitespace-nowrap overflow-hidden text-ellipsis">
-                                                <MapPin className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-indigo-500" /> {act.metadata?.location || 'Sénégal'} • {new Date(act.created_at).toLocaleDateString()}
+                                                <MapPin className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-500" /> {act.metadata?.location || 'Sénégal'} • {new Date(act.created_at).toLocaleDateString()}
                                             </p>
                                         </div>
                                     </div>
@@ -319,7 +319,7 @@ export default function DynamicDashboardView({ role = 'client' }) {
                                     <span className={`text-[9px] uppercase font-black tracking-widest px-3 py-1.5 rounded-lg inline-block border ${act.status === 'payee' || act.status === 'confirmee'
                                             ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
                                             : act.status === 'en_attente_paiement'
-                                                ? 'bg-indigo-50 text-indigo-600 border-indigo-100'
+                                                ? 'bg-amber-50 text-amber-600 border-amber-100'
                                                 : 'bg-amber-50 text-amber-600 border-amber-100'
                                         }`}>
                                         {(act.status || '...').replace(/_/g, ' ')}

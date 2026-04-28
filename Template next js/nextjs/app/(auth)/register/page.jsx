@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { Home, Mail, Lock, User, Phone, Briefcase, ArrowRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function RegisterPage() {
+function RegisterForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -137,7 +137,7 @@ export default function RegisterPage() {
             >
                 <div className="flex justify-center mb-8">
                     <Link href="/" className="flex items-center gap-2 text-[#D4AF37] hover:text-amber-500 transition-colors">
-                        <Home className="w-8 h-8" />
+                        <img src="/logo.svg" alt="Logo" className="h-10 w-auto object-contain" />
                         <span className="font-bold text-xl tracking-wider">HOLA AGENCY</span>
                     </Link>
                 </div>
@@ -281,5 +281,13 @@ export default function RegisterPage() {
                 </p>
             </motion.div>
         </div>
+    );
+}
+
+export default function RegisterPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-slate-50"><Loader2 className="w-8 h-8 animate-spin text-emerald-500" /></div>}>
+            <RegisterForm />
+        </Suspense>
     );
 }

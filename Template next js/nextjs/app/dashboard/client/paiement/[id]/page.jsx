@@ -95,6 +95,8 @@ export default function CheckoutPage() {
                 paypal: '/api/payments/paypal'
             };
 
+
+
             const response = await fetch(apiEndpoints[selectedMethod], {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -171,13 +173,13 @@ export default function CheckoutPage() {
                             <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full -mr-16 -mt-16 -z-0 opacity-50" />
 
                             <div className="relative z-10">
-                                <div className="flex gap-6 mb-8 pb-8 border-b border-slate-100">
-                                    <div className="w-24 h-24 rounded-2xl overflow-hidden shadow-lg shrink-0">
+                                <div className="flex flex-col sm:flex-row gap-6 mb-8 pb-8 border-b border-slate-100">
+                                    <div className="w-full sm:w-24 h-48 sm:h-24 rounded-2xl overflow-hidden shadow-lg shrink-0">
                                         <img src={booking.metadata?.image || 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750'} className="w-full h-full object-cover" />
                                     </div>
-                                    <div>
-                                        <h2 className="text-xl font-black text-slate-900 mb-2 truncate uppercase">{booking.metadata?.title || 'Résidence de luxe'}</h2>
-                                        <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 mb-3">
+                                    <div className="flex-1 min-w-0">
+                                        <h2 className="text-xl sm:text-2xl font-black text-slate-900 mb-3 uppercase leading-tight">{booking.metadata?.title || 'Résidence de luxe'}</h2>
+                                        <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 mb-4">
                                             <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" /> {booking.metadata?.location || 'Sénégal'}
                                         </p>
                                         <div className="flex gap-4">
@@ -200,9 +202,9 @@ export default function CheckoutPage() {
                                         <span className="text-xs uppercase tracking-widest font-black">Frais de service HOLA</span>
                                         <span className="text-emerald-600 font-black">OFFERT</span>
                                     </div>
-                                    <div className="pt-6 border-t border-slate-100 flex justify-between items-center">
+                                    <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                                         <span className="text-lg font-black text-slate-900 uppercase tracking-tight">Total à payer</span>
-                                        <span className="text-3xl font-black text-[#D4AF37]">{booking.amount.toLocaleString()} FCFA</span>
+                                        <span className="text-3xl sm:text-4xl font-black text-[#D4AF37] whitespace-nowrap">{booking.amount.toLocaleString()} <span className="text-xl">FCFA</span></span>
                                     </div>
                                 </div>
                             </div>

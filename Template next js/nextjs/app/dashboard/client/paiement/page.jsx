@@ -88,6 +88,27 @@ function PaymentContent() {
 
             console.log("Appel de l'API:", apiRoute);
 
+            // SIMULATION TEST D'EMAIL POUR PAYPAL
+            if (method === 'paypal') {
+                const capRes = await fetch('/api/payments/paypal/capture', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        orderId: 'MOCK_ORDER_' + Date.now(),
+                        bookingId: booking.id,
+                        clientEmail: user.email,
+                        clientName: clientName,
+                        amount: amount,
+                        title: title
+                    })
+                });
+
+                if (capRes.ok) {
+                    window.location.href = `/dashboard/client/paiement/success?booking_id=${booking.id}`;
+                    return;
+                }
+            }
+
             // 3. Appeler l'API de paiement avec timeout
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
@@ -185,14 +206,14 @@ function PaymentContent() {
                 <div className="lg:col-span-2 space-y-8">
                     <div className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm">
                         <h2 className="text-xl font-black text-slate-900 mb-8 uppercase tracking-widest flex items-center gap-3">
-                            <Wallet className="w-6 h-6 text-indigo-500" /> Mode de Paiement
+                            <Wallet className="w-6 h-6 text-amber-500" /> Mode de Paiement
                         </h2>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {/* Wave */}
                             <button
                                 onClick={() => setMethod('wave')}
-                                className={`p-6 rounded-3xl border-2 transition-all flex items-center justify-between group h-24 ${method === 'wave' ? 'border-indigo-600 bg-indigo-50/30' : 'border-slate-100 hover:border-slate-200'}`}
+                                className={`p-6 rounded-3xl border-2 transition-all flex items-center justify-between group h-24 ${method === 'wave' ? 'border-amber-600 bg-amber-50/30' : 'border-slate-100 hover:border-slate-200'}`}
                             >
                                 <div className="flex items-center gap-4">
                                     <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center overflow-hidden shadow-sm border border-slate-50">
@@ -203,8 +224,8 @@ function PaymentContent() {
                                         <p className="text-[9px] text-slate-400 uppercase font-black tracking-widest">Mobile Money</p>
                                     </div>
                                 </div>
-                                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${method === 'wave' ? 'border-indigo-600' : 'border-slate-200'}`}>
-                                    {method === 'wave' && <div className="w-2.5 h-2.5 bg-indigo-600 rounded-full" />}
+                                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${method === 'wave' ? 'border-amber-600' : 'border-slate-200'}`}>
+                                    {method === 'wave' && <div className="w-2.5 h-2.5 bg-amber-600 rounded-full" />}
                                 </div>
                             </button>
 
@@ -292,7 +313,7 @@ function PaymentContent() {
                                 <div className="space-y-1">
                                     <h3 className="font-black text-slate-900 text-sm leading-tight line-clamp-2 uppercase">{title}</h3>
                                     <p className="text-[10px] text-slate-500 flex items-center gap-1">
-                                        <MapPin className="w-3 h-3 text-indigo-400" /> {location}
+                                        <MapPin className="w-3 h-3 text-amber-400" /> {location}
                                     </p>
                                     <div className="flex items-center gap-1 bg-amber-50 w-fit px-1.5 py-0.5 rounded-lg border border-amber-100">
                                         <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
@@ -321,9 +342,9 @@ function PaymentContent() {
                                 </div>
                             </div>
 
-                            <div className="flex flex-col mb-8 p-4 bg-indigo-50/30 rounded-2xl border border-indigo-100/50">
+                            <div className="flex flex-col mb-8 p-4 bg-amber-50/30 rounded-2xl border border-amber-100/50">
                                 <span className="text-slate-400 font-bold text-[10px] uppercase tracking-widest mb-1 text-center">Total à régler</span>
-                                <span className="text-3xl font-black text-indigo-600 text-center">
+                                <span className="text-3xl font-black text-amber-600 text-center">
                                     {Number(amount).toLocaleString()} <span className="text-sm">FCFA</span>
                                 </span>
                             </div>
@@ -331,7 +352,7 @@ function PaymentContent() {
                             <button
                                 onClick={handlePayment}
                                 disabled={isProcessing}
-                                className="w-full py-5 bg-slate-900 text-white rounded-[2rem] font-black uppercase tracking-widest text-[11px] shadow-2xl hover:bg-indigo-600 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3 mb-4"
+                                className="w-full py-5 bg-slate-900 text-white rounded-[2rem] font-black uppercase tracking-widest text-[11px] shadow-2xl hover:bg-amber-600 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3 mb-4"
                             >
                                 {isProcessing ? (
                                     <>

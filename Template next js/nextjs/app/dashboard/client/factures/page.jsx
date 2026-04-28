@@ -100,7 +100,7 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
 
                         <div className="p-8">
                             <div className="flex items-center gap-4 mb-8">
-                                <div className="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+                                <div className="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600">
                                     <FileText className="w-8 h-8" />
                                 </div>
                                 <div>
@@ -114,13 +114,13 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
                                     <div>
                                         <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-2">Date d'émission</p>
                                         <div className="flex items-center gap-2 text-slate-700 font-bold italic">
-                                            <Calendar className="w-4 h-4 text-indigo-400" /> {invoice.date}
+                                            <Calendar className="w-4 h-4 text-amber-400" /> {invoice.date}
                                         </div>
                                     </div>
                                     <div>
                                         <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-2">Mode de paiement</p>
                                         <div className="flex items-center gap-2 text-slate-700 font-bold italic">
-                                            <CreditCard className="w-4 h-4 text-indigo-400" /> {invoice.method}
+                                            <CreditCard className="w-4 h-4 text-amber-400" /> {invoice.method}
                                         </div>
                                     </div>
                                 </div>
@@ -129,13 +129,13 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
                                     <div>
                                         <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-2">Lieu</p>
                                         <div className="flex items-center gap-2 text-slate-700 font-bold italic">
-                                            <MapPin className="w-4 h-4 text-indigo-400" /> {invoice.location}
+                                            <MapPin className="w-4 h-4 text-amber-400" /> {invoice.location}
                                         </div>
                                     </div>
                                     <div>
                                         <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-2">Séjour</p>
                                         <div className="flex items-center gap-2 text-slate-700 font-bold italic">
-                                            <Calendar className="w-4 h-4 text-indigo-400" /> {invoice.dates}
+                                            <Calendar className="w-4 h-4 text-amber-400" /> {invoice.dates}
                                         </div>
                                     </div>
                                 </div>
@@ -155,7 +155,7 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
                                     </div>
                                     <button
                                         onClick={handleDownloadPDF}
-                                        className="inline-flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-indigo-600 transition-all active:scale-95 shadow-xl shadow-slate-200"
+                                        className="inline-flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-amber-600 transition-all active:scale-95 shadow-xl shadow-slate-200"
                                     >
                                         <Download className="w-5 h-5" /> Télécharger PDF
                                     </button>
@@ -249,9 +249,9 @@ export default function ClientInvoicesPage() {
                     <p className="text-slate-500 font-medium italic">Consultez et suivez vos transactions.</p>
                 </div>
 
-                <div className="bg-indigo-50 px-6 py-4 rounded-3xl border border-indigo-100">
-                    <p className="text-[10px] uppercase font-black text-indigo-400 tracking-widest mb-1">Total Payé</p>
-                    <p className="text-xl font-black text-indigo-700 font-mono">{totalPaid.toLocaleString()} FCFA</p>
+                <div className="bg-amber-50 px-6 py-4 rounded-3xl border border-amber-100">
+                    <p className="text-[10px] uppercase font-black text-amber-400 tracking-widest mb-1">Total Payé</p>
+                    <p className="text-xl font-black text-amber-700 font-mono">{totalPaid.toLocaleString()} FCFA</p>
                 </div>
             </div>
 
@@ -266,7 +266,7 @@ export default function ClientInvoicesPage() {
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             placeholder="Rechercher..."
-                            className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:border-indigo-400 transition-colors"
+                            className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:border-amber-400 transition-colors"
                         />
                     </div>
                 </div>
@@ -373,7 +373,7 @@ export default function ClientInvoicesPage() {
                                 <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-1">Montant</p>
                                 <p className="text-lg font-black text-slate-900">{inv.amount.toLocaleString()} FCFA</p>
                             </div>
-                            <Eye className="w-5 h-5 text-indigo-500" />
+                            <Eye className="w-5 h-5 text-amber-500" />
                         </div>
                     </motion.div>
                 )) : (
@@ -382,7 +382,7 @@ export default function ClientInvoicesPage() {
             </div>
 
             <div className="bg-slate-900 rounded-[3rem] p-8 md:p-12 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500 opacity-10 rounded-full translate-x-1/2 -translate-y-1/2 blur-3xl animate-pulse" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500 opacity-10 rounded-full translate-x-1/2 -translate-y-1/2 blur-3xl animate-pulse" />
                 <div className="relative z-10 flex flex-col lg:flex-row items-center gap-12 text-center lg:text-left">
                     <div className="flex-1">
                         <h2 className="text-3xl font-black text-white mb-4 tracking-tight">Besoin d'aide ?</h2>

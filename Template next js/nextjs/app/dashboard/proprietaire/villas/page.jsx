@@ -58,7 +58,7 @@ const VillaCard = ({ villa, onEdit, onDelete }) => {
                     </div>
                 </div>
                 <p className="text-slate-500 text-[11px] font-medium flex items-center gap-1 mb-4 italic truncate">
-                    <MapPin className="w-3 h-3 text-indigo-500" /> {villa.location || 'Sénégal'}
+                    <MapPin className="w-3 h-3 text-amber-500" /> {villa.location || 'Sénégal'}
                 </p>
 
                 <div className="grid grid-cols-2 gap-4 text-slate-500 text-[10px] font-black uppercase tracking-widest py-3 border-t border-slate-50/80">
@@ -69,13 +69,13 @@ const VillaCard = ({ villa, onEdit, onDelete }) => {
                 <div className="flex items-center justify-between pt-4 border-t border-slate-50/80">
                     <div>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Revenu Net (-15%)</p>
-                        <p className="font-black text-indigo-600 text-lg">{netPrice.toLocaleString()} <span className="text-[10px] font-bold">FCFA</span></p>
+                        <p className="font-black text-amber-600 text-lg">{netPrice.toLocaleString()} <span className="text-[10px] font-bold">FCFA</span></p>
                         <p className="text-[9px] font-medium text-slate-400 mt-1 opacity-70 italic">Brut : {priceValue.toLocaleString()} FCFA</p>
                     </div>
                     <div className="relative">
                         <button
                             onClick={() => setShowMenu(!showMenu)}
-                            className="p-2.5 text-slate-400 hover:text-indigo-600 rounded-xl hover:bg-indigo-50 transition-all border border-slate-50"
+                            className="p-2.5 text-slate-400 hover:text-amber-600 rounded-xl hover:bg-amber-50 transition-all border border-slate-50"
                         >
                             <MoreHorizontal className="w-5 h-5" />
                         </button>
@@ -252,7 +252,7 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                     {/* Compact Image Uploader */}
                     <div
                         onClick={() => fileInputRef.current?.click()}
-                        className="group relative border-2 border-dashed border-slate-200 rounded-[2rem] p-4 text-center hover:border-indigo-600/40 transition-all cursor-pointer bg-slate-50/30 hover:bg-white overflow-hidden min-h-[160px] flex flex-col items-center justify-center"
+                        className="group relative border-2 border-dashed border-slate-200 rounded-[2rem] p-4 text-center hover:border-amber-600/40 transition-all cursor-pointer bg-slate-50/30 hover:bg-white overflow-hidden min-h-[160px] flex flex-col items-center justify-center"
                     >
                         {preview ? (
                             <div className="absolute inset-0">
@@ -263,7 +263,7 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                             </div>
                         ) : (
                             <>
-                                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-3 text-indigo-500 shadow-xl shadow-indigo-100 group-hover:scale-110 transition-transform">
+                                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-3 text-amber-500 shadow-xl shadow-amber-100 group-hover:scale-110 transition-transform">
                                     <Upload className="w-6 h-6" />
                                 </div>
                                 <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Photo de la villa (Requis)</p>
@@ -282,7 +282,7 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                                     value={formData.name}
                                     onChange={e => setFormData({ ...formData, name: e.target.value })}
                                     placeholder="ex: Villa Paradise Saly"
-                                    className="w-full px-5 py-4 bg-slate-50/50 border border-slate-100 rounded-2xl outline-none focus:border-indigo-600/30 focus:bg-white transition-all text-xs font-black text-slate-900"
+                                    className="w-full px-5 py-4 bg-slate-50/50 border border-slate-100 rounded-2xl outline-none focus:border-amber-600/30 focus:bg-white transition-all text-xs font-black text-slate-900"
                                 />
                             </div>
                             <div className="space-y-2">
@@ -290,7 +290,7 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                                 <select
                                     value={formData.type}
                                     onChange={e => setFormData({ ...formData, type: e.target.value })}
-                                    className="w-full px-5 py-4 bg-slate-50/50 border border-slate-100 rounded-2xl outline-none focus:border-indigo-600/30 focus:bg-white transition-all text-xs font-black text-slate-900 appearance-none cursor-pointer"
+                                    className="w-full px-5 py-4 bg-slate-50/50 border border-slate-100 rounded-2xl outline-none focus:border-amber-600/30 focus:bg-white transition-all text-xs font-black text-slate-900 appearance-none cursor-pointer"
                                 >
                                     <option>Villa Prestige</option>
                                     <option>Appartement Luxe</option>
@@ -309,7 +309,7 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                                         value={formData.city}
                                         onChange={e => setFormData({ ...formData, city: e.target.value })}
                                         placeholder="Saly"
-                                        className="w-full pl-10 pr-5 py-4 bg-slate-50/50 border border-slate-100 rounded-2xl outline-none focus:border-indigo-600/30 transition-all text-xs font-black text-slate-900"
+                                        className="w-full pl-10 pr-5 py-4 bg-slate-50/50 border border-slate-100 rounded-2xl outline-none focus:border-amber-600/30 transition-all text-xs font-black text-slate-900"
                                     />
                                 </div>
                             </div>
@@ -322,7 +322,7 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                                         value={formData.country}
                                         onChange={e => setFormData({ ...formData, country: e.target.value })}
                                         placeholder="Sénégal"
-                                        className="w-full pl-10 pr-5 py-4 bg-slate-50/50 border border-slate-100 rounded-2xl outline-none focus:border-indigo-600/30 transition-all text-xs font-black text-slate-900"
+                                        className="w-full pl-10 pr-5 py-4 bg-slate-50/50 border border-slate-100 rounded-2xl outline-none focus:border-amber-600/30 transition-all text-xs font-black text-slate-900"
                                     />
                                 </div>
                             </div>
@@ -336,7 +336,7 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                                     value={formData.rooms}
                                     onChange={e => setFormData({ ...formData, rooms: e.target.value })}
                                     placeholder="4"
-                                    className="w-full px-5 py-4 bg-slate-50/50 border border-slate-100 rounded-2xl outline-none focus:border-indigo-600/30 transition-all text-xs font-black text-center"
+                                    className="w-full px-5 py-4 bg-slate-50/50 border border-slate-100 rounded-2xl outline-none focus:border-amber-600/30 transition-all text-xs font-black text-center"
                                 />
                             </div>
                             <div className="space-y-2">
@@ -346,17 +346,17 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                                     value={formData.guests}
                                     onChange={e => setFormData({ ...formData, guests: e.target.value })}
                                     placeholder="8"
-                                    className="w-full px-5 py-4 bg-slate-50/50 border border-slate-100 rounded-2xl outline-none focus:border-indigo-600/30 transition-all text-xs font-black text-center"
+                                    className="w-full px-5 py-4 bg-slate-50/50 border border-slate-100 rounded-2xl outline-none focus:border-amber-600/30 transition-all text-xs font-black text-center"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] pl-1 text-center block text-indigo-600">Prix / Nuit</label>
+                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] pl-1 text-center block text-amber-600">Prix / Nuit</label>
                                 <input
                                     type="number"
                                     value={formData.price}
                                     onChange={e => setFormData({ ...formData, price: e.target.value })}
                                     placeholder="85000"
-                                    className="w-full px-5 py-4 bg-indigo-50/30 border border-indigo-100/50 rounded-2xl outline-none focus:border-indigo-600 focus:bg-white transition-all text-xs font-black text-center text-indigo-600"
+                                    className="w-full px-5 py-4 bg-amber-50/30 border border-amber-100/50 rounded-2xl outline-none focus:border-amber-600 focus:bg-white transition-all text-xs font-black text-center text-amber-600"
                                 />
                             </div>
                         </div>
@@ -365,7 +365,7 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                             <label className="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] pl-1 block">Méthodes acceptées</label>
                             <div className="flex flex-wrap gap-2">
                                 {['Wave', 'Orange Money', 'PayPal', 'Carte Bancaire'].map((method) => (
-                                    <label key={method} className={`flex items-center gap-2 px-3 py-2 rounded-xl border cursor-pointer transition-all ${formData.payment_methods.includes(method) ? 'bg-indigo-600 text-white border-indigo-600 shadow-md' : 'bg-slate-50/50 border-slate-100 text-slate-600 hover:bg-slate-100'}`}>
+                                    <label key={method} className={`flex items-center gap-2 px-3 py-2 rounded-xl border cursor-pointer transition-all ${formData.payment_methods.includes(method) ? 'bg-amber-600 text-white border-amber-600 shadow-md' : 'bg-slate-50/50 border-slate-100 text-slate-600 hover:bg-slate-100'}`}>
                                         <input
                                             type="checkbox"
                                             className="hidden"
@@ -388,7 +388,7 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                                     { id: 'Petit-déjeuner', icon: Coffee },
                                     { id: 'Climatisation', icon: Globe }
                                 ].map((item) => (
-                                    <label key={item.id} className={`flex items-center gap-2 px-3 py-2 rounded-xl border cursor-pointer transition-all ${formData.amenities.includes(item.id) ? 'bg-indigo-600 text-white border-indigo-600 shadow-md' : 'bg-slate-50/50 border-slate-100 text-slate-600 hover:bg-slate-100'}`}>
+                                    <label key={item.id} className={`flex items-center gap-2 px-3 py-2 rounded-xl border cursor-pointer transition-all ${formData.amenities.includes(item.id) ? 'bg-amber-600 text-white border-amber-600 shadow-md' : 'bg-slate-50/50 border-slate-100 text-slate-600 hover:bg-slate-100'}`}>
                                         <input
                                             type="checkbox"
                                             className="hidden"
@@ -409,14 +409,14 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                                 onChange={e => setFormData({ ...formData, description: e.target.value })}
                                 rows="3"
                                 placeholder="Résidence privée avec vue sur mer..."
-                                className="w-full px-5 py-4 bg-slate-50/50 border border-slate-100 rounded-2xl outline-none focus:border-indigo-600/30 transition-all text-xs font-medium resize-none shadow-inner"
+                                className="w-full px-5 py-4 bg-slate-50/50 border border-slate-100 rounded-2xl outline-none focus:border-amber-600/30 transition-all text-xs font-medium resize-none shadow-inner"
                             />
                         </div>
 
                         <button
                             onClick={handlePublish}
                             disabled={publishing}
-                            className="w-full py-5 bg-slate-900 text-white rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-[10px] hover:bg-indigo-600 transition-all shadow-2xl shadow-slate-200 active:scale-95 mt-4 group flex items-center justify-center gap-3 disabled:opacity-50"
+                            className="w-full py-5 bg-slate-900 text-white rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-[10px] hover:bg-amber-600 transition-all shadow-2xl shadow-slate-200 active:scale-95 mt-4 group flex items-center justify-center gap-3 disabled:opacity-50"
                         >
                             {publishing ? <Loader2 className="w-4 h-4 animate-spin text-white" /> : "Publier mon annonce"}
                             {!publishing && <span className="group-hover:translate-x-1 inline-block transition-transform">→</span>}
@@ -487,7 +487,7 @@ export default function ProprietaireVillasPage() {
                 </div>
                 <button
                     onClick={openEmptyModal}
-                    className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold flex items-center gap-3 shadow-xl shadow-indigo-100 transition-all hover:scale-105 active:scale-95 shrink-0"
+                    className="px-8 py-4 bg-amber-600 hover:bg-amber-700 text-white rounded-2xl font-bold flex items-center gap-3 shadow-xl shadow-amber-100 transition-all hover:scale-105 active:scale-95 shrink-0"
                 >
                     <Plus className="w-5 h-5" strokeWidth={4} /> Ajouter une villa
                 </button>
@@ -515,22 +515,7 @@ export default function ProprietaireVillasPage() {
                 )}
             </div>
 
-            <div className="mt-20 mb-10 bg-gradient-to-br from-indigo-600 to-violet-700 rounded-[3rem] p-10 md:p-14 text-white relative overflow-hidden shadow-2xl shadow-indigo-200/50">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-black/10 rounded-full -ml-32 -mb-32 blur-3xl"></div>
 
-                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
-                    <div className="text-center md:text-left">
-                        <h3 className="text-2xl md:text-3xl font-black mb-4 tracking-tight uppercase">Optimisez vos rendements</h3>
-                        <p className="text-indigo-100 text-sm md:text-base max-w-xl font-medium leading-relaxed opacity-90 italic">
-                            "HOLA prélève une commission de 15% pour assurer la gestion, le marketing et la sécurité de vos locations. Le montant affiché "Net" est ce qui sera versé sur votre compte."
-                        </p>
-                    </div>
-                    <button className="px-10 py-4 bg-white text-indigo-600 rounded-[1.2rem] font-black uppercase tracking-widest text-[10px] hover:bg-indigo-50 transition-all shadow-xl active:scale-95 shrink-0 whitespace-nowrap">
-                        Guide du propriétaire
-                    </button>
-                </div>
-            </div>
 
             <AddVillaModal
                 isOpen={isModalOpen}

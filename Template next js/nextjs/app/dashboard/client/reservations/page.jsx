@@ -35,21 +35,27 @@ const ReservationCard = ({ item, onCancel, onChat }) => {
 
     const statusStyles = {
         confirmee: "bg-emerald-100 text-emerald-700",
+        payee: "bg-emerald-100 text-emerald-700",
         "en_attente": "bg-amber-100 text-amber-700",
+        "en_attente_paiement": "bg-[#D4AF37]/20 text-[#D4AF37]",
         annulee: "bg-red-100 text-red-700",
     };
 
     const StatusIcon = {
         confirmee: CheckCircle2,
+        payee: CheckCircle2,
         "en_attente": Clock,
+        "en_attente_paiement": Clock,
         annulee: XCircle,
     }[status] || Clock; // Fallback to Clock if undefined
 
     const displayStatus = {
         confirmee: "confirmée",
+        payee: "payée",
         "en_attente": "en attente",
+        "en_attente_paiement": "en attente de paiement",
         annulee: "annulée",
-    }[status] || status;
+    }[status] || status.replace(/_/g, ' ');
 
     const formatDateRange = (start, end) => {
         if (!start) return "Date non spécifiée";
@@ -89,7 +95,7 @@ const ReservationCard = ({ item, onCancel, onChat }) => {
                 <div className="flex items-center gap-2">
                     <button
                         onClick={onChat}
-                        className="p-2 text-indigo-500 hover:bg-indigo-50 rounded-lg transition-colors group relative"
+                        className="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors group relative"
                         title="Contacter l'hôte"
                     >
                         <MessageSquare className="w-5 h-5" />
@@ -97,6 +103,12 @@ const ReservationCard = ({ item, onCancel, onChat }) => {
                     <Link href={`/dashboard/client/explorer/${item.item_id}`} className="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 rounded-lg transition-colors">
                         Revoir
                     </Link>
+
+                    {status === 'en_attente_paiement' && (
+                        <Link href={`/dashboard/client/paiement/${item.id}`} className="px-5 py-2 text-[10px] font-black uppercase tracking-wider text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition-all shadow-md active:scale-95">
+                            Payer
+                        </Link>
+                    )}
 
                     <div className="relative">
                         <button onClick={() => setShowMenu(!showMenu)} className="p-2 text-slate-400 hover:text-slate-900 rounded-lg">
@@ -155,7 +167,7 @@ const FavoriteCard = ({ item, onRemove }) => {
                     <MapPin className="w-3.5 h-3.5" /> {details.location}
                 </div>
                 <div className="flex items-center justify-between pt-4 border-t border-slate-50">
-                    <span className="text-indigo-600 font-bold">{Number(details.price).toLocaleString()} FCFA</span>
+                    <span className="text-amber-600 font-bold">{Number(details.price).toLocaleString()} FCFA</span>
                     <Link href={`/dashboard/client/explorer/${item.item_id}`} className="p-2 bg-slate-50 text-slate-400 rounded-lg hover:bg-slate-900 hover:text-white transition-all">
                         <ArrowRight className="w-4 h-4" />
                     </Link>
@@ -359,13 +371,13 @@ export default function ClientActivityPage() {
                                 placeholder="Rechercher dans mes favoris..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-12 pr-4 py-4 bg-white border border-slate-100 rounded-[1.5rem] outline-none focus:ring-4 focus:ring-indigo-500/5 transition-all text-sm font-bold shadow-sm"
+                                className="w-full pl-12 pr-4 py-4 bg-white border border-slate-100 rounded-[1.5rem] outline-none focus:ring-4 focus:ring-amber-500/5 transition-all text-sm font-bold shadow-sm"
                             />
                         </div>
 
                         {loading ? (
                             <div className="flex flex-col items-center justify-center py-20 gap-4">
-                                <Loader2 className="w-10 h-10 animate-spin text-indigo-200" />
+                                <Loader2 className="w-10 h-10 animate-spin text-amber-200" />
                             </div>
                         ) : favorites.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

@@ -20,7 +20,7 @@ import { useSearchParams } from 'next/navigation';
 const ContactItem = ({ contact, active, onClick }) => (
     <div
         onClick={onClick}
-        className={`p-4 flex items-center gap-4 cursor-pointer hover:bg-slate-50 transition-colors border-l-4 ${active ? 'bg-indigo-50/50 border-indigo-600' : 'border-transparent'}`}
+        className={`p-4 flex items-center gap-4 cursor-pointer hover:bg-slate-50 transition-colors border-l-4 ${active ? 'bg-amber-50/50 border-amber-600' : 'border-transparent'}`}
     >
         <div className="relative shrink-0">
             <div className="w-12 h-12 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-500 overflow-hidden">
@@ -278,7 +278,7 @@ function MessagesContent({ role }) {
                         <input
                             type="text"
                             placeholder="Rechercher..."
-                            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600/20"
+                            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-sm outline-none focus:ring-2 focus:ring-amber-600/10 focus:border-amber-600/20"
                         />
                     </div>
                 </div>
@@ -308,7 +308,7 @@ function MessagesContent({ role }) {
                                 >
                                     <ChevronRight className="w-6 h-6 rotate-180" />
                                 </button>
-                                <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold">
+                                <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center font-bold">
                                     {activeConv.display_name?.charAt(0)}
                                 </div>
                                 <div>
@@ -351,7 +351,7 @@ function MessagesContent({ role }) {
                                         type="button"
                                         onClick={() => fileInputRef.current?.click()}
                                         disabled={isUploading}
-                                        className="p-2 text-slate-400 hover:text-indigo-600 rounded-lg transition-colors"
+                                        className="p-2 text-slate-400 hover:text-amber-600 rounded-lg transition-colors"
                                     >
                                         {isUploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <ImageIcon className="w-5 h-5" />}
                                     </button>

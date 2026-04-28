@@ -170,7 +170,7 @@ export default function AdminRevenusView() {
                 </div>
                 <button
                     onClick={exportToCSV}
-                    className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-indigo-600 transition-all shadow-xl shadow-slate-200 flex items-center gap-2"
+                    className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-amber-600 transition-all shadow-xl shadow-slate-200 flex items-center gap-2"
                 >
                     <Download className="w-4 h-4" /> Exporter {activeTab === 'incomes' ? 'Rapport' : 'Retraits'}
                 </button>
@@ -179,7 +179,7 @@ export default function AdminRevenusView() {
             {/* Stats Overview */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
-                    { label: "Volume Global", value: stats.total, icon: Wallet, color: "bg-indigo-600" },
+                    { label: "Volume Global", value: stats.total, icon: Wallet, color: "bg-amber-600" },
                     { label: "Commissions (15%)", value: stats.commission, icon: Briefcase, color: "bg-amber-500" },
                     { label: "Transactions Net", value: stats.net, icon: TrendingUp, color: "bg-emerald-600" },
                     { label: "Flux en attente", value: stats.pending, icon: Clock, color: "bg-slate-900" }
@@ -276,7 +276,7 @@ export default function AdminRevenusView() {
                                             </div>
                                             <div>
                                                 <h4 className="font-black text-slate-900 uppercase tracking-tight text-sm mb-1">{p.profiles?.display_name || 'Utilisateur'}</h4>
-                                                <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">{p.method}</p>
+                                                <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest">{p.method}</p>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-6 md:gap-10">

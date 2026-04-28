@@ -9,14 +9,11 @@ const PAYTECH_API_SECRET = process.env.PAYTECH_API_SECRET || 'test_api_secret';
 export async function POST(req) {
     console.log("PayTech API Route hit");
     try {
-        const { bookingId } = await req.json();
+        const { bookingId, amount, title } = await req.json();
 
-        // 1. Récupérer les détails de la réservation
-        const { data: booking, error: bError } = await supabase
-            .from('bookings')
-            .select('*, profiles(id, display_name, email)')
-            .eq('id', bookingId)
-            .single();
+        if (!bookingId || !amount) {
+            return NextResponse.json({ success: false, error: "Données incomplètes." }, { status: 400 });
+        }
 
         if (!PAYTECH_API_KEY || PAYTECH_API_KEY === 'votre_cle_api_ici') {
             return NextResponse.json({
@@ -24,18 +21,27 @@ export async function POST(req) {
                 error: "Clé PayTech non configurée. Remplacez 'votre_cle_api_ici' par votre clé API réelle dans .env.local (récupérable sur paytech.sn)."
             }, { status: 500 });
         }
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+        const isLocal = siteUrl.includes('localhost');
+        const ipnUrl = isLocal ? 'https://holaluxe.com/api/webhooks/paytech' : `${siteUrl}/api/webhooks/paytech`;
+
+        // Astuce : PayTech déteste le mot "localhost" (qui n'est pas un domaine valide pour eux).
+        // Ils exigent aussi absolument "https://" pour les urls de redirection (succès/annulation).
+        // On trompe la sécurité en envoyant le domaine holaluxe.com pour que le popup s'affiche en mode test.
+        const validSiteUrl = isLocal ? 'https://holaluxe.com' : siteUrl;
+
         // PayTech attend souvent un format spécifique
         const paytechData = {
-            item_name: booking.metadata?.title || "Séjour HOLA",
-            item_price: booking.amount,
+            item_name: title || "Séjour HOLA",
+            item_price: amount,
             currency: "XOF",
-            ref_command: booking.id,
-            command_name: `Réservation HOLA #${booking.id.slice(0, 8)}`,
+            ref_command: bookingId,
+            command_name: `Réservation HOLA #${bookingId.slice(0, 8)}`,
             env: process.env.PAYTECH_ENVIRONMENT || "test", // 'test' ou 'live'
-            success_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/dashboard/client/paiement/success`,
-            ipn_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/webhooks/paytech`,
-            cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/dashboard/client/paiement/${booking.id}`,
-            custom_field: JSON.stringify({ booking_id: booking.id })
+            success_url: `${validSiteUrl}/dashboard/client/paiement/success`,
+            ipn_url: ipnUrl,
+            cancel_url: `${validSiteUrl}/dashboard/client/paiement/${bookingId}`,
+            custom_field: JSON.stringify({ booking_id: bookingId })
         };
 
         // 3. Appel à l'API PayTech

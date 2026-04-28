@@ -104,15 +104,15 @@ export default function AdminDashboardView() {
                     <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">
                         {userData?.display_name ? `Salut, ${userData.display_name}` : "Dashboard Admin"}
                     </h1>
-                    <div className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-indigo-100 flex items-center gap-1.5 shadow-sm">
+                    <div className="px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-amber-100 flex items-center gap-1.5 shadow-sm">
                         <ShieldCheck className="w-3.5 h-3.5" strokeWidth={3} /> ADMIN HOLA
                     </div>
                 </div>
-                <p className="text-slate-500 text-sm md:text-xl font-medium italic opacity-80 underline underline-offset-8 decoration-indigo-200">Vue d'ensemble de la plateforme HOLA.</p>
+                <p className="text-slate-500 text-sm md:text-xl font-medium italic opacity-80 underline underline-offset-8 decoration-amber-200">Vue d'ensemble de la plateforme HOLA.</p>
             </div>
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                <AdminStatCard title="Utilisateurs" value={stats.users} icon={Users} color="bg-indigo-600" trend="+12" />
+                <AdminStatCard title="Utilisateurs" value={stats.users} icon={Users} color="bg-amber-600" trend="+12" />
                 <AdminStatCard title="Hébergements" value={stats.villas} icon={Home} color="bg-slate-900" trend="+5" />
                 <AdminStatCard title="Réservations" value={stats.bookings} icon={CalendarDays} color="bg-emerald-600" trend="+24" />
                 <AdminStatCard title="Chiffre d'Affaire" value={`${stats.revenue.toLocaleString()} FCFA`} icon={TrendingUp} color="bg-amber-500" />
@@ -121,7 +121,7 @@ export default function AdminDashboardView() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="space-y-6 lg:order-2">
                     <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden group">
-                        <div className="absolute bottom-0 right-0 w-32 h-32 bg-indigo-500/20 rounded-full -mb-16 -mr-16 blur-2xl"></div>
+                        <div className="absolute bottom-0 right-0 w-32 h-32 bg-amber-500/20 rounded-full -mb-16 -mr-16 blur-2xl"></div>
                         <h3 className="text-xl font-black mb-6 relative z-10">Actions Rapides</h3>
                         <div className="space-y-3 relative z-10">
                             {[
@@ -130,7 +130,7 @@ export default function AdminDashboardView() {
                             ].map((action, i) => (
                                 <a key={i} href={action.link} className="flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5 transition-all group-hover:translate-x-1">
                                     <div className="flex items-center gap-3">
-                                        <action.icon className="w-5 h-5 text-indigo-400" />
+                                        <action.icon className="w-5 h-5 text-amber-400" />
                                         <span className="text-[10px] font-black uppercase tracking-widest">{action.label}</span>
                                     </div>
                                     <ChevronRight className="w-4 h-4 opacity-50" />
@@ -144,7 +144,7 @@ export default function AdminDashboardView() {
                     <div className="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-sm">
                         <div className="flex items-center justify-between mb-8">
                             <h2 className="text-2xl font-black text-slate-900 tracking-tight uppercase">Dernières Activités</h2>
-                            <button className="text-[10px] font-black uppercase text-indigo-600 hover:text-slate-900 transition-colors tracking-widest">Voir Tout</button>
+                            <button className="text-[10px] font-black uppercase text-amber-600 hover:text-slate-900 transition-colors tracking-widest">Voir Tout</button>
                         </div>
 
                         <div className="space-y-4">
@@ -164,7 +164,7 @@ export default function AdminDashboardView() {
                                         <span className={`text-[9px] font-black uppercase tracking-widest ${book.status === 'payee' || book.status === 'confirmee'
                                                 ? 'text-emerald-600'
                                                 : book.status === 'en_attente_paiement'
-                                                    ? 'text-indigo-600'
+                                                    ? 'text-amber-600'
                                                     : 'text-amber-600'
                                             }`}>
                                             {(book.status || '').replace(/_/g, ' ')}

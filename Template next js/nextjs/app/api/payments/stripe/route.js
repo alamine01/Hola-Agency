@@ -14,6 +14,12 @@ export async function POST(req) {
             }, { status: 500 });
         }
 
+        // Conversion de FCFA (XOF) en EUR pour que Stripe autorise PayPal
+        // Taux de change fixe BCEAO : 1 EUR = 655.957 XOF
+        const amountEUR = parseFloat(amount) / 655.957;
+        // Stripe attend le montant en centimes pour l'euro
+        const unitAmountCents = Math.round(amountEUR * 100).toString();
+
         // Créer une session Stripe Checkout
         const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
             method: 'POST',
@@ -25,9 +31,9 @@ export async function POST(req) {
                 'mode': 'payment',
                 'success_url': `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/dashboard/client/paiement/success?session_id={CHECKOUT_SESSION_ID}&booking_id=${bookingId}`,
                 'cancel_url': `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/dashboard/client/paiement/${bookingId}`,
-                'line_items[0][price_data][currency]': 'xof',
+                'line_items[0][price_data][currency]': 'eur',
                 'line_items[0][price_data][product_data][name]': title || 'Réservation HOLA',
-                'line_items[0][price_data][unit_amount]': Math.round(parseFloat(amount)).toString(),
+                'line_items[0][price_data][unit_amount]': unitAmountCents,
                 'line_items[0][quantity]': '1',
                 'metadata[booking_id]': bookingId,
             }),

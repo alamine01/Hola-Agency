@@ -52,12 +52,12 @@ const BookingDetailModal = ({ isOpen, onClose, reservation }) => {
                         />
                     </div>
                     <div className="space-y-4">
-                        <div className="inline-flex px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest italic">
+                        <div className="inline-flex px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-[10px] font-black uppercase tracking-widest italic">
                             {reservation.item_type === 'service' ? 'Prestation Service' : 'Location Villa'}
                         </div>
                         <h2 className="text-3xl font-black text-slate-900 leading-tight uppercase tracking-tight">{details.title || details.name || 'Réservation'}</h2>
                         <div className="flex items-center gap-4 text-slate-500 font-bold text-xs italic">
-                            <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4 text-indigo-400" /> {details.location || details.city || 'Sénégal'}</span>
+                            <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4 text-amber-400" /> {details.location || details.city || 'Sénégal'}</span>
                             {details.rating && <span className="flex items-center gap-1.5"><Star className="w-4 h-4 text-amber-400 fill-amber-400" /> {details.rating}</span>}
                         </div>
                     </div>
@@ -104,8 +104,8 @@ const BookingDetailModal = ({ isOpen, onClose, reservation }) => {
                     </div>
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Votre Gain Net</p>
-                            <p className="text-3xl font-black text-indigo-400">{netPayout.toLocaleString()} <span className="text-sm">FCFA</span></p>
+                            <p className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-1">Votre Gain Net</p>
+                            <p className="text-3xl font-black text-amber-400">{netPayout.toLocaleString()} <span className="text-sm">FCFA</span></p>
                         </div>
                         <div className="bg-emerald-500/10 px-4 py-2 rounded-xl border border-emerald-500/20 flex items-center gap-2">
                             <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
@@ -169,7 +169,7 @@ const HistoryModal = ({ isOpen, onClose }) => {
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Période (Brut)</p>
                         <p className="text-xl font-black text-slate-900">320,000 <span className="text-xs font-bold">FCFA</span></p>
                     </div>
-                    <button className="px-8 py-3.5 bg-slate-900 text-white rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-indigo-600 transition-all shadow-xl active:scale-95">
+                    <button className="px-8 py-3.5 bg-slate-900 text-white rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-amber-600 transition-all shadow-xl active:scale-95">
                         Exporter (PDF)
                     </button>
                 </div>
@@ -201,7 +201,7 @@ const ReservationItem = ({ reservation, onStatusUpdate, onViewDetails, onOpenCha
             <div className={`absolute left-0 top-0 bottom-0 w-2 ${statusColors[reservation.status] ? (statusColors[reservation.status].split(' ')[1]) : 'bg-slate-100'} rounded-l-[2rem]`}></div>
 
             <div className="flex items-center gap-4 relative z-10 pl-2">
-                <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-slate-50 border border-slate-50 flex items-center justify-center text-slate-300 group-hover:scale-105 group-hover:bg-indigo-50 group-hover:text-indigo-400 transition-all overflow-hidden">
+                <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-slate-50 border border-slate-50 flex items-center justify-center text-slate-300 group-hover:scale-105 group-hover:bg-amber-50 group-hover:text-amber-400 transition-all overflow-hidden">
                     {details.image ? <img src={details.image} className="w-full h-full object-cover" /> : <User className="w-6 h-6 md:w-7 md:h-7" />}
                 </div>
                 <div>
@@ -218,7 +218,7 @@ const ReservationItem = ({ reservation, onStatusUpdate, onViewDetails, onOpenCha
             <div className="flex flex-row md:flex-row items-center justify-between md:justify-end gap-6 md:gap-14 w-full md:w-auto pt-6 md:pt-0 border-t md:border-0 border-slate-100 relative z-10">
                 <div className="flex flex-col items-center md:items-end min-w-[100px]">
                     <p className="text-[10px] text-slate-400 uppercase font-black tracking-[0.15em] mb-1">Votre Gain Net</p>
-                    <p className="font-black text-indigo-600 text-lg">{netPayout.toLocaleString()} <span className="text-[10px]">FCFA</span></p>
+                    <p className="font-black text-amber-600 text-lg">{netPayout.toLocaleString()} <span className="text-[10px]">FCFA</span></p>
                     <p className="text-[9px] text-slate-400 font-medium italic opacity-60">Brut : {priceValue.toLocaleString()} FCFA</p>
                 </div>
 
@@ -262,11 +262,11 @@ const ReservationItem = ({ reservation, onStatusUpdate, onViewDetails, onOpenCha
                                 className="absolute top-full right-0 mt-3 w-56 bg-white border border-slate-100 rounded-2xl shadow-2xl z-[100] p-2 overflow-visible animate-in fade-in zoom-in duration-150 ring-4 ring-slate-900/5"
                             >
                                 <button onClick={(e) => { e.stopPropagation(); setShowMenu(false); onViewDetails(reservation); }} className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-black uppercase tracking-wider text-slate-600 hover:bg-slate-50 rounded-[1.2rem] transition-all group">
-                                    <FileText className="w-4 h-4 text-slate-400 group-hover:text-indigo-500" />
+                                    <FileText className="w-4 h-4 text-slate-400 group-hover:text-amber-500" />
                                     Détails Résa
                                 </button>
                                 <button onClick={(e) => { e.stopPropagation(); setShowMenu(false); onOpenChat(reservation.user_id); }} className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-black uppercase tracking-wider text-slate-600 hover:bg-slate-50 rounded-[1.2rem] transition-all group">
-                                    <MessageSquare className="w-4 h-4 text-slate-400 group-hover:text-indigo-500" />
+                                    <MessageSquare className="w-4 h-4 text-slate-400 group-hover:text-amber-500" />
                                     Chat Client
                                 </button>
                                 <div className="h-px bg-slate-50 my-2 mx-3"></div>
@@ -403,7 +403,7 @@ export default function ProprietaireReservationsPage() {
                     <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-2 tracking-tight uppercase">Demandes & Réservations</h1>
                     <p className="text-slate-500 font-medium italic opacity-80">Gérez vos revenus locatifs en accord avec le règlement HOLA (-15% commission).</p>
                 </div>
-                {loading && <div className="flex items-center gap-2 text-indigo-500 font-black text-[10px] uppercase tracking-widest"><Loader2 className="w-4 h-4 animate-spin" /> Synchronisation...</div>}
+                {loading && <div className="flex items-center gap-2 text-amber-500 font-black text-[10px] uppercase tracking-widest"><Loader2 className="w-4 h-4 animate-spin" /> Synchronisation...</div>}
             </div>
 
             <div className="space-y-5">
@@ -432,19 +432,19 @@ export default function ProprietaireReservationsPage() {
             </div>
 
             <div className="mt-20 bg-gradient-to-br from-white to-slate-50/50 rounded-[3rem] border border-slate-100 p-10 md:p-14 text-center group transition-all relative overflow-hidden shadow-sm">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl -translate-y-10 translate-x-10"></div>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl -translate-y-10 translate-x-10"></div>
                 <div className="absolute bottom-0 left-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl translate-y-10 -translate-x-10"></div>
 
-                <div className="w-20 h-20 bg-white shadow-2xl shadow-slate-200/50 rounded-3xl flex items-center justify-center mx-auto mb-8 text-indigo-500 group-hover:scale-110 transition-transform relative z-10 ring-4 ring-slate-50/50">
+                <div className="w-20 h-20 bg-white shadow-2xl shadow-slate-200/50 rounded-3xl flex items-center justify-center mx-auto mb-8 text-amber-500 group-hover:scale-110 transition-transform relative z-10 ring-4 ring-slate-50/50">
                     <Shield className="w-10 h-10" />
                 </div>
 
-                <h3 className="text-2xl font-black text-slate-900 mb-4 tracking-tight relative z-10 transition-colors group-hover:text-indigo-600 uppercase tracking-widest text-lg text-center">Gestion Comptable</h3>
+                <h3 className="text-2xl font-black text-slate-900 mb-4 tracking-tight relative z-10 transition-colors group-hover:text-amber-600 uppercase tracking-widest text-lg text-center">Gestion Comptable</h3>
                 <p className="text-slate-500 font-medium max-w-sm mx-auto mb-10 leading-relaxed relative z-10 italic">"Consultez vos relevés de revenus nets et gérez vos justificatifs de versement."</p>
 
                 <button
                     onClick={() => setIsHistoryOpen(true)}
-                    className="px-10 py-5 bg-slate-900 text-white rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-[10px] hover:bg-indigo-600 hover:shadow-2xl hover:shadow-indigo-200 transition-all active:scale-95 relative z-10"
+                    className="px-10 py-5 bg-slate-900 text-white rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-[10px] hover:bg-amber-600 hover:shadow-2xl hover:shadow-amber-200 transition-all active:scale-95 relative z-10"
                 >
                     Voir tout l'historique
                 </button>

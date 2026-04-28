@@ -71,7 +71,7 @@ export default function AdminUsersPage() {
 
     if (loading) return (
         <div className="h-[60vh] flex items-center justify-center">
-            <Loader2 className="w-10 h-10 animate-spin text-indigo-500" />
+            <Loader2 className="w-10 h-10 animate-spin text-amber-500" />
         </div>
     );
 
@@ -84,7 +84,7 @@ export default function AdminUsersPage() {
                         <ArrowLeft className="w-4 h-4" /> Retour
                     </Link>
                     <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-2 tracking-tight uppercase flex items-center gap-4">
-                        <Users className="w-10 h-10 text-indigo-600" />
+                        <Users className="w-10 h-10 text-amber-600" />
                         Gestion Utilisateurs
                     </h1>
                     <p className="text-slate-500 font-medium italic opacity-80 pl-1">Supervisez tous les comptes et modifiez les droits d'accès.</p>
@@ -100,7 +100,7 @@ export default function AdminUsersPage() {
                         placeholder="Rechercher par nom ou ID..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-indigo-600/10 focus:border-indigo-600/20"
+                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-amber-600/10 focus:border-amber-600/20"
                     />
                 </div>
                 <div className="flex items-center gap-2 bg-slate-50 border border-slate-100 px-4 py-3.5 rounded-2xl">
@@ -136,7 +136,7 @@ export default function AdminUsersPage() {
                                 <tr key={profile.id} className="group hover:bg-slate-50/50 transition-colors">
                                     <td className="px-8 py-6">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-2xl bg-indigo-50 border-2 border-white shadow-sm flex items-center justify-center text-indigo-600 font-black overflow-hidden group-hover:scale-110 transition-transform">
+                                            <div className="w-12 h-12 rounded-2xl bg-amber-50 border-2 border-white shadow-sm flex items-center justify-center text-amber-600 font-black overflow-hidden group-hover:scale-110 transition-transform">
                                                 {profile.avatar_url ? (
                                                     <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
                                                 ) : (
@@ -153,7 +153,7 @@ export default function AdminUsersPage() {
                                     </td>
                                     <td className="px-8 py-6">
                                         <div className={`inline-flex px-3 py-1.5 rounded-xl border text-[10px] font-black uppercase tracking-widest ${profile.role === 'admin' ? 'bg-slate-900 text-white border-slate-900' :
-                                            profile.role === 'proprietaire' ? 'bg-indigo-50 text-indigo-600 border-indigo-100' :
+                                            profile.role === 'proprietaire' ? 'bg-amber-50 text-amber-600 border-amber-100' :
                                                 profile.role === 'prestataire' ? 'bg-amber-50 text-amber-600 border-amber-100' :
                                                     'bg-slate-50 text-slate-500 border-slate-100'
                                             }`}>

@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { Home, Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 
-export default function LoginPage() {
+function LoginForm() {
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -95,7 +95,7 @@ export default function LoginPage() {
             >
                 <div className="flex justify-center mb-8">
                     <Link href="/" className="flex items-center gap-2 text-[#D4AF37] hover:text-amber-500 transition-colors">
-                        <Home className="w-8 h-8" />
+                        <img src="/logo.svg" alt="Logo" className="h-10 w-auto object-contain" />
                         <span className="font-bold text-xl tracking-wider">HOLA AGENCY</span>
                     </Link>
                 </div>
@@ -183,5 +183,13 @@ export default function LoginPage() {
                 </p>
             </motion.div>
         </div>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-slate-50"><Loader2 className="w-8 h-8 animate-spin text-amber-500" /></div>}>
+            <LoginForm />
+        </Suspense>
     );
 }

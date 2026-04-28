@@ -89,7 +89,7 @@ export default function DynamicProfileView({ role = 'client' }) {
             title: "Dakar & Thiès",
             badgeLabel: "Prestataire Certifié",
             badgeIcon: Briefcase,
-            badgeColor: "bg-indigo-50 text-indigo-600 border-indigo-100",
+            badgeColor: "bg-amber-50 text-amber-600 border-amber-100",
             subtitle: "Expert Multi-services HOLA"
         },
         admin: {
@@ -243,7 +243,7 @@ export default function DynamicProfileView({ role = 'client' }) {
                         <button onClick={() => { setEditMode(false); setTempProfile(profile); }} className="px-6 py-3 bg-slate-50 text-slate-400 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-100 transition-all">
                             Annuler
                         </button>
-                        <button onClick={handleSaveProfile} disabled={isSaving} className="px-6 py-3 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 flex items-center gap-2">
+                        <button onClick={handleSaveProfile} disabled={isSaving} className="px-6 py-3 bg-amber-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-700 transition-all shadow-lg shadow-amber-100 flex items-center gap-2">
                             {isSaving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
                             Enregistrer
                         </button>
@@ -260,7 +260,7 @@ export default function DynamicProfileView({ role = 'client' }) {
             </AnimatePresence>
 
             <div className="bg-white rounded-[2.5rem] border border-slate-100 p-8 md:p-12 shadow-sm relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl -translate-y-20 translate-x-20"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl -translate-y-20 translate-x-20"></div>
 
                 <div className="flex flex-col md:flex-row items-center gap-10 relative z-10">
                     <div className="relative group">
@@ -272,12 +272,12 @@ export default function DynamicProfileView({ role = 'client' }) {
                             )}
                             {isUploading && (
                                 <div className="absolute inset-0 bg-white/60 flex items-center justify-center backdrop-blur-sm">
-                                    <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+                                    <Loader2 className="w-8 h-8 animate-spin text-amber-600" />
                                 </div>
                             )}
                         </div>
                         <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleAvatarUpload} />
-                        <button onClick={() => fileInputRef.current?.click()} className="absolute -bottom-2 -right-2 p-3 bg-indigo-600 text-white rounded-2xl shadow-lg hover:scale-110 transition-transform border-4 border-white active:scale-95 disabled:grayscale">
+                        <button onClick={() => fileInputRef.current?.click()} className="absolute -bottom-2 -right-2 p-3 bg-amber-600 text-white rounded-2xl shadow-lg hover:scale-110 transition-transform border-4 border-white active:scale-95 disabled:grayscale">
                             <Camera className="w-5 h-5" />
                         </button>
                     </div>
@@ -289,7 +289,7 @@ export default function DynamicProfileView({ role = 'client' }) {
                                     type="text"
                                     value={tempProfile.display_name || ''}
                                     onChange={e => setTempProfile({ ...tempProfile, display_name: e.target.value })}
-                                    className="text-3xl font-black text-slate-900 bg-slate-50 border-b-2 border-indigo-600 outline-none px-2 max-w-xs focus:bg-white transition-all rounded-t-xl"
+                                    className="text-3xl font-black text-slate-900 bg-slate-50 border-b-2 border-amber-600 outline-none px-2 max-w-xs focus:bg-white transition-all rounded-t-xl"
                                     placeholder="Votre nom"
                                 />
                             ) : (
@@ -307,14 +307,14 @@ export default function DynamicProfileView({ role = 'client' }) {
                                     type="text"
                                     value={tempProfile.location || ''}
                                     onChange={e => setTempProfile({ ...tempProfile, location: e.target.value })}
-                                    className="text-sm border-b border-slate-200 outline-none focus:border-indigo-600 bg-transparent"
+                                    className="text-sm border-b border-slate-200 outline-none focus:border-amber-600 bg-transparent"
                                     placeholder="Votre ville, Pays"
                                 />
                             ) : (
                                 <span>{profile?.location || config.title}</span>
                             )}
                             <span className="text-slate-300 mx-1">•</span>
-                            <span className="text-indigo-600">{config.subtitle}</span>
+                            <span className="text-amber-600">{config.subtitle}</span>
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-xl">
@@ -327,7 +327,7 @@ export default function DynamicProfileView({ role = 'client' }) {
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] block pl-1">Téléphone</label>
-                                <div className={`flex items-center gap-3 p-4 rounded-2xl border transition-all ${editMode ? 'bg-white border-indigo-100 shadow-sm' : 'bg-slate-50 border-slate-50'}`}>
+                                <div className={`flex items-center gap-3 p-4 rounded-2xl border transition-all ${editMode ? 'bg-white border-amber-100 shadow-sm' : 'bg-slate-50 border-slate-50'}`}>
                                     <Phone className="w-4 h-4 text-slate-400" />
                                     {editMode ? (
                                         <input
@@ -360,7 +360,7 @@ export default function DynamicProfileView({ role = 'client' }) {
                         Modifier la clé
                     </button>
                     <div className="mt-8 text-center">
-                        <button onClick={handleSignOut} className="inline-flex items-center gap-3 text-slate-400 hover:text-indigo-600 font-black tracking-widest text-[10px] uppercase transition-all hover:scale-105">
+                        <button onClick={handleSignOut} className="inline-flex items-center gap-3 text-slate-400 hover:text-amber-600 font-black tracking-widest text-[10px] uppercase transition-all hover:scale-105">
                             <LogOut className="w-4 h-4" /> Déconnexion
                         </button>
                     </div>
@@ -381,15 +381,15 @@ export default function DynamicProfileView({ role = 'client' }) {
             </div>
 
             <Modal isOpen={isPassModalOpen} onClose={() => setIsPassModalOpen(false)} title="Sécurité du compte" footer={
-                <button onClick={handlePasswordChange} disabled={isSaving} className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-900 transition-all flex items-center justify-center gap-2">
+                <button onClick={handlePasswordChange} disabled={isSaving} className="w-full py-4 bg-amber-600 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-900 transition-all flex items-center justify-center gap-2">
                     {isSaving && <Loader2 className="w-4 h-4 animate-spin" />} Confirmer le changement
                 </button>
             }>
                 <div className="space-y-6">
                     <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Mot de passe actuel</label>
-                        <input type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} className="w-full p-4 bg-slate-50 rounded-2xl border border-slate-100 focus:bg-white focus:border-indigo-600 outline-none transition-all font-bold" placeholder="Requis pour vérifier votre identité" />
-                        <button onClick={handleForgotPassword} className="text-[10px] font-black text-indigo-600 hover:text-slate-900 transition-colors uppercase tracking-widest block mt-2 ml-1">
+                        <input type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} className="w-full p-4 bg-slate-50 rounded-2xl border border-slate-100 focus:bg-white focus:border-amber-600 outline-none transition-all font-bold" placeholder="Requis pour vérifier votre identité" />
+                        <button onClick={handleForgotPassword} className="text-[10px] font-black text-amber-600 hover:text-slate-900 transition-colors uppercase tracking-widest block mt-2 ml-1">
                             Mot de passe oublié ?
                         </button>
                     </div>
@@ -398,11 +398,11 @@ export default function DynamicProfileView({ role = 'client' }) {
 
                     <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Nouveau mot de passe</label>
-                        <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="w-full p-4 bg-slate-50 rounded-2xl border border-slate-100 focus:bg-white focus:border-indigo-600 outline-none transition-all font-bold" />
+                        <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="w-full p-4 bg-slate-50 rounded-2xl border border-slate-100 focus:bg-white focus:border-amber-600 outline-none transition-all font-bold" />
                     </div>
                     <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Confirmer le mot de passe</label>
-                        <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="w-full p-4 bg-slate-50 rounded-2xl border border-slate-100 focus:bg-white focus:border-indigo-600 outline-none transition-all font-bold" />
+                        <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="w-full p-4 bg-slate-50 rounded-2xl border border-slate-100 focus:bg-white focus:border-amber-600 outline-none transition-all font-bold" />
                     </div>
                 </div>
             </Modal>
