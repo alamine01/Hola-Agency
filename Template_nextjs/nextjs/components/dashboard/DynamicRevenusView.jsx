@@ -147,15 +147,15 @@ export default function DynamicRevenusView({ role = 'client' }) {
     }
 
     return (
-        <div className="max-w-6xl mx-auto space-y-10 pb-20">
+        <div className="max-w-6xl mx-auto space-y-8 md:space-y-10 pb-20 px-4 md:px-8 pt-6 overflow-x-hidden">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div>
-                    <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-2 tracking-tight uppercase">Portefeuille</h1>
-                    <p className="text-slate-500 font-medium italic opacity-80">Suivez vos gains et gérez vos demandes de retrait.</p>
+                <div className="text-center md:text-left">
+                    <h1 className="text-2xl md:text-4xl font-black text-slate-900 mb-2 tracking-tight uppercase">Portefeuille</h1>
+                    <p className="text-xs md:text-base text-slate-500 font-medium italic opacity-80 leading-relaxed">Suivez vos gains et gérez vos demandes de retrait.</p>
                 </div>
                 <button
                     onClick={() => setIsWithdrawModalOpen(true)}
-                    className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-amber-600 transition-all shadow-xl shadow-slate-200 active:scale-95 flex items-center gap-2"
+                    className="w-full md:w-auto px-8 py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-amber-600 transition-all shadow-xl shadow-slate-200 active:scale-95 flex items-center justify-center gap-2"
                 >
                     <Plus className="w-4 h-4" /> Demander un retrait
                 </button>
@@ -201,10 +201,10 @@ export default function DynamicRevenusView({ role = 'client' }) {
                 </div>
             </div>
 
-            <div className="bg-white rounded-[3rem] border border-slate-100 shadow-sm p-8 md:p-12">
-                <div className="flex items-center justify-between mb-10">
-                    <h2 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-3 uppercase">
-                        Historique des mouvements
+            <div className="bg-white rounded-[2rem] md:rounded-[3rem] border border-slate-100 shadow-sm p-5 md:p-12">
+                <div className="flex items-center justify-between mb-8 md:mb-10">
+                    <h2 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-3 uppercase">
+                        Historique <span className="hidden sm:inline">des mouvements</span>
                         <span className="px-3 py-1 bg-slate-100 text-[10px] rounded-full text-slate-500">{transactions.length}</span>
                     </h2>
                 </div>
@@ -212,36 +212,34 @@ export default function DynamicRevenusView({ role = 'client' }) {
                 <div className="space-y-4">
                     {transactions.length > 0 ? (
                         transactions.map((tx) => (
-                            <div key={tx.id} onClick={() => setSelectedTx(tx)} className="group p-6 bg-white rounded-3xl border border-slate-50 hover:border-slate-100 hover:shadow-xl hover:shadow-slate-100 transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 cursor-pointer">
-                                <div className="flex items-center gap-6">
-                                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg transition-transform group-hover:scale-105 ${tx.type === 'income' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600 shadow-rose-100/50'}`}>
-                                        {tx.type === 'income' ? <ArrowDownLeft className="w-6 h-6" /> : <ArrowUpRight className="w-6 h-6" />}
+                            <div key={tx.id} onClick={() => setSelectedTx(tx)} className="group p-4 md:p-6 bg-white rounded-2xl md:rounded-3xl border border-slate-50 hover:border-slate-100 hover:shadow-xl hover:shadow-slate-100 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 cursor-pointer">
+                                <div className="flex items-center gap-4 md:gap-6">
+                                    <div className={`w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg transition-transform group-hover:scale-105 shrink-0 ${tx.type === 'income' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600 shadow-rose-100/50'}`}>
+                                        {tx.type === 'income' ? <ArrowDownLeft className="w-5 h-5 md:w-6 md:h-6" /> : <ArrowUpRight className="w-5 h-5 md:w-6 md:h-6" />}
                                     </div>
-                                    <div>
-                                        <h4 className="font-black text-slate-900 uppercase tracking-tight text-sm mb-1">{tx.title}</h4>
-                                        <div className="flex items-center gap-3">
-                                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{tx.subtitle || 'Transaction'}</p>
-                                            <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
-                                            <p className="text-[10px] text-slate-400 font-medium italic">{new Date(tx.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                                    <div className="min-w-0">
+                                        <h4 className="font-black text-slate-900 uppercase tracking-tight text-[11px] md:text-sm mb-0.5 md:mb-1 truncate">{tx.title}</h4>
+                                        <div className="flex items-center gap-2 md:gap-3 flex-wrap">
+                                            <p className="text-[8px] md:text-[10px] text-slate-500 font-bold uppercase tracking-widest truncate">{tx.subtitle || 'Transaction'}</p>
+                                            <span className="w-1 h-1 bg-slate-300 rounded-full shrink-0"></span>
+                                            <p className="text-[8px] md:text-[10px] text-slate-400 font-medium italic truncate">{new Date(tx.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}</p>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="flex items-center justify-between md:justify-end gap-10 border-t md:border-t-0 pt-4 md:pt-0 border-slate-50">
-                                    <div className="text-right">
-                                        <p className={`text-xl font-black tracking-tight ${tx.type === 'income' ? 'text-emerald-600' : 'text-slate-900'}`}>
-                                            {tx.type === 'income' ? '+' : '-'}{(tx.amount || 0).toLocaleString()} <span className="text-[10px]">FCFA</span>
+                                <div className="flex items-center justify-between md:justify-end gap-6 md:gap-10 border-t md:border-t-0 pt-3 md:pt-0 border-slate-50">
+                                    <div className="text-right flex-1 md:flex-none">
+                                        <p className={`text-base md:text-xl font-black tracking-tight ${tx.type === 'income' ? 'text-emerald-600' : 'text-slate-900'}`}>
+                                            {tx.type === 'income' ? '+' : '-'}{(tx.amount || 0).toLocaleString()} <span className="text-[9px] md:text-[10px]">FCFA</span>
                                         </p>
-                                        <div className="flex items-center justify-end gap-2 mt-1">
-                                            <div className={`w-1.5 h-1.5 rounded-full ${tx.status === 'validated' || tx.status === 'valide' ? 'bg-emerald-500' : tx.status === 'pending' || tx.status === 'en_attente' ? 'bg-amber-500' : 'bg-rose-500'}`}></div>
-                                            <span className={`text-[9px] font-black uppercase tracking-widest ${tx.status === 'validated' || tx.status === 'valide' ? 'text-emerald-600' : tx.status === 'pending' || tx.status === 'en_attente' ? 'text-amber-600' : 'text-rose-600'}`}>
+                                        <div className="flex items-center justify-end gap-1.5 md:gap-2 mt-0.5 md:mt-1">
+                                            <div className={`w-1 md:w-1.5 h-1 md:h-1.5 rounded-full ${tx.status === 'validated' || tx.status === 'valide' ? 'bg-emerald-500' : tx.status === 'pending' || tx.status === 'en_attente' ? 'bg-amber-500' : 'bg-rose-500'}`}></div>
+                                            <span className={`text-[8px] md:text-[9px] font-black uppercase tracking-widest ${tx.status === 'validated' || tx.status === 'valide' ? 'text-emerald-600' : tx.status === 'pending' || tx.status === 'en_attente' ? 'text-amber-600' : 'text-rose-600'}`}>
                                                 {tx.status === 'validated' || tx.status === 'valide' ? 'Confirmé' : tx.status === 'pending' || tx.status === 'en_attente' ? 'En attente' : 'Refusé'}
                                             </span>
                                         </div>
                                     </div>
-                                    <button className="p-3 text-slate-300 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition-all">
-                                        <ChevronRight className="w-5 h-5" />
-                                    </button>
+                                    <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-slate-300 group-hover:text-amber-600 transition-colors" />
                                 </div>
                             </div>
                         ))
