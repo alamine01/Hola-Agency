@@ -127,6 +127,7 @@ export default function AdminDashboardView() {
                             {[
                                 { label: "Gérer les utilisateurs", icon: Users, link: "/dashboard/admin/utilisateurs" },
                                 { label: "Gérer les logements", icon: Home, link: "/dashboard/admin/logements" },
+                                { label: "Gérer les services", icon: Briefcase, link: "/dashboard/admin/services" },
                                 { label: "Vérifier les revenus", icon: TrendingUp, link: "/dashboard/admin/revenus" }
                             ].map((action, i) => (
                                 <a key={i} href={action.link} className="flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5 transition-all group-hover:translate-x-1">
