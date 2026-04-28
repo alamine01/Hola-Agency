@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { sendPaymentConfirmation } from '@/lib/brevo';
+import Stripe from 'stripe';
 
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
 
 export async function POST(req) {
@@ -9,30 +11,64 @@ export async function POST(req) {
         const body = await req.text();
         const signature = req.headers.get('stripe-signature');
 
-        // En production, vérifier la signature pour sécurité maximale:
-        // const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-        // const event = stripe.webhooks.constructEvent(body, signature, STRIPE_WEBHOOK_SECRET);
+        if (!signature || !STRIPE_WEBHOOK_SECRET) {
+            console.error("Missing signature or webhook secret");
+            return NextResponse.json({ error: "Missing signature or webhook secret" }, { status: 400 });
+        }
 
-        const event = JSON.parse(body);
+        let event;
+        try {
+            event = stripe.webhooks.constructEvent(body, signature, STRIPE_WEBHOOK_SECRET);
+        } catch (err) {
+            console.error(`Webhook signature verification failed: ${err.message}`);
+            return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
+        }
 
         if (event.type === 'checkout.session.completed') {
             const session = event.data.object;
             const bookingId = session.metadata?.booking_id;
 
             if (bookingId) {
-                // Marquer la réservation comme payée
-                await supabase
+                // 1. Marquer la réservation comme payée
+                const { error: bookingError } = await supabase
                     .from('bookings')
                     .update({ status: 'payee' })
                     .eq('id', bookingId);
+                
+                if (bookingError) throw bookingError;
 
-                // Marquer le paiement comme complété
-                await supabase
+                // 2. Créer ou mettre à jour l'entrée de paiement
+                // On essaie d'abord de voir si une entrée existe pour ce booking
+                const { data: existingPayment } = await supabase
                     .from('payments')
-                    .update({ status: 'completed', provider_id: session.id })
-                    .eq('booking_id', bookingId);
+                    .select('id')
+                    .eq('booking_id', bookingId)
+                    .maybeSingle();
 
-                // Récupérer la réservation pour notifier le propriétaire
+                if (existingPayment) {
+                    await supabase
+                        .from('payments')
+                        .update({ 
+                            status: 'completed', 
+                            provider_id: session.id,
+                            payment_method: 'stripe_card'
+                        })
+                        .eq('booking_id', bookingId);
+                } else {
+                    // Si pas de paiement existant (cas rare mais possible selon le flow), on en crée un
+                    await supabase
+                        .from('payments')
+                        .insert({
+                            booking_id: bookingId,
+                            amount: session.amount_total / 100, // Stripe est en centimes
+                            status: 'completed',
+                            provider: 'stripe',
+                            provider_id: session.id,
+                            payment_method: 'stripe_card'
+                        });
+                }
+
+                // 3. Récupérer la réservation pour notifier le propriétaire
                 const { data: booking } = await supabase
                     .from('bookings')
                     .select('*')
@@ -50,6 +86,8 @@ export async function POST(req) {
                 }
 
                 console.log(`Stripe Webhook: Booking ${bookingId} confirmed.`);
+                
+                // 4. Envoyer l'email de confirmation via Brevo
                 await sendPaymentConfirmation(bookingId);
             }
         }
@@ -57,6 +95,6 @@ export async function POST(req) {
         return NextResponse.json({ received: true });
     } catch (error) {
         console.error("Stripe Webhook Error:", error);
-        return NextResponse.json({ error: error.message }, { status: 400 });
+        return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
