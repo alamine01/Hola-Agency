@@ -197,8 +197,8 @@ const ReservationItem = ({ reservation, onStatusUpdate, onViewDetails, onOpenCha
         : 'Date non fixée';
 
     return (
-        <div className={`bg-white rounded-[2rem] border border-slate-100 p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:shadow-lg transition-all group relative shadow-sm ${showMenu ? 'z-50' : ''}`}>
-            <div className={`absolute left-0 top-0 bottom-0 w-2 ${statusColors[reservation.status] ? (statusColors[reservation.status].split(' ')[1]) : 'bg-slate-100'} rounded-l-[2rem]`}></div>
+        <div className={`bg-white rounded-[1.5rem] md:rounded-[2rem] border border-slate-100 p-4 md:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4 md:gap-6 hover:shadow-lg transition-all group relative shadow-sm ${showMenu ? 'z-50' : ''}`}>
+            <div className={`absolute left-0 top-0 bottom-0 w-1.5 md:w-2 ${statusColors[reservation.status] ? (statusColors[reservation.status].split(' ')[1]) : 'bg-slate-100'} rounded-l-[1.5rem] md:rounded-l-[2rem]`}></div>
 
             <div className="flex items-center gap-4 relative z-10 pl-2">
                 <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-slate-50 border border-slate-50 flex items-center justify-center text-slate-300 group-hover:scale-105 group-hover:bg-amber-50 group-hover:text-amber-400 transition-all overflow-hidden">
@@ -215,45 +215,45 @@ const ReservationItem = ({ reservation, onStatusUpdate, onViewDetails, onOpenCha
             </div>
 
 
-            <div className="flex flex-row md:flex-row items-center justify-between md:justify-end gap-6 md:gap-14 w-full md:w-auto pt-6 md:pt-0 border-t md:border-0 border-slate-100 relative z-10">
-                <div className="flex flex-col items-center md:items-end min-w-[100px]">
-                    <p className="text-[10px] text-slate-400 uppercase font-black tracking-[0.15em] mb-1">Votre Gain Net</p>
-                    <p className="font-black text-amber-600 text-lg">{netPayout.toLocaleString()} <span className="text-[10px]">FCFA</span></p>
-                    <p className="text-[9px] text-slate-400 font-medium italic opacity-60">Brut : {priceValue.toLocaleString()} FCFA</p>
+            <div className="grid grid-cols-2 lg:flex lg:items-center justify-between lg:justify-end gap-4 md:gap-14 w-full lg:w-auto pt-4 md:pt-6 lg:pt-0 border-t lg:border-0 border-slate-100 relative z-10">
+                <div className="flex flex-col items-start md:items-end lg:min-w-[120px]">
+                    <p className="text-[8px] md:text-[10px] text-slate-400 uppercase font-black tracking-[0.15em] mb-1">Votre Gain Net</p>
+                    <p className="font-black text-amber-600 text-sm md:text-lg">{netPayout.toLocaleString()} <span className="text-[8px] md:text-[10px]">FCFA</span></p>
+                    <p className="text-[7px] md:text-[9px] text-slate-400 font-medium italic opacity-60">Brut : {priceValue.toLocaleString()} FCFA</p>
                 </div>
 
-                <div className="flex flex-col items-center min-w-[100px]">
-                    <p className="text-[10px] text-slate-400 uppercase font-black tracking-[0.15em] mb-2">Statut</p>
-                    <span className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${statusColors[reservation.status] || 'bg-slate-50 text-slate-500 border-slate-100'}`}>
+                <div className="flex flex-col items-end lg:items-center lg:min-w-[100px]">
+                    <p className="text-[8px] md:text-[10px] text-slate-400 uppercase font-black tracking-[0.15em] mb-2 text-right lg:text-center w-full">Statut</p>
+                    <span className={`px-3 md:px-4 py-1 rounded-lg md:rounded-xl text-[8px] md:text-[9px] font-black uppercase tracking-widest border ${statusColors[reservation.status] || 'bg-slate-50 text-slate-500 border-slate-100'}`}>
                         {reservation.status === 'payee' ? 'PAYÉE' : reservation.status === 'confirmee' ? 'CONFIRMÉE' : reservation.status.replace('_', ' ')}
                     </span>
                 </div>
 
-                <div className="flex items-center gap-2 relative">
+                <div className="flex items-center gap-2 col-span-2 justify-end pt-2 md:pt-0">
                     {reservation.status === 'en_attente' && (
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={() => onStatusUpdate(reservation, 'confirmee')}
                                 title="Confirmer"
-                                className="p-3 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm active:scale-95 border border-emerald-100"
+                                className="p-2 md:p-3 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm active:scale-95 border border-emerald-100"
                             >
-                                <CheckCircle2 className="w-5 h-5" />
+                                <CheckCircle2 className="w-4 h-4 md:w-5 md:h-5" />
                             </button>
                             <button
                                 onClick={() => onStatusUpdate(reservation, 'annulee')}
                                 title="Refuser"
-                                className="p-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm active:scale-95 border border-red-100"
+                                className="p-2 md:p-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm active:scale-95 border border-red-100"
                             >
-                                <XCircle className="w-5 h-5" />
+                                <XCircle className="w-4 h-4 md:w-5 md:h-5" />
                             </button>
                         </div>
                     )}
                     <div className="relative">
                         <button
                             onClick={() => setShowMenu(!showMenu)}
-                            className="p-3 text-slate-400 hover:text-slate-900 rounded-xl hover:bg-slate-50 transition-all border border-slate-100"
+                            className="p-2 md:p-3 text-slate-400 hover:text-slate-900 rounded-xl hover:bg-slate-50 transition-all border border-slate-100"
                         >
-                            <MoreHorizontal className="w-5 h-5" />
+                            <MoreHorizontal className="w-4 h-4 md:w-5 md:h-5" />
                         </button>
 
                         {showMenu && (
@@ -397,11 +397,11 @@ export default function ProprietaireReservationsPage() {
     };
 
     return (
-        <div className="max-w-5xl mx-auto pb-10 px-4 md:px-0">
-            <div className="mb-12 text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="max-w-5xl mx-auto pb-10 px-4 md:px-8 pt-6 overflow-x-hidden">
+            <div className="mb-8 md:mb-12 text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-2 tracking-tight uppercase">Demandes & Réservations</h1>
-                    <p className="text-slate-500 font-medium italic opacity-80">Gérez vos revenus locatifs en accord avec le règlement HOLA (-15% commission).</p>
+                    <h1 className="text-2xl md:text-4xl font-black text-slate-900 mb-2 tracking-tight uppercase">Demandes & Réservations</h1>
+                    <p className="text-sm md:text-base text-slate-500 font-medium italic opacity-80">Gérez vos revenus locatifs en accord avec le règlement HOLA (-15% commission).</p>
                 </div>
                 {loading && <div className="flex items-center gap-2 text-amber-500 font-black text-[10px] uppercase tracking-widest"><Loader2 className="w-4 h-4 animate-spin" /> Synchronisation...</div>}
             </div>
