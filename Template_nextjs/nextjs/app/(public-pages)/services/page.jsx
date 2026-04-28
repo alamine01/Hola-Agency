@@ -33,8 +33,10 @@ export default function ServicesCatalogPage() {
         fetchServices();
     }, []);
 
-    // Extraire les types uniques pour le filtre
-    const uniqueTypes = [...new Set(services.map(s => s.type).filter(Boolean))];
+    // Catégories par défaut combinées avec celles de la base de données
+    const defaultCategories = ["Chef à Domicile", "Chauffeur Privé", "Bien-être & Spa", "Conciergerie", "Événementiel"];
+    const dbTypes = services.map(s => s.type).filter(Boolean);
+    const uniqueTypes = [...new Set([...defaultCategories, ...dbTypes])];
 
     const filteredServices = services.filter(s => {
         const matchSearch = (s.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
