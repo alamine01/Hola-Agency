@@ -198,16 +198,16 @@ export default function AdminRevenusView() {
 
             {/* Tabs */}
             <div className="bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden">
-                <div className="flex border-b border-slate-50">
+                <div className="flex border-b border-slate-50 overflow-x-auto no-scrollbar">
                     <button
                         onClick={() => setActiveTab('incomes')}
-                        className={`flex-1 py-6 font-black uppercase tracking-widest text-[10px] transition-all ${activeTab === 'incomes' ? 'bg-slate-900 text-white' : 'text-slate-400 hover:bg-slate-50'}`}
+                        className={`flex-1 min-w-max px-6 py-5 font-black uppercase tracking-widest text-[9px] md:text-[10px] transition-all border-b-2 ${activeTab === 'incomes' ? 'border-slate-900 bg-slate-900 text-white' : 'border-transparent text-slate-400 hover:bg-slate-50'}`}
                     >
                         Paiements Clients
                     </button>
                     <button
                         onClick={() => setActiveTab('payouts')}
-                        className={`flex-1 py-6 font-black uppercase tracking-widest text-[10px] transition-all ${activeTab === 'payouts' ? 'bg-slate-900 text-white' : 'text-slate-400 hover:bg-slate-50'}`}
+                        className={`flex-1 min-w-max px-6 py-5 font-black uppercase tracking-widest text-[9px] md:text-[10px] transition-all border-b-2 ${activeTab === 'payouts' ? 'border-slate-900 bg-slate-900 text-white' : 'border-transparent text-slate-400 hover:bg-slate-50'}`}
                     >
                         Demandes de Retrait ({payouts.filter(p => p.status === 'en_attente').length})
                     </button>
@@ -216,45 +216,50 @@ export default function AdminRevenusView() {
                 <div className="p-8 md:p-12">
                     {activeTab === 'incomes' ? (
                         <div className="space-y-8">
-                            <div className="flex items-center justify-between">
-                                <h2 className="text-xl font-black text-slate-900 tracking-tight uppercase">Dernières Réservations</h2>
-                                <div className="relative">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                <h2 className="text-lg md:text-xl font-black text-slate-900 tracking-tight uppercase">Dernières Réservations</h2>
+                                <div className="relative w-full sm:w-auto">
                                     <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-400" />
                                     <select
                                         value={filter}
                                         onChange={(e) => setFilter(e.target.value)}
-                                        className="pl-8 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-lg text-[9px] font-black uppercase tracking-tighter outline-none"
+                                        className="w-full sm:w-auto pl-8 pr-8 py-2.5 md:py-2 bg-slate-50 border border-slate-100 rounded-xl text-[9px] font-black uppercase tracking-widest outline-none appearance-none"
                                     >
-                                        <option value="all">Tout</option>
+                                        <option value="all">Filtre : Tout</option>
                                         <option value="today">Aujourd'hui</option>
-                                        <option value="month">Mois</option>
+                                        <option value="month">Ce Mois</option>
                                     </select>
                                 </div>
                             </div>
 
                             <div className="space-y-4">
                                 {filteredBookings.map((book) => (
-                                    <div key={book.id} className="p-6 bg-white rounded-3xl border border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                                        <div className="flex items-center gap-6">
-                                            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg ${book.status === 'payee' || book.status === 'confirmee' ? (book.is_validated ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-50 text-slate-400') : 'bg-amber-50 text-amber-600'}`}>
-                                                <ArrowDownLeft className="w-6 h-6" />
+                                    <div key={book.id} className="p-4 md:p-6 bg-white rounded-[2rem] border border-slate-50 hover:border-slate-200 transition-all shadow-sm">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className="flex items-center gap-3 md:gap-6">
+                                                <div className={`w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg ${book.status === 'payee' || book.status === 'confirmee' ? (book.is_validated ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-50 text-slate-400') : 'bg-amber-50 text-amber-600'}`}>
+                                                    <ArrowDownLeft className="w-5 h-5 md:w-6 md:h-6" />
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-black text-slate-900 uppercase tracking-tight text-[11px] md:text-sm mb-0.5 md:mb-1">{book.item_type} #{book.id.slice(0, 5)}</h4>
+                                                    <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest">{new Date(book.created_at).toLocaleDateString()}</p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <h4 className="font-black text-slate-900 uppercase tracking-tight text-sm mb-1">{book.item_type} #{book.id.slice(0, 5)}</h4>
-                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{new Date(book.created_at).toLocaleDateString()}</p>
+                                            <div className="text-right">
+                                                <p className="text-base md:text-xl font-black text-slate-900 tracking-tight">{book.amount.toLocaleString()} <span className="text-[10px]">FCFA</span></p>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-10">
-                                            <div className="text-right">
-                                                <p className="text-xl font-black text-slate-900 tracking-tight">{book.amount.toLocaleString()} FCFA</p>
-                                                <span className={`text-[9px] font-black uppercase tracking-widest ${book.status === 'payee' || book.status === 'confirmee' ? 'text-emerald-600' : 'text-amber-600'}`}>
-                                                    {book.status} {book.is_validated && "• Validé"}
+                                        
+                                        <div className="flex items-center justify-between pt-4 border-t border-slate-50 gap-4">
+                                            <div className="flex flex-col">
+                                                <span className={`text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] px-2 py-1 rounded-lg ${book.status === 'payee' || book.status === 'confirmee' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
+                                                    {book.status.replace(/_/g, ' ')} {book.is_validated && "• Validé"}
                                                 </span>
                                             </div>
                                             {(!book.is_validated && (book.status === 'payee' || book.status === 'confirmee')) && (
                                                 <button
                                                     onClick={() => handleValidateBooking(book.id)}
-                                                    className="px-6 py-3 bg-emerald-600 text-white rounded-2xl font-black uppercase text-[9px] hover:bg-slate-900 transition-all shadow-xl shadow-emerald-100"
+                                                    className="px-5 md:px-8 py-2 md:py-3 bg-emerald-600 text-white rounded-xl md:rounded-2xl font-black uppercase text-[9px] hover:bg-slate-900 transition-all shadow-lg shadow-emerald-50 active:scale-95"
                                                 >
                                                     Valider
                                                 </button>

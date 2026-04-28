@@ -151,23 +151,21 @@ export default function AdminDashboardView() {
 
                         <div className="space-y-4">
                             {recentBookings.map((book) => (
-                                <div key={book.id} className="flex items-center justify-between p-5 rounded-3xl border border-slate-50 hover:bg-slate-50 transition-all group">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:scale-110 transition-all">
-                                            <Calendar className="w-6 h-6" />
+                                <div key={book.id} className="flex items-center justify-between p-4 md:p-5 rounded-2xl md:rounded-3xl border border-slate-50 hover:bg-slate-50 transition-all group">
+                                    <div className="flex items-center gap-3 md:gap-4">
+                                        <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:scale-110 transition-all shrink-0">
+                                            <Calendar className="w-5 h-5 md:w-6 md:h-6" />
                                         </div>
-                                        <div>
-                                            <p className="font-bold text-slate-900 text-sm">Réservation #{book.id.slice(0, 8)}</p>
-                                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{new Date(book.created_at).toLocaleDateString()}</p>
+                                        <div className="min-w-0">
+                                            <p className="font-black text-slate-900 text-[11px] md:text-sm truncate">Réservation #{book.id.slice(0, 8)}</p>
+                                            <p className="text-[8px] md:text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{new Date(book.created_at).toLocaleDateString()}</p>
                                         </div>
                                     </div>
-                                    <div className="text-right">
-                                        <p className="font-black text-slate-900 text-sm">{book.amount.toLocaleString()} FCFA</p>
-                                        <span className={`text-[9px] font-black uppercase tracking-widest ${book.status === 'payee' || book.status === 'confirmee'
+                                    <div className="text-right shrink-0">
+                                        <p className="font-black text-slate-900 text-[11px] md:text-sm">{book.amount.toLocaleString()} <span className="text-[8px] md:text-[9px]">FCFA</span></p>
+                                        <span className={`text-[8px] md:text-[9px] font-black uppercase tracking-widest ${book.status === 'payee' || book.status === 'confirmee'
                                             ? 'text-emerald-600'
-                                            : book.status === 'en_attente_paiement'
-                                                ? 'text-amber-600'
-                                                : 'text-amber-600'
+                                            : 'text-amber-600'
                                             }`}>
                                             {(book.status || '').replace(/_/g, ' ')}
                                         </span>
