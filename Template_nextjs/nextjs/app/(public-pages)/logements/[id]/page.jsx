@@ -11,48 +11,45 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 
 // Mock function to get property by ID (simulating database call)
-const getPropertyById = (id) => {
-    const properties = [
-        {
-            id: '1', title: "Villa Saly Exception", location: "Saly, Sénégal",
-            price: 85000, image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop",
-            beds: 4, guests: 8, rating: 4.9, type: "Villa",
-            description: "Une villa d'exception située au cœur de Saly, offrant un luxe inégalé et une intimité totale. Parfaite pour les familles ou les groupes d'amis cherchant une expérience haut de gamme.",
-            amenities: ["Piscine privée", "Wi-Fi haut débit", "Parking gratuit", "Climatisation", "Cuisine équipée"]
-        },
-        {
-            id: '2', title: "Appartement Cosy Plateau", location: "Dakar Plateau",
-            price: 50000, image: "https://images.unsplash.com/photo-1502672260266-1c1db2dba659?q=80&w=1936&auto=format&fit=crop",
-            beds: 2, guests: 4, rating: 4.8, type: "Appartement",
-            description: "Un appartement moderne et chaleureux au centre-ville de Dakar. Idéal pour les voyageurs d'affaires ou les couples.",
-            amenities: ["Wi-Fi", "Ascenseur", "Sécurité 24/7", "Machine à laver"]
-        }
-    ];
-    return properties.find(p => p.id === id) || properties[0];
-};
+// Removed mock function as we now fetch from Supabase
 
 export default function PropertyDetailPage() {
     const { id } = useParams();
     const router = useRouter();
-    const property = getPropertyById(id);
+    const [property, setProperty] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
-    }, []);
+        const fetchProperty = async () => {
+            setLoading(true);
+            try {
+                const { data, error } = await supabase
+                    .from('villas')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+                
+                if (error) throw error;
+                setProperty(data);
+            } catch (err) {
+                console.error("Erreur chargement bien:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    const [bookingData, setBookingData] = useState({
-        startDate: '',
-        endDate: '',
-        guests: 1
-    });
+        fetchProperty();
+        supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
+    }, [id]);
 
     const calculateTotal = () => {
-        if (!bookingData.startDate || !bookingData.endDate) return 0;
+        if (!bookingData.startDate || !bookingData.endDate || !property) return 0;
         const start = new Date(bookingData.startDate);
         const end = new Date(bookingData.endDate);
         const nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-        return nights > 0 ? nights * property.price : 0;
+        const activePrice = property.sale_price && property.sale_price > 0 ? property.sale_price : property.price;
+        return nights > 0 ? nights * activePrice : 0;
     };
 
     const handleBooking = async () => {
@@ -151,6 +148,23 @@ export default function PropertyDetailPage() {
         }
     };
 
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+                <Loader2 className="w-10 h-10 animate-spin text-[#D4AF37]" />
+            </div>
+        );
+    }
+
+    if (!property) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 p-4 text-center">
+                <h1 className="text-2xl font-bold text-slate-900 mb-4">Bien introuvable</h1>
+                <Link href="/logements" className="text-indigo-600 font-bold hover:underline">Retourner au catalogue</Link>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-slate-50 pt-24 pb-24">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -173,9 +187,9 @@ export default function PropertyDetailPage() {
                         </motion.div>
 
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">{property.title}</h1>
-                            <div className="flex items-center gap-1.5 bg-white px-4 py-2 rounded-2xl shadow-sm border border-slate-100 text-slate-800 font-bold">
-                                <Star className="w-5 h-5 fill-amber-400 text-amber-400" /> {property.rating}
+                            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 tracking-tight uppercase">{property.name}</h1>
+                            <div className="flex items-center gap-1.5 bg-white px-4 py-2 rounded-2xl shadow-sm border border-slate-100 text-slate-800 font-bold self-start">
+                                <Star className="w-5 h-5 fill-amber-400 text-amber-400" /> {property.rating || 'Nouveau'}
                             </div>
                         </div>
 
@@ -183,8 +197,8 @@ export default function PropertyDetailPage() {
                             <div className="flex items-center gap-2">
                                 <MapPin className="w-5 h-5 text-indigo-500" /> <span className="font-medium text-slate-900">{property.location}</span>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <BedDouble className="w-5 h-5 text-slate-400" /> <span>{property.beds} Lits</span>
+                             <div className="flex items-center gap-2">
+                                <BedDouble className="w-5 h-5 text-slate-400" /> <span>{property.rooms} Ch.</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <Users className="w-5 h-5 text-slate-400" /> <span>{property.guests} Voyageurs max</span>
@@ -203,7 +217,7 @@ export default function PropertyDetailPage() {
                         <div className="mb-12">
                             <h2 className="text-2xl font-bold text-slate-900 mb-6 tracking-tight">Ce que propose ce lieu</h2>
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                                {property.amenities.map((amenity, idx) => (
+                                 {property.amenities?.map((amenity, idx) => (
                                     <div key={idx} className="flex items-center gap-3 text-slate-600 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
                                         <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                                         <span className="font-medium">{amenity}</span>
@@ -223,7 +237,17 @@ export default function PropertyDetailPage() {
                                 className="bg-white rounded-[2.5rem] p-8 shadow-[0_20px_60px_rgb(0,0,0,0.08)] border border-slate-100"
                             >
                                 <div className="flex items-center justify-between mb-8">
-                                    <div className="text-2xl font-black text-[#D4AF37]">{property.price.toLocaleString()} FCFA <span className="text-sm font-normal text-slate-400">/nuit</span></div>
+                                    <div className="flex flex-col">
+                                        <div className="text-2xl font-black text-[#D4AF37]">
+                                            {(property.sale_price && property.sale_price > 0 ? property.sale_price : property.price).toLocaleString()} FCFA 
+                                            <span className="text-sm font-normal text-slate-400 tracking-normal ml-1">/nuit</span>
+                                        </div>
+                                        {property.sale_price && property.sale_price > 0 && (
+                                            <div className="text-sm text-slate-400 line-through font-medium italic mt-1">
+                                                {property.price.toLocaleString()} FCFA
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
 
                                 <div className="space-y-4 mb-8">
@@ -275,7 +299,9 @@ export default function PropertyDetailPage() {
                                 {calculateTotal() > 0 && (
                                     <div className="space-y-3 pt-6 border-t border-slate-100">
                                         <div className="flex justify-between text-slate-500 font-medium">
-                                            <span>{property.price.toLocaleString()} FCFA x {Math.ceil((new Date(bookingData.endDate) - new Date(bookingData.startDate)) / (1000 * 60 * 60 * 24))} nuits</span>
+                                            <span>
+                                                {(property.sale_price && property.sale_price > 0 ? property.sale_price : property.price).toLocaleString()} FCFA x {Math.ceil((new Date(bookingData.endDate) - new Date(bookingData.startDate)) / (1000 * 60 * 60 * 24))} nuits
+                                            </span>
                                             <span>{calculateTotal().toLocaleString()} FCFA</span>
                                         </div>
                                         <div className="flex justify-between text-slate-500 font-medium pb-2">

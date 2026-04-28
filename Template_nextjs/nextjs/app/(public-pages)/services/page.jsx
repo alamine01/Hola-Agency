@@ -129,8 +129,15 @@ export default function ServicesCatalogPage() {
                                             <Briefcase className="w-16 h-16 text-slate-300" strokeWidth={1} />
                                         )}
                                         {service.type && (
-                                            <div className="absolute top-4 left-4 bg-indigo-600/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-semibold text-white tracking-widest uppercase shadow-sm">
-                                                {service.type}
+                                            <div className="absolute top-4 left-4 flex flex-col gap-2">
+                                                <div className="bg-indigo-600/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-semibold text-white tracking-widest uppercase shadow-sm">
+                                                    {service.type}
+                                                </div>
+                                                {service.sale_price && service.sale_price > 0 && (
+                                                    <div className="bg-amber-500 px-3 py-1.5 rounded-full text-[10px] font-black text-white tracking-widest uppercase shadow-xl animate-pulse self-start">
+                                                        PROMO
+                                                    </div>
+                                                )}
                                             </div>
                                         )}
                                     </div>
@@ -149,8 +156,17 @@ export default function ServicesCatalogPage() {
                                         <div className="pt-6 border-t border-slate-100 flex items-center justify-between">
                                             <div>
                                                 <div className="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-1">Tarif indicatif</div>
-                                                <div className="text-lg font-bold text-indigo-600">
-                                                    {service.price ? `${service.price.toLocaleString()} FCFA` : "Sur devis"}
+                                                <div className="flex items-baseline gap-2">
+                                                    <div className="text-lg font-bold text-indigo-600">
+                                                        {service.sale_price && service.sale_price > 0 
+                                                            ? `${service.sale_price.toLocaleString()} FCFA`
+                                                            : (service.price ? `${service.price.toLocaleString()} FCFA` : "Sur devis")}
+                                                    </div>
+                                                    {service.sale_price && service.sale_price > 0 && (
+                                                        <div className="text-xs text-slate-400 line-through font-medium italic">
+                                                            {service.price?.toLocaleString()} FCFA
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                             {/* Link pointant vers le book ou detail si existant, placeholder pour l'instant */}

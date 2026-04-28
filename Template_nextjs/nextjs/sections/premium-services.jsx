@@ -111,8 +111,17 @@ export default function PremiumServices() {
                                     </div>
                                     <h3 className="text-xl font-bold text-slate-900 mb-3">{service.name}</h3>
                                     <p className="text-slate-500 text-sm leading-relaxed mb-6 flex-1 line-clamp-3">{service.description}</p>
-                                    <div className="text-sm font-semibold text-[#D4AF37] mt-auto">
-                                        {service.price ? `${service.price.toLocaleString()} FCFA` : "Sur Devis"}
+                                    <div className="flex flex-col mt-auto gap-1">
+                                        <div className="text-sm font-black text-indigo-600">
+                                            {service.sale_price && service.sale_price > 0 
+                                                ? `${service.sale_price.toLocaleString()} FCFA`
+                                                : (service.price ? `${service.price.toLocaleString()} FCFA` : "Sur Devis")}
+                                        </div>
+                                        {service.sale_price && service.sale_price > 0 && (
+                                            <div className="text-[10px] text-slate-400 line-through font-medium italic">
+                                                {service.price?.toLocaleString()} FCFA
+                                            </div>
+                                        )}
                                     </div>
                                 </motion.div>
                             ))

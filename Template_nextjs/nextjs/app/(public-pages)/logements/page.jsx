@@ -192,8 +192,15 @@ export default function CatalogPage() {
                                             </button>
                                         </div>
                                         {property.type && (
-                                            <div className="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-semibold text-white tracking-widest uppercase shadow-sm">
-                                                {property.type}
+                                            <div className="absolute top-4 left-4 flex flex-col gap-2">
+                                                <div className="bg-slate-900/80 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-semibold text-white tracking-widest uppercase shadow-sm">
+                                                    {property.type}
+                                                </div>
+                                                {property.sale_price && property.sale_price > 0 && (
+                                                    <div className="bg-amber-500 px-3 py-1.5 rounded-full text-[10px] font-black text-white tracking-widest uppercase shadow-xl animate-pulse self-start">
+                                                        - {Math.round((1 - property.sale_price / property.price) * 100)}%
+                                                    </div>
+                                                )}
                                             </div>
                                         )}
                                     </div>
@@ -219,7 +226,16 @@ export default function CatalogPage() {
                                         <div className="pt-6 border-t border-slate-100 flex items-center justify-between">
                                             <div>
                                                 <div className="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-1">Prix par nuit</div>
-                                                <div className="text-lg font-bold text-[#D4AF37]">{property.price?.toLocaleString()} FCFA</div>
+                                                <div className="flex items-baseline gap-2">
+                                                    <div className="text-lg font-bold text-[#D4AF37]">
+                                                        {(property.sale_price && property.sale_price > 0 ? property.sale_price : property.price)?.toLocaleString()} FCFA
+                                                    </div>
+                                                    {property.sale_price && property.sale_price > 0 && (
+                                                        <div className="text-xs text-slate-400 line-through font-medium italic">
+                                                            {property.price?.toLocaleString()} FCFA
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
                                             <Link href={`/logements/${property.id}`} className="w-12 h-12 rounded-full bg-slate-50 group-hover:bg-slate-900 flex items-center justify-center transition-colors">
                                                 <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-white transition-colors" />

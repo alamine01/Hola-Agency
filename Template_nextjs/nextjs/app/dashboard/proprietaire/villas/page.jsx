@@ -33,10 +33,17 @@ const VillaCard = ({ villa, onEdit, onDelete }) => {
     const [showMenu, setShowMenu] = useState(false);
     // Calcul du net (85% du prix brut comme dans le PHP original)
     const priceValue = villa.price || 0;
-    const netPrice = Math.floor(priceValue * 0.85);
+    const salePrice = villa.sale_price;
+    const activePrice = salePrice && salePrice > 0 ? salePrice : priceValue;
+    const netPrice = Math.floor(activePrice * 0.85);
 
     return (
-        <div className="bg-white rounded-[2rem] border border-slate-100 p-4 flex flex-col gap-4 hover:shadow-xl transition-all group shadow-sm">
+        <div className="bg-white rounded-[2rem] border border-slate-100 p-4 flex flex-col gap-4 hover:shadow-xl transition-all group shadow-sm relative overflow-hidden">
+            {salePrice && salePrice > 0 && (
+                <div className="absolute top-6 -left-8 bg-amber-500 text-white text-[8px] font-black uppercase tracking-widest px-10 py-1.5 -rotate-45 z-10 shadow-lg">
+                    PROMO
+                </div>
+            )}
             <div className="relative h-48 sm:h-56 rounded-[1.5rem] overflow-hidden bg-slate-50">
                 {villa.image ? (
                     <img src={villa.image} alt={villa.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
@@ -70,7 +77,16 @@ const VillaCard = ({ villa, onEdit, onDelete }) => {
                     <div>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Revenu Net (-15%)</p>
                         <p className="font-black text-amber-600 text-lg">{netPrice.toLocaleString()} <span className="text-[10px] font-bold">FCFA</span></p>
-                        <p className="text-[9px] font-medium text-slate-400 mt-1 opacity-70 italic">Brut : {priceValue.toLocaleString()} FCFA</p>
+                        <div className="flex items-center gap-2 mt-1">
+                            {salePrice && salePrice > 0 ? (
+                                <>
+                                    <p className="text-[9px] font-black text-slate-900">{salePrice.toLocaleString()} <span className="text-[8px]">FCFA</span></p>
+                                    <p className="text-[9px] font-medium text-slate-400 line-through italic opacity-70">{priceValue.toLocaleString()} FCFA</p>
+                                </>
+                            ) : (
+                                <p className="text-[9px] font-medium text-slate-400 opacity-70 italic">Brut : {priceValue.toLocaleString()} FCFA</p>
+                            )}
+                        </div>
                     </div>
                     <div className="relative">
                         <button
@@ -110,6 +126,7 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
         rooms: '',
         guests: '',
         price: '',
+        sale_price: '',
         description: '',
         payment_methods: [],
         amenities: []
@@ -126,13 +143,14 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                     rooms: initialData.rooms || '',
                     guests: initialData.guests || '',
                     price: initialData.price || '',
+                    sale_price: initialData.sale_price || '',
                     description: initialData.description || '',
                     payment_methods: initialData.payment_methods || [],
                     amenities: initialData.amenities || []
                 });
                 setPreview(initialData.image || null);
             } else {
-                setFormData({ name: '', type: 'Villa Prestige', city: '', country: 'Sénégal', rooms: '', guests: '', price: '', description: '', payment_methods: [], amenities: [] });
+                setFormData({ name: '', type: 'Villa Prestige', city: '', country: 'Sénégal', rooms: '', guests: '', price: '', sale_price: '', description: '', payment_methods: [], amenities: [] });
                 setPreview(null);
             }
             setFile(null);
@@ -197,6 +215,7 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                 rooms: parseInt(formData.rooms) || 0,
                 guests: parseInt(formData.guests) || 0,
                 price: parseInt(formData.price),
+                sale_price: formData.sale_price ? parseInt(formData.sale_price) : null,
                 description: formData.description,
                 payment_methods: formData.payment_methods,
                 amenities: formData.amenities,
@@ -328,7 +347,7 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-3 gap-4">
+                        <div className="grid grid-cols-4 gap-4">
                             <div className="space-y-2">
                                 <label className="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] pl-1 text-center block">Chambres</label>
                                 <input
@@ -350,13 +369,23 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] pl-1 text-center block text-amber-600">Prix / Nuit</label>
+                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] pl-1 text-center block text-slate-400">Prix Normal</label>
                                 <input
                                     type="number"
                                     value={formData.price}
                                     onChange={e => setFormData({ ...formData, price: e.target.value })}
                                     placeholder="85000"
-                                    className="w-full px-5 py-4 bg-amber-50/30 border border-amber-100/50 rounded-2xl outline-none focus:border-amber-600 focus:bg-white transition-all text-xs font-black text-center text-amber-600"
+                                    className="w-full px-5 py-4 bg-slate-50/30 border border-slate-100/50 rounded-2xl outline-none focus:border-slate-400 transition-all text-xs font-black text-center text-slate-600"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[9px] font-black text-amber-600 uppercase tracking-[0.15em] pl-1 text-center block">Mise en vente</label>
+                                <input
+                                    type="number"
+                                    value={formData.sale_price}
+                                    onChange={e => setFormData({ ...formData, sale_price: e.target.value })}
+                                    placeholder="Promo ?"
+                                    className="w-full px-5 py-4 bg-amber-50/30 border border-amber-100/50 rounded-2xl outline-none focus:border-amber-600 focus:bg-white transition-all text-xs font-black text-center text-amber-600 shadow-sm"
                                 />
                             </div>
                         </div>

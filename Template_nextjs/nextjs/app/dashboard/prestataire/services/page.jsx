@@ -27,10 +27,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 const ServiceCard = ({ service, onEdit, onDelete }) => {
     // Calcul du net (85% comme pour les villas)
     const priceValue = service.price || 0;
-    const netPrice = Math.floor(priceValue * 0.85);
+    const salePrice = service.sale_price;
+    const activePrice = salePrice && salePrice > 0 ? salePrice : priceValue;
+    const netPrice = Math.floor(activePrice * 0.85);
 
     return (
         <div className="bg-white rounded-[2rem] border border-slate-100 p-6 hover:shadow-xl transition-all group overflow-hidden relative shadow-sm">
+            {salePrice && salePrice > 0 && (
+                <div className="absolute top-6 -left-8 bg-amber-500 text-white text-[8px] font-black uppercase tracking-widest px-10 py-1.5 -rotate-45 z-10 shadow-lg">
+                    PROMO
+                </div>
+            )}
             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full -mr-16 -mt-16 group-hover:bg-amber-500/10 transition-colors blur-2xl"></div>
 
             <div className="relative z-10">
@@ -52,7 +59,16 @@ const ServiceCard = ({ service, onEdit, onDelete }) => {
                     <div>
                         <p className="text-[10px] uppercase font-black text-slate-400 tracking-[0.15em] mb-0.5">Votre Gain Net</p>
                         <p className="text-lg font-black text-amber-600">{netPrice.toLocaleString()} <span className="text-[10px] font-bold">FCFA</span></p>
-                        <p className="text-[9px] font-medium text-slate-400 opacity-70 italic">Brut : {priceValue.toLocaleString()} FCFA</p>
+                        <div className="flex items-center gap-2 mt-1">
+                            {salePrice && salePrice > 0 ? (
+                                <>
+                                    <p className="text-[9px] font-black text-slate-900">{salePrice.toLocaleString()} <span className="text-[8px]">FCFA</span></p>
+                                    <p className="text-[9px] font-medium text-slate-400 line-through italic opacity-70">{priceValue.toLocaleString()} FCFA</p>
+                                </>
+                            ) : (
+                                <p className="text-[9px] font-medium text-slate-400 opacity-70 italic">Brut : {priceValue.toLocaleString()} FCFA</p>
+                            )}
+                        </div>
                     </div>
                     <div className="text-right">
                         <p className="text-[10px] uppercase font-black text-slate-400 tracking-[0.15em] mb-1">Notation</p>
@@ -86,6 +102,7 @@ const AddServiceModal = ({ isOpen, onClose, onRefresh, initialData }) => {
         type: 'massage',
         location: '',
         price: '',
+        sale_price: '',
         description: ''
     });
 
@@ -96,12 +113,13 @@ const AddServiceModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                 type: initialData.type || 'massage',
                 location: initialData.location || '',
                 price: initialData.price || '',
+                sale_price: initialData.sale_price || '',
                 description: initialData.description || ''
             });
             if (initialData.image) setPreview(initialData.image);
             else setPreview(null);
         } else if (isOpen) {
-            setFormData({ name: '', type: 'massage', location: '', price: '', description: '' });
+            setFormData({ name: '', type: 'massage', location: '', price: '', sale_price: '', description: '' });
             setPreview(null);
         }
         setFile(null);
@@ -148,6 +166,7 @@ const AddServiceModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                     type: formData.type,
                     location: formData.location,
                     price: parseInt(formData.price),
+                    sale_price: formData.sale_price ? parseInt(formData.sale_price) : null,
                     description: formData.description,
                     ...(imageUrl ? { image: imageUrl } : {})
                 }).eq('id', initialData.id).select();
@@ -164,6 +183,7 @@ const AddServiceModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                     type: formData.type,
                     location: formData.location,
                     price: parseInt(formData.price),
+                    sale_price: formData.sale_price ? parseInt(formData.sale_price) : null,
                     description: formData.description,
                     image: imageUrl,
                     status: 'active'
@@ -273,15 +293,28 @@ const AddServiceModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                                 </div>
                             </div>
                             <div className="space-y-1">
-                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest pl-1">Prix Brut (FCFA)</label>
+                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest pl-1">Prix Normal</label>
                                 <div className="relative">
-                                    <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-amber-600" />
+                                    <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
                                     <input
                                         type="number"
                                         value={formData.price}
                                         onChange={e => setFormData({ ...formData, price: e.target.value })}
                                         placeholder="ex: 25000"
-                                        className="w-full pl-10 pr-4 py-3.5 bg-amber-50/30 border border-amber-100/50 rounded-2xl outline-none focus:border-amber-600 transition-all text-xs font-black text-amber-600"
+                                        className="w-full pl-10 pr-4 py-3.5 bg-slate-50/50 border border-slate-100 rounded-2xl outline-none focus:border-amber-600/30 transition-all text-xs font-black text-slate-600"
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[9px] font-black text-amber-600 uppercase tracking-widest pl-1">Prix Promo</label>
+                                <div className="relative">
+                                    <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-amber-600" />
+                                    <input
+                                        type="number"
+                                        value={formData.sale_price}
+                                        onChange={e => setFormData({ ...formData, sale_price: e.target.value })}
+                                        placeholder="Optionnel"
+                                        className="w-full pl-10 pr-4 py-3.5 bg-amber-50/30 border border-amber-100/50 rounded-2xl outline-none focus:border-amber-600 transition-all text-xs font-black text-amber-600 shadow-sm"
                                     />
                                 </div>
                             </div>
