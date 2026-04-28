@@ -31,10 +31,10 @@ export default function Footer() {
 
     return (
         <footer className="px-4 md:px-16 lg:px-24 text-[14px] mt-24 pt-16 pb-12 bg-white text-slate-600 border-t border-slate-100">
-            <div className="max-w-7xl mx-auto flex flex-wrap items-start md:justify-between gap-12">
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row flex-wrap items-center md:items-start justify-center md:justify-between gap-12 text-center md:text-left">
 
                 {/* Brand Info */}
-                <div className="max-w-xs">
+                <div className="max-w-xs flex flex-col items-center md:items-start">
                     <div className="flex items-center gap-2 text-[#D4AF37] font-bold tracking-wider mb-6">
                         <img src="/logo.svg" alt="Logo" className="h-10 w-auto object-contain" />
                         <span className="text-xl">HOLA AGENCY</span>
@@ -46,7 +46,7 @@ export default function Footer() {
 
                 {/* Links */}
                 {data.map((item, index) => (
-                    <div key={index} className="min-w-[150px]">
+                    <div key={index} className="min-w-[150px] flex flex-col items-center md:items-start">
                         <p className="font-bold text-slate-900 mb-6">{item.title}</p>
                         <ul className="space-y-4">
                             {item.links.map((link, idx) => (
