@@ -228,7 +228,7 @@ export default function DynamicProfileView({ role = 'client' }) {
     if (loading) return <div className="h-full flex items-center justify-center p-20 text-slate-400"><Loader2 className="animate-spin" /></div>;
 
     return (
-        <div className="max-w-4xl mx-auto space-y-8 pb-10">
+        <div className="max-w-4xl mx-auto space-y-8 pb-10 px-4 md:px-8 pt-6">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div className="text-center md:text-left">
                     <h1 className="text-3xl font-black text-slate-900 mb-2 tracking-tight uppercase">Mon Profil {role}</h1>

@@ -161,7 +161,7 @@ export default function AdminRevenusView() {
     if (loading) return <div className="h-full flex items-center justify-center p-20"><Loader2 className="animate-spin" /></div>;
 
     return (
-        <div className="max-w-7xl mx-auto space-y-10 pb-20">
+        <div className="max-w-7xl mx-auto space-y-10 pb-20 px-4 md:px-8 pt-6">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>

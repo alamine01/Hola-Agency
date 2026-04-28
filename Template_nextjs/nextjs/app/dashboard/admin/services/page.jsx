@@ -55,7 +55,7 @@ export default function AdminServicesPage() {
     }
 
     return (
-        <div className="max-w-7xl mx-auto space-y-8 pb-20">
+        <div className="max-w-7xl mx-auto space-y-8 pb-20 px-4 md:px-8 pt-6">
             <div>
                 <h1 className="text-3xl font-black text-slate-900 tracking-tight">Gestion des Services</h1>
                 <p className="text-slate-500 mt-2">Gérez les prestations et choisissez celles affichées "À la une" sur la page d'accueil.</p>

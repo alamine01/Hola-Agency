@@ -98,7 +98,7 @@ export default function AdminDashboardView() {
     if (loading) return <div className="h-full flex items-center justify-center p-20"><Loader2 className="animate-spin text-slate-900" /></div>;
 
     return (
-        <div className="max-w-7xl mx-auto space-y-10 pb-20">
+        <div className="max-w-7xl mx-auto space-y-10 pb-20 px-4 md:px-8 pt-6">
             <div className="mb-10 md:mb-14">
                 <div className="flex items-center gap-3 mb-2 flex-wrap">
                     <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">

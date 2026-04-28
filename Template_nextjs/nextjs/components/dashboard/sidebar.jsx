@@ -149,7 +149,7 @@ const Sidebar = ({ role }) => {
 
             {/* Sidebar Desktop & Mobile Container */}
             <aside className={`
-                fixed top-0 left-0 bottom-0 z-[70] w-[280px] transition-transform duration-300 transform
+                fixed top-0 left-0 bottom-0 z-[70] w-[280px] max-w-[85vw] transition-transform duration-300 transform
                 lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}
             `}>
                 <SidebarContent />

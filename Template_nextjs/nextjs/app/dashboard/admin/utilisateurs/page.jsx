@@ -76,7 +76,7 @@ export default function AdminUsersPage() {
     );
 
     return (
-        <div className="max-w-7xl mx-auto space-y-8 pb-20">
+        <div className="max-w-7xl mx-auto space-y-8 pb-20 px-4 md:px-8 pt-6">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
@@ -119,9 +119,8 @@ export default function AdminUsersPage() {
                 </div>
             </div>
 
-            {/* User List */}
-            <div className="bg-white rounded-[3rem] border border-slate-100 shadow-sm">
-                <div className="overflow-visible">
+            <div className="bg-white rounded-[2rem] md:rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
                     <table className="w-full border-collapse">
                         <thead>
                             <tr className="bg-slate-50/50 border-b border-slate-50">
