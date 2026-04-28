@@ -37,7 +37,7 @@ export async function POST(req) {
             currency: "XOF",
             ref_command: bookingId,
             command_name: `Réservation HOLA #${bookingId.slice(0, 8)}`,
-            env: process.env.PAYTECH_ENVIRONMENT || "test", // 'test' ou 'live'
+            env: process.env.PAYTECH_ENVIRONMENT === 'live' ? 'prod' : (process.env.PAYTECH_ENVIRONMENT || "test"), // 'test' ou 'prod' (PayTech n'accepte pas 'live')
             success_url: `${validSiteUrl}/dashboard/client/paiement/success`,
             ipn_url: ipnUrl,
             cancel_url: `${validSiteUrl}/dashboard/client/paiement/${bookingId}`,
