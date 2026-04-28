@@ -68,16 +68,17 @@ export default function PremiumServices() {
                             Au-delà d'un simple logement, HOLA vous donne accès à un réseau exclusif de prestataires haut de gamme, vérifiés pour vous garantir l'excellence.
                         </motion.p>
 
-                        <motion.a
-                            href="#services"
-                            initial={{ opacity: 0, x: -30 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: 0.3 }}
-                            className="inline-block px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full font-medium transition-colors shadow-lg shadow-indigo-200"
-                        >
-                            Découvrir nos services
-                        </motion.a>
+                        <Link href="/services">
+                            <motion.div
+                                initial={{ opacity: 0, x: -30 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: 0.3 }}
+                                className="inline-block px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full font-medium transition-colors shadow-lg shadow-indigo-200"
+                            >
+                                Découvrir nos services
+                            </motion.div>
+                        </Link>
                     </div>
 
                     {/* Right Grid */}
