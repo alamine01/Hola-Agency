@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Home, ArrowRight, Loader2, PartyPopper } from 'lucide-react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 
-export default function PaymentSuccessPage() {
+function SuccessContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const [verifying, setVerifying] = useState(true);
@@ -117,5 +117,13 @@ export default function PaymentSuccessPage() {
                 </p>
             </motion.div>
         </div>
+    );
+}
+
+export default function PaymentSuccessPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-slate-50"><Loader2 className="w-12 h-12 animate-spin text-emerald-500" /></div>}>
+            <SuccessContent />
+        </Suspense>
     );
 }
