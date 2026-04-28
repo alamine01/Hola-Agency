@@ -32,7 +32,7 @@ const AdminStatCard = ({ title, value, icon: Icon, color, trend }) => (
             </div>
             <p className="text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{title}</p>
             <div className="flex items-end gap-2 md:gap-3">
-                <h3 className="text-xl md:text-3xl font-black text-slate-900 tracking-tight">{value}</h3>
+                <h3 className="text-sm md:text-3xl font-black text-slate-900 tracking-tight">{value}</h3>
                 {trend && (
                     <span className="text-[8px] md:text-[10px] font-black text-emerald-600 mb-0.5 md:mb-1 flex items-center gap-0.5">
                         <ArrowUpRight className="w-2.5 h-2.5 md:w-3 md:h-3" /> {trend}

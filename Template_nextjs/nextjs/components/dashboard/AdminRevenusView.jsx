@@ -177,20 +177,20 @@ export default function AdminRevenusView() {
             </div>
 
             {/* Stats Overview */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 {[
                     { label: "Volume Global", value: stats.total, icon: Wallet, color: "bg-amber-600" },
                     { label: "Commissions (15%)", value: stats.commission, icon: Briefcase, color: "bg-amber-500" },
                     { label: "Transactions Net", value: stats.net, icon: TrendingUp, color: "bg-emerald-600" },
                     { label: "Flux en attente", value: stats.pending, icon: Clock, color: "bg-slate-900" }
                 ].map((s, i) => (
-                    <div key={i} className="bg-white p-7 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group">
+                    <div key={i} className="bg-white p-4 md:p-7 rounded-[1.5rem] md:rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group">
                         <div className="relative z-10">
-                            <div className={`w-12 h-12 rounded-2xl ${s.color} flex items-center justify-center mb-6 shadow-lg`}>
+                            <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl ${s.color} flex items-center justify-center mb-4 md:mb-6 shadow-lg`}>
                                 <s.icon className="w-6 h-6 text-white" />
                             </div>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{s.label}</p>
-                            <h3 className="text-2xl font-black text-slate-900 tracking-tight">{s.value.toLocaleString()} <span className="text-[10px]">FCFA</span></h3>
+                            <p className="text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{s.label}</p>
+                            <h3 className="text-sm md:text-2xl font-black text-slate-900 tracking-tight">{s.value.toLocaleString()} <span className="text-[8px] md:text-[10px]">FCFA</span></h3>
                         </div>
                     </div>
                 ))}
