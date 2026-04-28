@@ -91,14 +91,14 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
                         exit={{ opacity: 0, scale: 0.9, y: 20 }}
                         className="relative bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden"
                     >
-                        <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
-                            <h3 className="text-xl font-bold text-slate-900 tracking-tight">Détails de la facture</h3>
+                        <div className="p-6 md:p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
+                            <h3 className="text-lg md:text-xl font-bold text-slate-900 tracking-tight">Détails de la facture</h3>
                             <button onClick={onClose} className="p-2 hover:bg-white rounded-xl transition-colors text-slate-400 hover:text-slate-900">
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
 
-                        <div className="p-8">
+                        <div className="p-6 md:p-8">
                             <div className="flex items-center gap-4 mb-8">
                                 <div className="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600">
                                     <FileText className="w-8 h-8" />
@@ -148,14 +148,14 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
                                     </div>
                                 </div>
 
-                                <div className="pt-8 mt-8 border-t border-slate-100 flex items-center justify-between">
-                                    <div>
+                                <div className="pt-6 md:pt-8 mt-6 md:mt-8 border-t border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-4">
+                                    <div className="text-center md:text-left">
                                         <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-1">Montant Total</p>
                                         <p className="text-2xl font-black text-slate-900 font-mono tracking-tighter">{invoice.amount.toLocaleString()} FCFA</p>
                                     </div>
                                     <button
                                         onClick={handleDownloadPDF}
-                                        className="inline-flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-amber-600 transition-all active:scale-95 shadow-xl shadow-slate-200"
+                                        className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-amber-600 transition-all active:scale-95 shadow-xl shadow-slate-200 w-full md:w-auto"
                                     >
                                         <Download className="w-5 h-5" /> Télécharger PDF
                                     </button>

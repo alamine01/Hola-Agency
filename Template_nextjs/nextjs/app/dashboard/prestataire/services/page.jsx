@@ -310,10 +310,79 @@ const AddServiceModal = ({ isOpen, onClose, onRefresh, initialData }) => {
             </motion.div>
         </div>
     );
+const TipsModal = ({ isOpen, onClose }) => {
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={onClose}
+                className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
+            />
+            <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                className="relative bg-white rounded-[2.5rem] p-8 md:p-12 w-full max-w-xl shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar"
+            >
+                <button onClick={onClose} className="absolute top-8 right-8 p-3 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-50 z-10">
+                    <X className="w-6 h-6" />
+                </button>
+
+                <div className="mb-10 flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+                    <div className="w-16 h-16 bg-amber-500 text-white rounded-2xl flex items-center justify-center shadow-xl shadow-amber-100 shrink-0">
+                        <Lightbulb className="w-8 h-8" />
+                    </div>
+                    <div>
+                        <h2 className="text-2xl font-black text-slate-900 tracking-tight uppercase mb-1">Astuces d'Expert</h2>
+                        <p className="text-slate-500 font-bold text-xs italic tracking-wide uppercase opacity-60">"Boostez l'attrait de vos services"</p>
+                    </div>
+                </div>
+
+                <div className="space-y-4 mb-10 overflow-x-hidden">
+                    {[
+                        { 
+                            id: 1, 
+                            title: "Photos Lumineuses", 
+                            desc: "Utilisez des photos claires et de haute qualité. Les services avec de belles images convertissent 3x plus.",
+                            color: "bg-amber-50 text-amber-600 border-amber-100"
+                        },
+                        { 
+                            id: 2, 
+                            title: "Description Captivante", 
+                            desc: "Soyez précis : expliquez exactement ce que comprend votre prestation et ce qui vous différencie.",
+                            color: "bg-emerald-50 text-emerald-600 border-emerald-100"
+                        },
+                        { 
+                            id: 3, 
+                            title: "Tarifs Compétitifs", 
+                            desc: "Observez le marché et proposez un prix juste. N'oubliez pas que HOLA gère toute la sécurité du paiement.",
+                            color: "bg-blue-50 text-blue-600 border-blue-100"
+                        }
+                    ].map(tip => (
+                        <div key={tip.id} className={`p-6 rounded-[2rem] border ${tip.color} shadow-sm text-left`}>
+                            <h4 className="font-black uppercase text-[10px] tracking-widest mb-2 flex items-center gap-2">
+                                <span className="w-6 h-6 rounded-lg bg-white/50 flex items-center justify-center border border-current opacity-50">{tip.id}</span>
+                                {tip.title}
+                            </h4>
+                            <p className="text-slate-700 text-sm font-medium leading-relaxed italic">"{tip.desc}"</p>
+                        </div>
+                    ))}
+                </div>
+
+                <button onClick={onClose} className="w-full py-5 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] hover:bg-amber-500 hover:text-slate-900 transition-all shadow-xl active:scale-95">
+                    Commencer à briller
+                </button>
+            </motion.div>
+        </div>
+    );
 };
 
 export default function PrestataireServicesPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isTipsOpen, setIsTipsOpen] = useState(false);
     const [serviceToEdit, setServiceToEdit] = useState(null);
     const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -385,23 +454,31 @@ export default function PrestataireServicesPage() {
             </div>
 
             {/* Harmonized Footer Card (Light Gradient) */}
-            <div className="mt-20 bg-gradient-to-br from-white to-slate-50/50 rounded-[3rem] border border-slate-100 p-10 md:p-14 text-center group transition-all relative overflow-hidden shadow-sm">
+            <div className="mt-12 md:mt-20 bg-gradient-to-br from-white to-slate-50/50 rounded-[2rem] md:rounded-[3rem] border border-slate-100 p-8 md:p-14 text-center group transition-all relative overflow-hidden shadow-sm">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl -translate-y-10 translate-x-10"></div>
                 <div className="absolute bottom-0 left-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl translate-y-10 -translate-x-10"></div>
 
-                <div className="w-20 h-20 bg-white shadow-2xl shadow-slate-200/50 rounded-3xl flex items-center justify-center mx-auto mb-8 text-amber-500 group-hover:scale-110 transition-transform relative z-10 ring-4 ring-slate-50/50">
-                    <Lightbulb className="w-10 h-10" />
+                <div className="w-16 h-16 md:w-20 md:h-20 bg-white shadow-2xl shadow-slate-200/50 rounded-2xl md:rounded-3xl flex items-center justify-center mx-auto mb-6 md:mb-8 text-amber-500 group-hover:scale-110 transition-transform relative z-10 ring-4 ring-slate-50/50">
+                    <Lightbulb className="w-8 h-8 md:w-10 md:h-10" />
                 </div>
 
-                <h3 className="text-2xl font-black text-slate-900 mb-4 tracking-tight relative z-10 transition-colors group-hover:text-amber-600 uppercase">Devenez un Expert HOLA</h3>
-                <p className="text-slate-500 font-medium max-w-lg mx-auto mb-10 leading-relaxed relative z-10 italic">
+                <h3 className="text-xl md:text-2xl font-black text-slate-900 mb-4 tracking-tight relative z-10 transition-colors group-hover:text-amber-600 uppercase">Devenez un Expert HOLA</h3>
+                <p className="text-slate-500 text-sm md:text-base font-medium max-w-lg mx-auto mb-8 md:mb-10 leading-relaxed relative z-10 italic">
                     "Comme pour les villas, une commission de 15% est appliquée sur chaque prestation pour garantir la mise en avant de votre expertise et la gestion sécurisée."
                 </p>
 
-                <button className="px-10 py-4 bg-slate-900 text-white rounded-[1.2rem] font-black uppercase tracking-widest text-[10px] hover:bg-amber-500 hover:text-slate-900 hover:shadow-2xl hover:shadow-amber-200 transition-all active:scale-95 relative z-10">
+                <button
+                    onClick={() => setIsTipsOpen(true)}
+                    className="w-full md:w-auto px-10 py-4 bg-slate-900 text-white rounded-[1.2rem] font-black uppercase tracking-widest text-[10px] hover:bg-amber-500 hover:text-slate-900 hover:shadow-2xl hover:shadow-amber-200 transition-all active:scale-95 relative z-10"
+                >
                     Découvrir les astuces
                 </button>
             </div>
+
+            <TipsModal
+                isOpen={isTipsOpen}
+                onClose={() => setIsTipsOpen(false)}
+            />
 
             <AddServiceModal
                 isOpen={isModalOpen}
