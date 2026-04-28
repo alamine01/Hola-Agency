@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, UtensilsCrossed, Car, Wine, Loader2, Briefcase } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import Link from 'next/link';
 
 export default function PremiumServices() {
     const [services, setServices] = useState([]);
