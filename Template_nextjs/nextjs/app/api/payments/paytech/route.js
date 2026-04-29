@@ -15,63 +15,77 @@ export async function POST(req) {
             return NextResponse.json({ success: false, error: "Données incomplètes." }, { status: 400 });
         }
 
-        // 1. Mettre à jour les métadonnées de la réservation dans Supabase
-        if (phoneNumber || accountHolder) {
-            await supabase
-                .from('bookings')
-                .update({ 
-                    metadata: { 
-                        phoneNumber, 
-                        accountHolder, 
-                        paymentMethod,
-                        updated_at: new Date().toISOString() 
-                    } 
-                })
-                .eq('id', bookingId);
-        }
+        // 1. Mettre à jour les métadonnées de la réservation
+        await supabase
+            .from('bookings')
+            .update({ 
+                metadata: { 
+                    phoneNumber, 
+                    accountHolder, 
+                    paymentMethod,
+                    updated_at: new Date().toISOString() 
+                } 
+            })
+            .eq('id', bookingId);
 
-        if (!PAYTECH_API_KEY || PAYTECH_API_KEY === 'votre_cle_api_ici') {
-            return NextResponse.json({
-                success: false,
-                error: "Clé PayTech non configurée. Remplacez 'votre_cle_api_ici' par votre clé API réelle dans .env.local (récupérable sur paytech.sn)."
-            }, { status: 500 });
-        }
         const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
         const isLocal = siteUrl.includes('localhost');
-        const ipnUrl = isLocal ? 'https://holaluxe.com/api/webhooks/paytech' : `${siteUrl}/api/webhooks/paytech`;
+        const callbackUrl = isLocal ? 'https://holaluxe.com/api/webhooks/paytech' : `${siteUrl}/api/webhooks/paytech`;
 
-        // Astuce : PayTech déteste le mot "localhost" (qui n'est pas un domaine valide pour eux).
-        // Ils exigent aussi absolument "https://" pour les urls de redirection (succès/annulation).
-        // On trompe la sécurité en envoyant le domaine holaluxe.com pour que le popup s'affiche en mode test.
+        // MODE SEAMLESS (Intech API) pour Wave et Orange Money
+        if (paymentMethod === 'wave' || paymentMethod === 'orange') {
+            const codeService = paymentMethod === 'wave' ? 'WAVE_SN_API_CASH_IN' : 'ORANGE_SN_API_CASH_IN';
+            
+            const intechData = {
+                apiKey: PAYTECH_API_KEY,
+                phone: phoneNumber.replace(/\s+/g, ''), // Nettoyer le numéro
+                amount: amount,
+                codeService: codeService,
+                externalTransactionId: bookingId,
+                callbackUrl: callbackUrl,
+                data: JSON.stringify({ booking_id: bookingId, title })
+            };
+
+            console.log("Calling Intech API (Seamless)...");
+            const response = await fetch('https://api.intech.sn/api-services/operation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(intechData)
+            });
+
+            const result = await response.json();
+            console.log("Intech API Result:", result);
+
+            if (result.code === 2000) {
+                return NextResponse.json({
+                    success: true,
+                    seamless: true,
+                    status: result.data.status,
+                    transactionId: result.data.transactionId,
+                    deepLinkUrl: result.data.deepLinkUrl || null, // Pour Wave
+                    message: "Paiement initié. Veuillez confirmer sur votre téléphone."
+                });
+            } else {
+                throw new Error(result.msg || "Erreur lors de l'initiation du paiement direct.");
+            }
+        }
+
+        // MODE REDIRECTION (PayTech Standard) pour les autres cas (ou fallback)
         const validSiteUrl = isLocal ? 'https://holaluxe.com' : siteUrl;
-
-        // PayTech attend souvent un format spécifique
         const paytechData = {
             item_name: title || "Séjour HOLA",
             item_price: amount,
             currency: "XOF",
             ref_command: bookingId,
             command_name: `Réservation HOLA #${bookingId.slice(0, 8)}`,
-            env: process.env.PAYTECH_ENVIRONMENT === 'live' ? 'prod' : (process.env.PAYTECH_ENVIRONMENT || "test"), // 'test' ou 'prod' (PayTech n'accepte pas 'live')
+            env: process.env.PAYTECH_ENVIRONMENT === 'live' ? 'prod' : (process.env.PAYTECH_ENVIRONMENT || "test"),
             success_url: `${validSiteUrl}/dashboard/client/paiement/success`,
-            ipn_url: ipnUrl,
+            ipn_url: callbackUrl,
             cancel_url: `${validSiteUrl}/dashboard/client/paiement/${bookingId}`,
-            custom_field: JSON.stringify({ 
-                booking_id: bookingId,
-                customer_phone: phoneNumber,
-                customer_name: accountHolder,
-                method: paymentMethod
-            })
+            custom_field: JSON.stringify({ booking_id: bookingId }),
+            target_payment: paymentMethod === 'wave' ? 'Wave' : (paymentMethod === 'orange' ? 'Orange Money' : null)
         };
 
-        // Bypassing the selection page by specifying the target payment
-        if (paymentMethod === 'wave') {
-            paytechData.target_payment = 'Wave';
-        } else if (paymentMethod === 'orange') {
-            paytechData.target_payment = 'Orange Money';
-        }
-
-        // 3. Appel à l'API PayTech
         const response = await fetch('https://paytech.sn/api/payment/request-payment', {
             method: 'POST',
             headers: {
@@ -81,11 +95,9 @@ export async function POST(req) {
             },
             body: JSON.stringify(paytechData)
         });
-        const result = await response.json();
 
-        if (result.success !== 1) {
-            throw new Error("Erreur de l'API PayTech: " + JSON.stringify(result));
-        }
+        const result = await response.json();
+        if (result.success !== 1) throw new Error(result.error || "Erreur PayTech");
 
         return NextResponse.json({
             success: true,
@@ -93,7 +105,7 @@ export async function POST(req) {
         });
 
     } catch (error) {
-        console.error("PayTech Error:", error);
+        console.error("Payment API Error:", error);
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 }
