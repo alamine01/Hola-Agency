@@ -21,14 +21,13 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
     if (!invoice) return null;
 
     const handleDownloadPDF = () => {
-        const printWindow = window.open('', '_blank');
         const html = `
         <!DOCTYPE html>
         <html><head><title>Facture ${invoice.ref}</title>
         <style>
             body { font-family: 'Segoe UI', sans-serif; max-width: 700px; margin: 0 auto; padding: 40px; color: #1e293b; }
-            .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 3px solid #4f46e5; padding-bottom: 20px; }
-            .logo { font-size: 28px; font-weight: 900; color: #1e293b; } .logo span { color: #4f46e5; }
+            .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 3px solid #D4AF37; padding-bottom: 20px; }
+            .logo { font-size: 28px; font-weight: 900; color: #1e293b; } .logo span { color: #D4AF37; }
             .ref { text-align: right; } .ref p { margin: 4px 0; font-size: 13px; color: #64748b; }
             .ref .id { font-size: 16px; font-weight: 800; color: #1e293b; letter-spacing: 1px; }
             .section { margin-bottom: 30px; } .section-title { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; margin-bottom: 10px; }
@@ -41,10 +40,10 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
             .status { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
             .paid { background: #ecfdf5; color: #059669; } .pending { background: #fffbeb; color: #d97706; } .cancelled { background: #fef2f2; color: #dc2626; }
             .footer { margin-top: 60px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 20px; }
-            @media print { body { padding: 20px; } }
+            @media print { body { padding: 20px; } .no-print { display: none; } }
         </style></head><body>
             <div class="header">
-                <img src="/logo.svg" alt="HOLA LUXE" style="height: 50px; object-fit: contain;">
+                <img src="${window.location.origin}/logo.svg" alt="HOLA LUXE" style="height: 50px; object-fit: contain;">
                 <div class="ref">
                     <p class="id">${invoice.ref}</p>
                     <p>${invoice.date}</p>
@@ -67,11 +66,22 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
                 <p>HOLA LUXE — Facture générée automatiquement</p>
                 <p>Pour toute question, contactez contact@holaluxe.com</p>
             </div>
+            <script>
+                window.onload = () => {
+                    setTimeout(() => {
+                        window.print();
+                    }, 500);
+                };
+            </script>
         </body></html>`;
-        printWindow.document.write(html);
-        printWindow.document.close();
-        printWindow.focus();
-        setTimeout(() => printWindow.print(), 300);
+
+        const blob = new Blob([html], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const win = window.open(url, '_blank');
+        if (!win || win.closed || typeof win.closed === 'undefined') {
+            // If popup blocked, fallback to current window (less ideal but works)
+            window.location.href = url;
+        }
     };
 
     return (
