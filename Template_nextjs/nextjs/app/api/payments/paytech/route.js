@@ -33,7 +33,53 @@ export async function POST(req) {
         const callbackUrl = isLocal ? 'https://holaluxe.com/api/webhooks/paytech' : `${siteUrl}/api/webhooks/paytech`;
         const validSiteUrl = isLocal ? 'https://holaluxe.com' : siteUrl;
 
-        // MODE REDIRECTION OPTIMISÉE (Bypass Menu + Bypass Personal Info)
+        // MODE SEAMLESS (Intech API) - Tentative finale avec structure corrigée
+        if (paymentMethod === 'wave' || paymentMethod === 'orange') {
+            const codeService = paymentMethod === 'wave' ? 'WAVE_SN_API_CASH_IN' : 'ORANGE_SN_API_CASH_IN';
+            
+            // Formatage du numéro : Intech API CashIn exige souvent le 221
+            let formattedPhone = phoneNumber.replace(/\s+/g, '').replace(/\+/g, '');
+            if (!formattedPhone.startsWith('221')) {
+                formattedPhone = '221' + formattedPhone;
+            }
+
+            const intechData = {
+                apiKey: PAYTECH_API_KEY,
+                phone: formattedPhone,
+                amount: parseInt(amount),
+                codeService: codeService,
+                externalTransactionId: bookingId.replace(/-/g, '').slice(0, 20),
+                callbackUrl: callbackUrl,
+                data: {} // Objet vide (important: pas de stringify ici car fetch le fera pour tout le body)
+            };
+
+            console.log("Initiating Seamless Payment with Intech...");
+            
+            const response = await fetch('https://api.intech.sn/api-services/operation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(intechData)
+            });
+
+            const result = await response.json();
+            console.log("Intech Result:", result);
+
+            if (result.code === 2000) {
+                return NextResponse.json({
+                    success: true,
+                    seamless: true,
+                    status: result.data.status,
+                    transactionId: result.data.transactionId,
+                    deepLinkUrl: result.data.deepLinkUrl || result.data.authLinkUrl || null,
+                    message: "Paiement initié. Veuillez confirmer sur votre téléphone."
+                });
+            }
+            // Si Intech échoue encore, on ne bloque pas, on prévient et on pourra voir le message
+            console.warn("Intech Seamless failed, falling back to Redirect:", result.msg);
+        }
+
+        // MODE REDIRECTION (Standard) - Avec tous les champs possibles pour pré-remplir
+        const validSiteUrl = isLocal ? 'https://holaluxe.com' : siteUrl;
         const paytechData = {
             item_name: title || "Séjour HOLA",
             item_price: amount,
@@ -44,24 +90,18 @@ export async function POST(req) {
             success_url: `${validSiteUrl}/dashboard/client/paiement/success?booking_id=${bookingId}`,
             ipn_url: callbackUrl,
             cancel_url: `${validSiteUrl}/dashboard/client/paiement/${bookingId}`,
-            // Champs pour pré-remplir et sauter l'étape des infos personnelles chez PayTech
+            
+            // Tentative massive de pré-remplissage pour forcer le saut de l'écran
             customer_phone: phoneNumber.replace(/\s+/g, ''),
+            customer_phone_number: phoneNumber.replace(/\s+/g, ''),
             customer_name: accountHolder,
-            custom_field: JSON.stringify({ 
-                booking_id: bookingId,
-                customer_phone: phoneNumber,
-                customer_name: accountHolder
-            })
+            customer_firstname: accountHolder.split(' ')[0],
+            customer_lastname: accountHolder.split(' ').slice(1).join(' ') || "HOLA",
+            
+            custom_field: JSON.stringify({ booking_id: bookingId }),
+            target_payment: paymentMethod === 'wave' ? 'Wave' : (paymentMethod === 'orange' ? 'Orange Money' : null)
         };
 
-        // Forcer le moyen de paiement pour sauter le menu de sélection
-        if (paymentMethod === 'wave') {
-            paytechData.target_payment = 'Wave';
-        } else if (paymentMethod === 'orange') {
-            paytechData.target_payment = 'Orange Money';
-        }
-
-        console.log("Calling PayTech (Optimized Redirect)...");
         const response = await fetch('https://paytech.sn/api/payment/request-payment', {
             method: 'POST',
             headers: {
@@ -73,11 +113,7 @@ export async function POST(req) {
         });
 
         const result = await response.json();
-        console.log("PayTech Result:", result);
-
-        if (result.success !== 1) {
-            throw new Error(result.error || "Erreur de l'API PayTech.");
-        }
+        if (result.success !== 1) throw new Error(result.error || "Erreur PayTech");
 
         return NextResponse.json({
             success: true,
