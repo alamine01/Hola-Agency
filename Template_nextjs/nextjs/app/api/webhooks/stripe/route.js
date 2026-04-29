@@ -3,6 +3,8 @@ import { supabase } from '@/lib/supabase';
 import { sendPaymentConfirmation } from '@/lib/brevo';
 import Stripe from 'stripe';
 
+export const dynamic = 'force-dynamic';
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
 
