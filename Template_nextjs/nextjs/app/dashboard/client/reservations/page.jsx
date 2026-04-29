@@ -110,28 +110,7 @@ const ReservationCard = ({ item, onCancel, onChat }) => {
                         </Link>
                     )}
 
-                    <div className="relative">
-                        <button onClick={() => setShowMenu(!showMenu)} className="p-2 text-slate-400 hover:text-slate-900 rounded-lg">
-                            <MoreHorizontal className="w-5 h-5" />
-                        </button>
 
-                        {showMenu && (
-                            <div
-                                onMouseLeave={() => setShowMenu(false)}
-                                className="absolute top-full right-0 mt-2 w-48 bg-white border border-slate-100 rounded-2xl shadow-2xl z-[100] p-2 overflow-visible animate-in fade-in zoom-in duration-150 ring-4 ring-slate-900/5"
-                            >
-                                {status === 'en_attente' ? (
-                                    <>
-                                        <button onClick={(e) => { e.stopPropagation(); setShowMenu(false); onCancel(item.id); }} className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-black uppercase tracking-wider text-red-600 hover:bg-red-50 rounded-[1.2rem] transition-all">
-                                            <XCircle className="w-4 h-4" /> Annuler (Client)
-                                        </button>
-                                    </>
-                                ) : (
-                                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest text-center py-4 italic">Action non dispo.</p>
-                                )}
-                            </div>
-                        )}
-                    </div>
                 </div>
             </div>
         </div>
