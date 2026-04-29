@@ -36,27 +36,30 @@ export async function POST(req) {
         if (paymentMethod === 'wave' || paymentMethod === 'orange') {
             const codeService = paymentMethod === 'wave' ? 'WAVE_SN_API_CASH_IN' : 'ORANGE_SN_API_CASH_IN';
             
-            // Nettoyage et formatage du numéro (Ajout de 221 si nécessaire)
+            // Formatage du numéro : 9 chiffres (ex: 771234567) car Intech l'attend souvent ainsi pour le Sénégal
             let formattedPhone = phoneNumber.replace(/\s+/g, '').replace(/\+/g, '');
-            if (formattedPhone.length === 9) {
-                formattedPhone = '221' + formattedPhone;
+            if (formattedPhone.startsWith('221')) {
+                formattedPhone = formattedPhone.substring(3);
             }
 
             const intechData = {
                 apiKey: PAYTECH_API_KEY,
                 phone: formattedPhone,
-                amount: Math.round(Number(amount)), // S'assurer que c'est un entier
+                amount: parseInt(amount),
                 codeService: codeService,
-                externalTransactionId: bookingId.replace(/-/g, ''), // Enlever les tirets du UUID pour la compatibilité
+                externalTransactionId: bookingId.slice(0, 10), // ID plus court
                 callbackUrl: callbackUrl,
-                data: JSON.stringify({ booking_id: bookingId })
+                data: "{}" // Chaîne vide JSON comme dans la doc
             };
 
             console.log("Calling Intech API with data:", JSON.stringify(intechData));
             
             const response = await fetch('https://api.intech.sn/api-services/operation', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Secretkey': PAYTECH_API_KEY 
+                },
                 body: JSON.stringify(intechData)
             });
 
@@ -73,10 +76,9 @@ export async function POST(req) {
                     message: "Paiement initié. Veuillez confirmer sur votre téléphone."
                 });
             } else {
-                // Si l'erreur est liée aux paramètres, on renvoie le message de l'API
                 return NextResponse.json({ 
                     success: false, 
-                    error: result.msg || "Erreur de paramètres Intech API." 
+                    error: result.msg || "Paramètres invalides selon Intech API." 
                 }, { status: 400 });
             }
         }
