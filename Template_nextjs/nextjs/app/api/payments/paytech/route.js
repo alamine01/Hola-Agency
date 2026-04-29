@@ -79,7 +79,6 @@ export async function POST(req) {
         }
 
         // MODE REDIRECTION (Standard) - Avec tous les champs possibles pour pré-remplir
-        const validSiteUrl = isLocal ? 'https://holaluxe.com' : siteUrl;
         const paytechData = {
             item_name: title || "Séjour HOLA",
             item_price: amount,
