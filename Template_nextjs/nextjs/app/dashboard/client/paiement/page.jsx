@@ -150,45 +150,8 @@ function PaymentContent() {
             const result = await res.json();
             console.log("Résultat API:", result);
 
-            if (!result.success) {
+            if (!result.success || !result.redirect_url) {
                 throw new Error(result.error || "Impossible de contacter le fournisseur de paiement.");
-            }
-
-            // Gestion du mode SEAMLESS
-            if (result.seamless) {
-                setIsProcessing(false);
-                setIsPolling(true);
-
-                // Pour Wave : Ouvrir le deep link
-                if (result.deepLinkUrl) {
-                    window.open(result.deepLinkUrl, '_blank');
-                }
-
-                // Polling Supabase pour vérifier le statut de la réservation
-                const pollInterval = setInterval(async () => {
-                    const { data: updatedBooking } = await supabase
-                        .from('bookings')
-                        .select('status')
-                        .eq('id', booking.id)
-                        .single();
-
-                    if (updatedBooking?.status === 'payee') {
-                        clearInterval(pollInterval);
-                        setIsPolling(false);
-                        window.location.href = `/dashboard/client/paiement/success?booking_id=${booking.id}`;
-                    }
-                }, 4000);
-
-                // Arrêter après 5 minutes
-                setTimeout(() => {
-                    clearInterval(pollInterval);
-                    if (isPolling) {
-                        setIsPolling(false);
-                        alert("Le délai de confirmation est dépassé. Veuillez vérifier votre application de paiement.");
-                    }
-                }, 300000);
-
-                return;
             }
 
             // 4. Notifier le propriétaire (en attente de paiement)
@@ -202,10 +165,8 @@ function PaymentContent() {
                 });
             }
 
-            // 5. Rediriger vers le fournisseur (Stripe, PayTech, PayPal)
-            if (result.redirect_url) {
-                window.location.href = result.redirect_url;
-            }
+            // 5. Rediriger vers le fournisseur (Wave/Orange Money avec menu sauté)
+            window.location.href = result.redirect_url;
 
         } catch (error) {
             console.error("Payment Error:", error);
