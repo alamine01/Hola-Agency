@@ -23,27 +23,36 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
     const handleDownloadPDF = () => {
         const html = `
         <!DOCTYPE html>
-        <html><head><title>Facture ${invoice.ref}</title>
-        <style>
-            body { font-family: 'Segoe UI', sans-serif; max-width: 700px; margin: 0 auto; padding: 40px; color: #1e293b; }
-            .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 3px solid #D4AF37; padding-bottom: 20px; }
-            .logo { font-size: 28px; font-weight: 900; color: #1e293b; } .logo span { color: #D4AF37; }
-            .ref { text-align: right; } .ref p { margin: 4px 0; font-size: 13px; color: #64748b; }
-            .ref .id { font-size: 16px; font-weight: 800; color: #1e293b; letter-spacing: 1px; }
-            .section { margin-bottom: 30px; } .section-title { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; margin-bottom: 10px; }
-            .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
-            .grid-item p { margin: 4px 0; } .grid-item .label { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; }
-            .grid-item .value { font-size: 15px; font-weight: 700; color: #334155; }
-            .total-box { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 16px; padding: 24px; display: flex; justify-content: space-between; align-items: center; margin-top: 30px; }
-            .total-label { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; }
-            .total-value { font-size: 28px; font-weight: 900; color: #1e293b; }
-            .status { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-            .paid { background: #ecfdf5; color: #059669; } .pending { background: #fffbeb; color: #d97706; } .cancelled { background: #fef2f2; color: #dc2626; }
-            .footer { margin-top: 60px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 20px; }
-            @media print { body { padding: 20px; } .no-print { display: none; } }
-        </style></head><body>
+        <html lang="fr">
+        <head>
+            <meta charset="UTF-8">
+            <title>Facture ${invoice.ref}</title>
+            <style>
+                body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 40px; color: #1e293b; line-height: 1.5; }
+                .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 3px solid #D4AF37; padding-bottom: 20px; }
+                .brand { display: flex; align-items: center; gap: 12px; }
+                .brand-name { font-size: 24px; font-weight: 900; color: #1e293b; letter-spacing: 2px; }
+                .ref { text-align: right; } .ref p { margin: 4px 0; font-size: 13px; color: #64748b; }
+                .ref .id { font-size: 18px; font-weight: 800; color: #1e293b; letter-spacing: 1px; }
+                .section { margin-bottom: 30px; } .section-title { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; margin-bottom: 10px; }
+                .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px; }
+                .grid-item p { margin: 4px 0; } .grid-item .label { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; }
+                .grid-item .value { font-size: 16px; font-weight: 700; color: #334155; }
+                .total-box { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 20px; padding: 30px; display: flex; justify-content: space-between; align-items: center; margin-top: 30px; }
+                .total-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; }
+                .total-value { font-size: 32px; font-weight: 900; color: #1e293b; }
+                .status { display: inline-block; padding: 8px 20px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+                .paid { background: #ecfdf5; color: #059669; } .pending { background: #fffbeb; color: #d97706; } .cancelled { background: #fef2f2; color: #dc2626; }
+                .footer { margin-top: 80px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 30px; }
+                @media print { body { padding: 20px; } .no-print { display: none; } }
+            </style>
+        </head>
+        <body>
             <div class="header">
-                <img src="${window.location.origin}/logo.svg" alt="HOLA LUXE" style="height: 50px; object-fit: contain;">
+                <div class="brand">
+                    <img src="${window.location.origin}/logo.svg" alt="Logo" style="height: 45px; width: auto; object-fit: contain;">
+                    <span class="brand-name">HOLA AGENCY</span>
+                </div>
                 <div class="ref">
                     <p class="id">${invoice.ref}</p>
                     <p>${invoice.date}</p>
@@ -60,7 +69,10 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
                 <span class="status ${invoice.isPaid ? 'paid' : invoice.status === 'annulee' ? 'cancelled' : 'pending'}">${invoice.statusLabel}</span>
             </div>
             <div class="total-box">
-                <div><p class="total-label">Montant Total</p><p class="total-value">${invoice.amount.toLocaleString()} FCFA</p></div>
+                <div>
+                    <p class="total-label">Montant Total</p>
+                    <p class="total-value">${invoice.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} FCFA</p>
+                </div>
             </div>
             <div class="footer">
                 <p>HOLA LUXE — Facture générée automatiquement</p>
