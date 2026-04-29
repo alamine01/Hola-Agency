@@ -35,8 +35,8 @@ export default function Navbar() {
         <>
             <nav className='sticky top-0 z-50 flex w-full items-center justify-between bg-white/80 px-4 py-4 backdrop-blur-xl md:px-16 lg:px-24 border-b border-slate-100 shadow-sm'>
                 <Link href='/' className='flex items-center gap-2 text-slate-800 hover:text-[#D4AF37] transition-colors'>
-                    <img src="/logo.svg" alt="Logo" className="h-8 w-auto object-contain" />
-                    <span className='font-bold text-lg tracking-wider'>HOLA AGENCY</span>
+                    <img src="/logo.svg" alt="Logo" className="h-8 w-auto object-contain shrink-0" />
+                    <span className='font-bold text-lg tracking-wider whitespace-nowrap'>HOLA AGENCY</span>
                 </Link>
 
                 <div className='hidden items-center space-x-8 text-sm font-medium text-slate-600 md:flex'>
@@ -93,9 +93,9 @@ export default function Navbar() {
                                 <XIcon className="size-6" />
                             </button>
 
-                            <div className="flex items-center gap-2 text-[#D4AF37] font-bold tracking-wider mb-10">
-                                <img src="/logo.svg" alt="Logo" className="h-8 w-auto object-contain" />
-                                <span>HOLA AGENCY</span>
+                            <div className="flex items-center gap-2 text-slate-800 font-bold tracking-wider mb-8">
+                                <img src="/logo.svg" alt="Logo" className="h-8 w-auto object-contain shrink-0" />
+                                <span className="whitespace-nowrap">HOLA AGENCY</span>
                             </div>
 
                             <div className="flex flex-col gap-6">
