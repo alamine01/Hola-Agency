@@ -87,25 +87,25 @@ const ReservationCard = ({ item, onCancel, onChat }) => {
                 </div>
             </div>
 
-            <div className="flex items-center justify-between md:flex-col md:items-end gap-3 pt-4 md:pt-0 border-t md:border-t-0 border-slate-100">
-                <div className="text-right">
-                    <p className="text-xs text-slate-400 mb-0.5">Montant total</p>
-                    <p className="text-xl font-black text-slate-900">{Number(item.amount).toLocaleString()} FCFA</p>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between sm:justify-end gap-4 sm:gap-14 w-full sm:w-auto pt-4 md:pt-0 border-t md:border-t-0 border-slate-100">
+                <div className="flex items-center justify-between sm:flex-col sm:items-end gap-1">
+                    <p className="text-[10px] text-slate-400 uppercase font-black tracking-[0.15em] sm:mb-0.5">Montant total</p>
+                    <p className="text-xl font-black text-slate-900 whitespace-nowrap">{Number(item.amount).toLocaleString()} FCFA</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 justify-end">
                     <button
                         onClick={onChat}
-                        className="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors group relative"
+                        className="p-2.5 text-amber-500 hover:bg-amber-50 rounded-xl transition-colors border border-amber-100/50"
                         title="Contacter l'hôte"
                     >
                         <MessageSquare className="w-5 h-5" />
                     </button>
-                    <Link href={`/dashboard/client/explorer/${item.item_id}`} className="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 rounded-lg transition-colors">
+                    <Link href={`/dashboard/client/explorer/${item.item_id}`} className="px-4 py-2.5 text-xs font-black uppercase tracking-widest text-slate-600 hover:bg-slate-100 rounded-xl transition-all whitespace-nowrap border border-slate-100">
                         Revoir
                     </Link>
 
                     {status === 'en_attente_paiement' && (
-                        <Link href={`/dashboard/client/paiement/${item.id}`} className="px-5 py-2 text-[10px] font-black uppercase tracking-wider text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition-all shadow-md active:scale-95">
+                        <Link href={`/dashboard/client/paiement/${item.id}`} className="px-6 py-2.5 text-[10px] font-black uppercase tracking-widest text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition-all shadow-lg active:scale-95 whitespace-nowrap">
                             Payer
                         </Link>
                     )}
@@ -236,7 +236,10 @@ export default function ClientActivityPage() {
     const fetchData = async () => {
         setLoading(true);
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        if (!user) {
+            setLoading(false);
+            return;
+        }
 
         if (mainTab === 'favorites') {
             const { data } = await supabase.from('favorites').select('*').eq('user_id', user.id).order('created_at', { ascending: false });

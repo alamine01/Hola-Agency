@@ -317,9 +317,9 @@ export default function DynamicDashboardView({ role = 'client' }) {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex items-center justify-between sm:flex-col sm:items-end border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-50 gap-2 shrink-0">
-                                    <p className="font-black text-slate-900 text-base sm:text-lg whitespace-nowrap">{(act.amount || 0).toLocaleString()} <span className="text-[10px] font-bold">FCFA</span></p>
-                                    <span className={`text-[9px] uppercase font-black tracking-widest px-3 py-1.5 rounded-lg inline-block border whitespace-nowrap ${act.status === 'payee' || act.status === 'confirmee'
+                                <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-50 gap-2 shrink-0 w-full sm:w-auto">
+                                    <p className="font-black text-slate-900 text-sm sm:text-lg whitespace-nowrap">{(act.amount || 0).toLocaleString()} <span className="text-[9px] sm:text-[10px] font-bold">FCFA</span></p>
+                                    <span className={`text-[8px] sm:text-[9px] uppercase font-black tracking-widest px-3 py-1.5 rounded-lg inline-block border whitespace-nowrap ${act.status === 'payee' || act.status === 'confirmee'
                                             ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
                                             : act.status === 'en_attente_paiement'
                                                 ? 'bg-amber-50 text-amber-600 border-amber-100'

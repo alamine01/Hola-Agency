@@ -197,6 +197,7 @@ export default function ClientInvoicesPage() {
                 const isPaid = b.status === 'payee' || b.status === 'confirmee';
                 const statusMap = {
                     en_attente: 'En attente',
+                    en_attente_paiement: 'En attente de paiement',
                     confirmee: 'Confirmée',
                     payee: 'Payée',
                     annulee: 'Annulée'
@@ -363,7 +364,7 @@ export default function ClientInvoicesPage() {
                                     <p className="text-sm font-bold text-slate-900 line-clamp-1">{inv.service}</p>
                                 </div>
                             </div>
-                            <div className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${inv.isPaid ? 'bg-emerald-50 text-emerald-600' : inv.status === 'annulee' ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'}`}>
+                            <div className={`px-3 py-1.5 rounded-xl text-[8px] sm:text-[10px] font-black uppercase tracking-widest whitespace-nowrap border shrink-0 ${inv.isPaid ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : inv.status === 'annulee' ? 'bg-red-50 text-red-600 border-red-100' : 'bg-amber-50 text-amber-600 border-amber-100'}`}>
                                 {inv.statusLabel}
                             </div>
                         </div>
