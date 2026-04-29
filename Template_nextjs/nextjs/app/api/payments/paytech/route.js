@@ -42,7 +42,6 @@ export async function POST(req) {
             if (cleanPhone.length === 9) cleanPhone = '221' + cleanPhone;
 
             const intechData = {
-                apiKey: PAYTECH_API_KEY,
                 phone: cleanPhone,
                 amount: Math.round(Number(amount)),
                 codeService: codeService,
@@ -51,10 +50,14 @@ export async function POST(req) {
                 data: {}
             };
 
-            console.log("Calling Intech API Seamless...");
+            console.log("Calling Intech API Seamless (Headers Auth)...");
             const response = await fetch('https://api.intech.sn/api-services/operation', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'API_KEY': PAYTECH_API_KEY,
+                    'API_SECRET': PAYTECH_API_SECRET
+                },
                 body: JSON.stringify(intechData)
             });
 
