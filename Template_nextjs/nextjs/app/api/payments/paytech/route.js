@@ -33,7 +33,7 @@ export async function POST(req) {
         const callbackUrl = isLocal ? 'https://holaluxe.com/api/webhooks/paytech' : `${siteUrl}/api/webhooks/paytech`;
         const validSiteUrl = isLocal ? 'https://holaluxe.com' : siteUrl;
 
-        // MODE REDIRECTION OPTIMISÉE (Bypass Menu)
+        // MODE REDIRECTION OPTIMISÉE (Bypass Menu + Bypass Personal Info)
         const paytechData = {
             item_name: title || "Séjour HOLA",
             item_price: amount,
@@ -44,6 +44,9 @@ export async function POST(req) {
             success_url: `${validSiteUrl}/dashboard/client/paiement/success?booking_id=${bookingId}`,
             ipn_url: callbackUrl,
             cancel_url: `${validSiteUrl}/dashboard/client/paiement/${bookingId}`,
+            // Champs pour pré-remplir et sauter l'étape des infos personnelles chez PayTech
+            customer_phone: phoneNumber.replace(/\s+/g, ''),
+            customer_name: accountHolder,
             custom_field: JSON.stringify({ 
                 booking_id: bookingId,
                 customer_phone: phoneNumber,
