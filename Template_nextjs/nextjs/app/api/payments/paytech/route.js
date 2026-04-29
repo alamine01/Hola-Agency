@@ -36,17 +36,24 @@ export async function POST(req) {
         if (paymentMethod === 'wave' || paymentMethod === 'orange') {
             const codeService = paymentMethod === 'wave' ? 'WAVE_SN_API_CASH_IN' : 'ORANGE_SN_API_CASH_IN';
             
+            // Nettoyage et formatage du numéro (Ajout de 221 si nécessaire)
+            let formattedPhone = phoneNumber.replace(/\s+/g, '').replace(/\+/g, '');
+            if (formattedPhone.length === 9) {
+                formattedPhone = '221' + formattedPhone;
+            }
+
             const intechData = {
                 apiKey: PAYTECH_API_KEY,
-                phone: phoneNumber.replace(/\s+/g, ''), // Nettoyer le numéro
-                amount: amount,
+                phone: formattedPhone,
+                amount: Math.round(Number(amount)), // S'assurer que c'est un entier
                 codeService: codeService,
-                externalTransactionId: bookingId,
+                externalTransactionId: bookingId.replace(/-/g, ''), // Enlever les tirets du UUID pour la compatibilité
                 callbackUrl: callbackUrl,
-                data: JSON.stringify({ booking_id: bookingId, title })
+                data: JSON.stringify({ booking_id: bookingId })
             };
 
-            console.log("Calling Intech API (Seamless)...");
+            console.log("Calling Intech API with data:", JSON.stringify(intechData));
+            
             const response = await fetch('https://api.intech.sn/api-services/operation', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -62,11 +69,15 @@ export async function POST(req) {
                     seamless: true,
                     status: result.data.status,
                     transactionId: result.data.transactionId,
-                    deepLinkUrl: result.data.deepLinkUrl || null, // Pour Wave
+                    deepLinkUrl: result.data.deepLinkUrl || result.data.authLinkUrl || null,
                     message: "Paiement initié. Veuillez confirmer sur votre téléphone."
                 });
             } else {
-                throw new Error(result.msg || "Erreur lors de l'initiation du paiement direct.");
+                // Si l'erreur est liée aux paramètres, on renvoie le message de l'API
+                return NextResponse.json({ 
+                    success: false, 
+                    error: result.msg || "Erreur de paramètres Intech API." 
+                }, { status: 400 });
             }
         }
 
