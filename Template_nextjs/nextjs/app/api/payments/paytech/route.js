@@ -64,8 +64,12 @@ export async function POST(req) {
             })
         };
 
-        // Note: Si le compte PayTech supporte le "Direct Checkout", on pourrait ajouter :
-        // if (paymentMethod === 'wave') paytechData.payment_method = 'wave';
+        // Bypassing the selection page by specifying the target payment
+        if (paymentMethod === 'wave') {
+            paytechData.target_payment = 'Wave';
+        } else if (paymentMethod === 'orange') {
+            paytechData.target_payment = 'Orange Money';
+        }
 
         // 3. Appel à l'API PayTech
         const response = await fetch('https://paytech.sn/api/payment/request-payment', {
