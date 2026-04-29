@@ -31,6 +31,7 @@ export async function POST(req) {
         const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
         const isLocal = siteUrl.includes('localhost');
         const callbackUrl = isLocal ? 'https://holaluxe.com/api/webhooks/paytech' : `${siteUrl}/api/webhooks/paytech`;
+        const validSiteUrl = isLocal ? 'https://holaluxe.com' : siteUrl;
         
         // MODE REDIRECTION OFFICIEL AVEC AUTO-SUBMIT (NAC=1)
         const paytechData = {
