@@ -31,13 +31,12 @@ export async function POST(req) {
         const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
         const isLocal = siteUrl.includes('localhost');
         const callbackUrl = isLocal ? 'https://holaluxe.com/api/webhooks/paytech' : `${siteUrl}/api/webhooks/paytech`;
-        const validSiteUrl = isLocal ? 'https://holaluxe.com' : siteUrl;
-
-        // MODE SEAMLESS (Intech API) - Tentative finale avec structure corrigée
+        
+        // MODE 100% SEAMLESS (Intech API) - Uniquement Wave et Orange Money
         if (paymentMethod === 'wave' || paymentMethod === 'orange') {
             const codeService = paymentMethod === 'wave' ? 'WAVE_SN_API_CASH_IN' : 'ORANGE_SN_API_CASH_IN';
             
-            // Formatage du numéro : Intech API CashIn exige souvent le 221
+            // Formatage du numéro : Intech API CashIn exige le 221
             let formattedPhone = phoneNumber.replace(/\s+/g, '').replace(/\+/g, '');
             if (!formattedPhone.startsWith('221')) {
                 formattedPhone = '221' + formattedPhone;
@@ -46,15 +45,14 @@ export async function POST(req) {
             const intechData = {
                 apiKey: PAYTECH_API_KEY,
                 phone: formattedPhone,
-                amount: parseInt(amount),
+                amount: Math.round(Number(amount)),
                 codeService: codeService,
                 externalTransactionId: bookingId.replace(/-/g, '').slice(0, 20),
                 callbackUrl: callbackUrl,
-                data: {} // Objet vide (important: pas de stringify ici car fetch le fera pour tout le body)
+                data: {} 
             };
 
-            console.log("Initiating Seamless Payment with Intech...");
-            
+            console.log("Calling Intech API (100% Seamless)...");
             const response = await fetch('https://api.intech.sn/api-services/operation', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -62,7 +60,7 @@ export async function POST(req) {
             });
 
             const result = await response.json();
-            console.log("Intech Result:", result);
+            console.log("Intech API Result:", result);
 
             if (result.code === 2000) {
                 return NextResponse.json({
@@ -73,51 +71,20 @@ export async function POST(req) {
                     deepLinkUrl: result.data.deepLinkUrl || result.data.authLinkUrl || null,
                     message: "Paiement initié. Veuillez confirmer sur votre téléphone."
                 });
+            } else {
+                // On renvoie l'erreur directe de l'API pour débugger
+                return NextResponse.json({ 
+                    success: false, 
+                    error: result.msg || "Le paiement direct a échoué. Vérifiez vos paramètres Intech." 
+                }, { status: 400 });
             }
-            // Si Intech échoue encore, on ne bloque pas, on prévient et on pourra voir le message
-            console.warn("Intech Seamless failed, falling back to Redirect:", result.msg);
         }
 
-        // MODE REDIRECTION (Standard) - Avec tous les champs possibles pour pré-remplir
-        const paytechData = {
-            item_name: title || "Séjour HOLA",
-            item_price: amount,
-            currency: "XOF",
-            ref_command: bookingId,
-            command_name: `Réservation HOLA #${bookingId.slice(0, 8)}`,
-            env: process.env.PAYTECH_ENVIRONMENT === 'live' ? 'prod' : (process.env.PAYTECH_ENVIRONMENT || "test"),
-            success_url: `${validSiteUrl}/dashboard/client/paiement/success?booking_id=${bookingId}`,
-            ipn_url: callbackUrl,
-            cancel_url: `${validSiteUrl}/dashboard/client/paiement/${bookingId}`,
-            
-            // Tentative massive de pré-remplissage pour forcer le saut de l'écran
-            customer_phone: phoneNumber.replace(/\s+/g, ''),
-            customer_phone_number: phoneNumber.replace(/\s+/g, ''),
-            customer_name: accountHolder,
-            customer_firstname: accountHolder.split(' ')[0],
-            customer_lastname: accountHolder.split(' ').slice(1).join(' ') || "HOLA",
-            
-            custom_field: JSON.stringify({ booking_id: bookingId }),
-            target_payment: paymentMethod === 'wave' ? 'Wave' : (paymentMethod === 'orange' ? 'Orange Money' : null)
-        };
-
-        const response = await fetch('https://paytech.sn/api/payment/request-payment', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'API_KEY': PAYTECH_API_KEY,
-                'API_SECRET': PAYTECH_API_SECRET
-            },
-            body: JSON.stringify(paytechData)
-        });
-
-        const result = await response.json();
-        if (result.success !== 1) throw new Error(result.error || "Erreur PayTech");
-
-        return NextResponse.json({
-            success: true,
-            redirect_url: result.redirect_url
-        });
+        // Cas par défaut : Redirection pour les autres moyens (Carte, etc.) si nécessaire
+        return NextResponse.json({ 
+            success: false, 
+            error: "Méthode de paiement non supportée en mode direct." 
+        }, { status: 400 });
 
     } catch (error) {
         console.error("Payment API Error:", error);
