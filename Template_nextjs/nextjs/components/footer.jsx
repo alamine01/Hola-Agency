@@ -36,7 +36,7 @@ export default function Footer() {
                 {/* Brand Info */}
                 <div className="max-w-xs flex flex-col items-center md:items-start">
                     <div className="flex items-center gap-2 text-[#D4AF37] font-bold tracking-wider mb-6">
-                        <img src="/logo.svg" alt="Logo" className="h-10 w-auto object-contain shrink-0" />
+                        <img src="/logo.svg" alt="Logo" className="h-10 w-auto object-contain" />
                         <span className="text-xl whitespace-nowrap">HOLA AGENCY</span>
                     </div>
                     <p className="text-slate-500 leading-relaxed mb-6">
