@@ -44,7 +44,7 @@ export default function HeroSection() {
                 className="z-10 flex flex-col items-center justify-center p-1.5 rounded-full border border-[#D4AF37]/40 bg-white/80 backdrop-blur-md mb-8 shadow-sm"
             >
                 <div className="px-6 py-2 flex items-center gap-2 text-[#D4AF37] font-bold tracking-widest uppercase text-sm">
-                    <img src="/logo.svg" alt="Logo" className="h-5 w-auto object-contain" />
+                    <img src="/logo.svg" alt="Logo" className="h-5 w-7 object-contain" />
                     <span className="whitespace-nowrap">HOLA AGENCY</span>
                 </div>
             </motion.div>

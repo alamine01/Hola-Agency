@@ -35,7 +35,7 @@ export default function Navbar() {
         <>
             <nav className='sticky top-0 z-50 flex w-full items-center justify-between bg-white/80 px-4 py-4 backdrop-blur-xl md:px-16 lg:px-24 border-b border-slate-100 shadow-sm'>
                 <Link href='/' className='flex items-center gap-3 text-slate-900 hover:text-[#D4AF37] transition-colors'>
-                    <img src="/logo.svg" alt="Logo" className="h-10 w-auto object-contain" />
+                    <img src="/logo.svg" alt="Logo" className="h-10 w-14 object-contain" />
                     <span className='font-black text-xl tracking-widest whitespace-nowrap'>HOLA AGENCY</span>
                 </Link>
 
@@ -94,7 +94,7 @@ export default function Navbar() {
                             </button>
 
                             <div className="flex items-center gap-3 text-slate-900 font-black tracking-widest mb-8">
-                                <img src="/logo.svg" alt="Logo" className="h-10 w-auto object-contain" />
+                                <img src="/logo.svg" alt="Logo" className="h-10 w-14 object-contain" />
                                 <span className="whitespace-nowrap text-xl">HOLA AGENCY</span>
                             </div>
 
