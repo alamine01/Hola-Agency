@@ -37,9 +37,9 @@ export async function POST(req) {
         if (paymentMethod === 'wave' || paymentMethod === 'orange') {
             const codeService = paymentMethod === 'wave' ? 'WAVE_SN_API_CASH_IN' : 'ORANGE_SN_API_CASH_IN';
             
-            // Format 12 chiffres strict (ex: 221774155121)
+            // Format 9 chiffres strict pour Intech (ex: 774155121)
             let cleanPhone = phoneNumber.replace(/\s+/g, '').replace(/\+/g, '');
-            if (cleanPhone.length === 9) cleanPhone = '221' + cleanPhone;
+            if (cleanPhone.startsWith('221')) cleanPhone = cleanPhone.substring(3);
 
             const intechData = {
                 apiKey: PAYTECH_API_KEY,
@@ -48,10 +48,10 @@ export async function POST(req) {
                 amount: Math.round(Number(amount)),
                 externalId: bookingId.replace(/-/g, '').slice(0, 20),
                 callbackUrl: callbackUrl,
-                data: "{}" // Très important : doit être une chaîne JSON pour Intech
+                data: "{}"
             };
 
-            console.log("Calling Intech API Seamless (Strict Format)...");
+            console.log("Calling Intech API Seamless (9-digit phone)...");
             const response = await fetch('https://api.intech.sn/api-services/operation', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

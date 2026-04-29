@@ -44,7 +44,7 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
             @media print { body { padding: 20px; } }
         </style></head><body>
             <div class="header">
-                <div class="logo">HOLA <span>PLATFORM</span></div>
+                <img src="/logo.svg" alt="HOLA LUXE" style="height: 50px; object-fit: contain;">
                 <div class="ref">
                     <p class="id">${invoice.ref}</p>
                     <p>${invoice.date}</p>
@@ -64,8 +64,8 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
                 <div><p class="total-label">Montant Total</p><p class="total-value">${invoice.amount.toLocaleString()} FCFA</p></div>
             </div>
             <div class="footer">
-                <p>HOLA Platform — Facture générée automatiquement</p>
-                <p>Pour toute question, contactez support@hola-platform.com</p>
+                <p>HOLA LUXE — Facture générée automatiquement</p>
+                <p>Pour toute question, contactez contact@holaluxe.com</p>
             </div>
         </body></html>`;
         printWindow.document.write(html);
