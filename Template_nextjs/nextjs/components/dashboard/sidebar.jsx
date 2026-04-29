@@ -85,9 +85,13 @@ const Sidebar = ({ role }) => {
     const SidebarContent = () => (
         <div className="flex flex-col h-full py-8 px-6 bg-white border-r border-slate-100">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-3 mb-10 group cursor-pointer hover:opacity-80 transition-opacity">
-                <img src="/logo.svg" alt="Logo" className="h-10 w-auto object-contain" />
-                <span className="text-xl font-bold tracking-tight text-slate-900">HOLA <span className="text-amber-600 underline decoration-amber-200">DASH</span></span>
+            <Link href="/" className="flex items-center gap-4 mb-12 group cursor-pointer hover:opacity-80 transition-all">
+                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-xl border border-slate-50 group-hover:scale-110 transition-transform shrink-0">
+                    <img src="/logo.svg" alt="Logo" className="w-8 h-8 object-contain" />
+                </div>
+                <span className="text-2xl font-black tracking-tighter text-slate-900 whitespace-nowrap overflow-hidden">
+                    HOLA <span className="text-amber-600">DASH</span>
+                </span>
             </Link>
 
             {/* Navigation */}
