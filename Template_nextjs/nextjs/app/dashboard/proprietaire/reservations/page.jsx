@@ -216,10 +216,10 @@ const ReservationItem = ({ reservation, onStatusUpdate, onViewDetails, onOpenCha
 
 
             <div className="grid grid-cols-2 lg:flex lg:items-center justify-between lg:justify-end gap-4 md:gap-14 w-full lg:w-auto pt-4 md:pt-6 lg:pt-0 border-t lg:border-0 border-slate-100 relative z-10">
-                <div className="flex flex-col items-start md:items-end lg:min-w-[120px]">
+                <div className="flex flex-col items-start md:items-end lg:min-w-[120px] shrink-0">
                     <p className="text-[8px] md:text-[10px] text-slate-400 uppercase font-black tracking-[0.15em] mb-1">Votre Gain Net</p>
-                    <p className="font-black text-amber-600 text-sm md:text-lg">{netPayout.toLocaleString()} <span className="text-[8px] md:text-[10px]">FCFA</span></p>
-                    <p className="text-[7px] md:text-[9px] text-slate-400 font-medium italic opacity-60">Brut : {priceValue.toLocaleString()} FCFA</p>
+                    <p className="font-black text-amber-600 text-sm md:text-lg whitespace-nowrap">{netPayout.toLocaleString()} <span className="text-[8px] md:text-[10px]">FCFA</span></p>
+                    <p className="text-[7px] md:text-[9px] text-slate-400 font-medium italic opacity-60 whitespace-nowrap">Brut : {priceValue.toLocaleString()} FCFA</p>
                 </div>
 
                 <div className="flex flex-col items-end lg:items-center lg:min-w-[100px]">

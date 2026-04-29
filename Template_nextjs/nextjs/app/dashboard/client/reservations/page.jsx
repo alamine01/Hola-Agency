@@ -66,8 +66,8 @@ const ReservationCard = ({ item, onCancel, onChat }) => {
     };
 
     return (
-        <div className={`bg-white rounded-2xl border border-slate-100 p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:shadow-md transition-shadow relative ${showMenu ? 'z-50' : ''}`}>
-            <div className="flex items-center gap-6">
+        <div className={`bg-white rounded-2xl border border-slate-100 p-4 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 hover:shadow-md transition-shadow relative ${showMenu ? 'z-50' : ''}`}>
+            <div className="flex items-center gap-4 md:gap-6">
                 <div className="w-24 h-24 rounded-xl bg-slate-100 overflow-hidden shrink-0">
                     <img src={details.image || "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=400"} alt={details.title} className="w-full h-full object-cover" />
                 </div>

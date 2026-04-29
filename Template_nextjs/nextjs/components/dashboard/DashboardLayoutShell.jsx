@@ -30,7 +30,7 @@ const NotificationDropdown = ({ isOpen, onClose, notifications, onMarkAllRead })
 
     return (
         <>
-            <div className="absolute top-full right-0 mt-3 w-80 md:w-96 bg-white border border-slate-100 rounded-[2rem] shadow-2xl z-[60] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ring-4 ring-slate-900/5">
+            <div className="fixed md:absolute top-20 md:top-full left-4 right-4 md:left-auto md:right-0 mt-3 md:w-96 bg-white border border-slate-100 rounded-[2rem] shadow-2xl z-[60] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ring-4 ring-slate-900/5">
                 <div className="p-5 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
                     <h3 className="font-black text-slate-900 text-sm uppercase tracking-widest">Notifications</h3>
                     {notifications.filter(n => !n.is_read).length > 0 && (
@@ -185,11 +185,11 @@ export default function DashboardLayoutShell({ children, forcedRole }) {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 flex">
+        <div className="min-h-screen bg-slate-50 flex overflow-x-hidden w-full">
             <Sidebar role={activeRole} />
 
-            <div className="flex-1 lg:ml-[280px] flex flex-col min-h-screen">
-                <header className="h-20 bg-white border-b border-slate-100 flex items-center justify-between px-6 lg:px-10 sticky top-0 z-40">
+            <div className="flex-1 lg:ml-[280px] flex flex-col min-h-screen w-full max-w-full overflow-x-hidden">
+                <header className="h-20 bg-white border-b border-slate-100 flex items-center justify-between px-4 md:px-6 lg:px-10 sticky top-0 z-40 w-full">
                     <div className="flex items-center gap-4 flex-1">
                         <div className="hidden md:flex items-center bg-slate-50 border border-slate-100 rounded-full px-5 py-2.5 w-full max-w-md focus-within:border-amber-600/30 focus-within:bg-white transition-all group shadow-sm shadow-slate-100">
                             <Search className="w-4 h-4 text-slate-400 mr-2 group-focus-within:text-amber-600 transition-colors" />

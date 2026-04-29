@@ -169,7 +169,7 @@ export default function CatalogPage() {
                                     transition={{ delay: index * 0.1 }}
                                     className="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-[0_20px_40px_rgb(0,0,0,0.06)] transition-all duration-300 flex flex-col h-full"
                                 >
-                                    <div className="relative h-64 overflow-hidden shrink-0 bg-slate-50 flex items-center justify-center">
+                                    <div className="relative aspect-video overflow-hidden shrink-0 bg-slate-50 flex items-center justify-center">
                                         {property.image ? (
                                             <img
                                                 src={property.image}

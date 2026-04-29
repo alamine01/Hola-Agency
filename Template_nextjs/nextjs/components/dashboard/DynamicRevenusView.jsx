@@ -40,7 +40,10 @@ export default function DynamicRevenusView({ role = 'client' }) {
         setLoading(true);
         try {
             const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return;
+            if (!user) {
+                setLoading(false);
+                return;
+            }
 
             const { data: bookingsData } = await supabase
                 .from('bookings')
@@ -161,7 +164,7 @@ export default function DynamicRevenusView({ role = 'client' }) {
                 </button>
             </div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 <div className="bg-white p-5 md:p-8 rounded-[1.8rem] md:rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-amber-50 rounded-full -mr-12 -mt-12 md:-mr-16 md:-mt-16 group-hover:scale-110 transition-transform duration-500"></div>
                     <div className="relative z-10">
@@ -169,7 +172,7 @@ export default function DynamicRevenusView({ role = 'client' }) {
                             <Clock className="w-5 h-5 md:w-6 md:h-6" />
                         </div>
                         <p className="text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Revenus en Attente</p>
-                        <h3 className="text-xl md:text-3xl font-black text-slate-900 tracking-tight">{(wallet.pending || 0).toLocaleString()} <span className="text-[10px] md:text-sm font-bold">FCFA</span></h3>
+                        <h3 className="text-lg sm:text-xl md:text-3xl font-black text-slate-900 tracking-tight">{(wallet.pending || 0).toLocaleString()} <span className="text-[9px] md:text-sm font-bold">FCFA</span></h3>
                         <p className="hidden md:block text-[9px] text-slate-400 mt-4 font-medium italic leading-relaxed">"Revenus en cours de validation par l'administrateur HOLA."</p>
                     </div>
                 </div>
@@ -181,7 +184,7 @@ export default function DynamicRevenusView({ role = 'client' }) {
                             <Wallet className="w-5 h-5 md:w-6 md:h-6" />
                         </div>
                         <p className="text-[8px] md:text-[10px] font-black text-amber-300 uppercase tracking-widest mb-1">Solde Disponible</p>
-                        <h3 className="text-xl md:text-3xl font-black text-white tracking-tight">{(wallet.available || 0).toLocaleString()} <span className="text-[10px] md:text-sm font-bold">FCFA</span></h3>
+                        <h3 className="text-lg sm:text-xl md:text-3xl font-black text-white tracking-tight">{(wallet.available || 0).toLocaleString()} <span className="text-[9px] md:text-sm font-bold">FCFA</span></h3>
                         <div className="mt-3 md:mt-4 flex items-center gap-2">
                             <span className="text-[7px] md:text-[9px] font-black text-emerald-400 uppercase tracking-widest px-2 py-0.5 bg-emerald-400/10 rounded-full">Prêt au retrait</span>
                         </div>
@@ -195,7 +198,7 @@ export default function DynamicRevenusView({ role = 'client' }) {
                             <CheckCircle2 className="w-5 h-5 md:w-6 md:h-6" />
                         </div>
                         <p className="text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Retiré</p>
-                        <h3 className="text-xl md:text-3xl font-black text-slate-900 tracking-tight">{(wallet.withdrawn || 0).toLocaleString()} <span className="text-[10px] md:text-sm font-bold">FCFA</span></h3>
+                        <h3 className="text-lg sm:text-xl md:text-3xl font-black text-slate-900 tracking-tight">{(wallet.withdrawn || 0).toLocaleString()} <span className="text-[9px] md:text-sm font-bold">FCFA</span></h3>
                         <p className="hidden md:block text-[9px] text-slate-400 mt-4 font-medium italic leading-relaxed">Historique complet de vos virements reçus.</p>
                     </div>
                 </div>
@@ -227,9 +230,9 @@ export default function DynamicRevenusView({ role = 'client' }) {
                                     </div>
                                 </div>
 
-                                <div className="flex items-center justify-between md:justify-end gap-6 md:gap-10 border-t md:border-t-0 pt-3 md:pt-0 border-slate-50">
+                                <div className="flex items-center justify-between md:justify-end gap-4 md:gap-10 border-t md:border-t-0 pt-3 md:pt-0 border-slate-50 shrink-0">
                                     <div className="text-right flex-1 md:flex-none">
-                                        <p className={`text-base md:text-xl font-black tracking-tight ${tx.type === 'income' ? 'text-emerald-600' : 'text-slate-900'}`}>
+                                        <p className={`text-sm sm:text-base md:text-xl font-black tracking-tight whitespace-nowrap ${tx.type === 'income' ? 'text-emerald-600' : 'text-slate-900'}`}>
                                             {tx.type === 'income' ? '+' : '-'}{(tx.amount || 0).toLocaleString()} <span className="text-[9px] md:text-[10px]">FCFA</span>
                                         </p>
                                         <div className="flex items-center justify-end gap-1.5 md:gap-2 mt-0.5 md:mt-1">
@@ -266,7 +269,7 @@ export default function DynamicRevenusView({ role = 'client' }) {
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="bg-white rounded-[3rem] p-8 md:p-12 w-full max-w-lg shadow-2xl relative z-10"
+                            className="bg-white rounded-[2.5rem] md:rounded-[3rem] p-6 md:p-12 w-full max-w-lg shadow-2xl relative z-10"
                         >
                             <button onClick={() => setIsWithdrawModalOpen(false)} className="absolute top-8 right-8 p-3 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-50 border border-slate-50">
                                 <X className="w-5 h-5" />

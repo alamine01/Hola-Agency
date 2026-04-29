@@ -4,6 +4,27 @@
     --font-sans: 'Inter', sans-serif;
 }
 
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    position: relative;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+* {
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
 body {
     @apply bg-white text-gray-900 text-sm antialiased;
 }

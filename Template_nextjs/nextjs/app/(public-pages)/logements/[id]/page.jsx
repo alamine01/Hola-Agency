@@ -4,7 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
     MapPin, Star, BedDouble, Users, ArrowLeft,
-    Wifi, Car, Coffee, Shield, Calendar, ChevronRight
+    Wifi, Car, Coffee, Shield, Calendar, ChevronRight, Loader2
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
@@ -19,6 +19,11 @@ export default function PropertyDetailPage() {
     const [property, setProperty] = useState(null);
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
+    const [bookingData, setBookingData] = useState({
+        startDate: '',
+        endDate: '',
+        guests: 1
+    });
 
     useEffect(() => {
         const fetchProperty = async () => {
@@ -181,9 +186,9 @@ export default function PropertyDetailPage() {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="rounded-[2.5rem] overflow-hidden shadow-2xl mb-10 h-[300px] sm:h-[400px] lg:h-[500px]"
+                            className="rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-2xl mb-10 aspect-[4/3] sm:aspect-video lg:h-[500px] lg:aspect-auto"
                         >
-                            <img src={property.image} alt={property.title} className="w-full h-full object-cover" />
+                            <img src={property.image} alt={property.title} className="w-full h-full object-cover object-center" />
                         </motion.div>
 
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
@@ -234,7 +239,7 @@ export default function PropertyDetailPage() {
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.2 }}
-                                className="bg-white rounded-[2.5rem] p-8 shadow-[0_20px_60px_rgb(0,0,0,0.08)] border border-slate-100"
+                                className="bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 shadow-[0_20px_60px_rgb(0,0,0,0.08)] border border-slate-100"
                             >
                                 <div className="flex items-center justify-between mb-8">
                                     <div className="flex flex-col">
@@ -284,14 +289,14 @@ export default function PropertyDetailPage() {
 
                                 <button
                                     onClick={handleBooking}
-                                    className="w-full py-4 sm:py-5 px-2 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black text-[13px] sm:text-base shadow-xl shadow-slate-200 transition-all hover:scale-[1.02] active:scale-95 mb-4 uppercase tracking-widest flex items-center justify-center whitespace-nowrap"
+                                className="w-full py-4 sm:py-5 px-4 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black text-[13px] sm:text-base shadow-xl shadow-slate-200 transition-all hover:scale-[1.02] active:scale-95 mb-4 uppercase tracking-widest flex items-center justify-center whitespace-nowrap"
                                 >
                                     {property.type === 'Service' ? 'Réserver la prestation' : 'Réserver maintenant'}
                                 </button>
 
                                 <button
                                     onClick={handleContact}
-                                    className="w-full py-4 px-2 bg-white border-2 border-slate-900 text-slate-900 hover:bg-slate-50 rounded-2xl font-black text-[13px] sm:text-base transition-all active:scale-95 mb-6 uppercase tracking-widest flex items-center justify-center whitespace-nowrap"
+                                    className="w-full py-4 px-4 bg-white border-2 border-slate-900 text-slate-900 hover:bg-slate-50 rounded-2xl font-black text-[13px] sm:text-base transition-all active:scale-95 mb-6 uppercase tracking-widest flex items-center justify-center whitespace-nowrap"
                                 >
                                     {property.type === 'Service' ? 'Contacter le professionnel' : 'Contacter le propriétaire'}
                                 </button>

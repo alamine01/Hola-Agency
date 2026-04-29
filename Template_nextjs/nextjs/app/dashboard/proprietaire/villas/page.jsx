@@ -347,7 +347,7 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-4 gap-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <div className="space-y-2">
                                 <label className="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] pl-1 text-center block">Chambres</label>
                                 <input

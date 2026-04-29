@@ -162,7 +162,10 @@ export default function DynamicDashboardView({ role = 'client' }) {
         setLoading(true);
         try {
             const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return;
+            if (!user) {
+                setLoading(false);
+                return;
+            }
 
             const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
             setUserData(profile);
@@ -241,7 +244,7 @@ export default function DynamicDashboardView({ role = 'client' }) {
     const isMismatch = profileRole && role && profileRole.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "") !== role;
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-0 pb-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
             <RoleHeader role={role} name={userData?.display_name} />
 
             {isMismatch && (
@@ -270,7 +273,7 @@ export default function DynamicDashboardView({ role = 'client' }) {
                 </div>
             )}
 
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 mb-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 mb-12">
                 {stats.map((stat, idx) => (
                     <StatCard
                         key={idx}
@@ -314,9 +317,9 @@ export default function DynamicDashboardView({ role = 'client' }) {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex items-center justify-between sm:flex-col sm:items-end border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-50 gap-2">
-                                    <p className="font-black text-slate-900 text-base sm:text-lg">{(act.amount || 0).toLocaleString()} <span className="text-[10px] font-bold">FCFA</span></p>
-                                    <span className={`text-[9px] uppercase font-black tracking-widest px-3 py-1.5 rounded-lg inline-block border ${act.status === 'payee' || act.status === 'confirmee'
+                                <div className="flex items-center justify-between sm:flex-col sm:items-end border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-50 gap-2 shrink-0">
+                                    <p className="font-black text-slate-900 text-base sm:text-lg whitespace-nowrap">{(act.amount || 0).toLocaleString()} <span className="text-[10px] font-bold">FCFA</span></p>
+                                    <span className={`text-[9px] uppercase font-black tracking-widest px-3 py-1.5 rounded-lg inline-block border whitespace-nowrap ${act.status === 'payee' || act.status === 'confirmee'
                                             ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
                                             : act.status === 'en_attente_paiement'
                                                 ? 'bg-amber-50 text-amber-600 border-amber-100'

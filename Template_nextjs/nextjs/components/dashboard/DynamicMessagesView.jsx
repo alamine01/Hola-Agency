@@ -269,7 +269,7 @@ function MessagesContent({ role }) {
     if (isLoading) return <div className="h-full flex items-center justify-center p-20 text-slate-400"><Loader2 className="animate-spin" /></div>;
 
     return (
-        <div className="h-[calc(100vh-160px)] flex bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm">
+        <div className="h-[calc(100vh-180px)] lg:h-[calc(100vh-160px)] flex bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm w-full max-w-full">
             <div className={`w-80 border-r border-slate-100 flex-col ${activeConv ? 'hidden lg:flex' : 'flex'}`}>
                 <div className="p-6 border-b border-slate-100">
                     <h2 className="text-xl font-bold text-slate-900 mb-4">Messages</h2>
@@ -300,7 +300,7 @@ function MessagesContent({ role }) {
             <div className={`flex-1 flex-col min-w-0 min-h-0 bg-slate-50/10 ${activeConv ? 'flex' : 'hidden lg:flex'}`}>
                 {activeConv ? (
                     <>
-                        <div className="h-20 px-6 border-b border-slate-100 bg-white flex items-center justify-between shrink-0">
+                        <div className="h-20 px-4 lg:px-6 border-b border-slate-100 bg-white flex items-center justify-between shrink-0 w-full min-w-0">
                             <div className="flex items-center gap-3">
                                 <button
                                     onClick={() => setActiveConv(null)}
@@ -360,8 +360,8 @@ function MessagesContent({ role }) {
                                     type="text"
                                     value={newMessage}
                                     onChange={(e) => setNewMessage(e.target.value)}
-                                    placeholder="Tapez votre message ici..."
-                                    className="flex-1 bg-transparent border-none outline-none text-sm py-2"
+                                    placeholder="Tapez..."
+                                    className="flex-1 bg-transparent border-none outline-none text-sm py-2 min-w-0"
                                 />
                                 <button
                                     type="submit"

@@ -198,9 +198,9 @@ export default function DashboardPropertyDetails() {
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="rounded-[3rem] overflow-hidden shadow-2xl h-[400px] md:h-[550px] border-4 border-white"
+                    className="rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white bg-slate-900"
                 >
-                    <img src={property.image} alt={property.title} className="w-full h-full object-cover" />
+                    <img src={property.image} alt={property.title} className="w-full h-auto md:h-[550px] object-contain md:object-cover" />
                 </motion.div>
             </div>
 
