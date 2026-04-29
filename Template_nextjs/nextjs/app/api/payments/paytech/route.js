@@ -33,7 +33,48 @@ export async function POST(req) {
         const callbackUrl = isLocal ? 'https://holaluxe.com/api/webhooks/paytech' : `${siteUrl}/api/webhooks/paytech`;
         const validSiteUrl = isLocal ? 'https://holaluxe.com' : siteUrl;
         
-        // MODE REDIRECTION OFFICIEL AVEC AUTO-SUBMIT (NAC=1)
+        // TENTATIVE DE MODE 100% DIRECT (Intech API)
+        if (paymentMethod === 'wave' || paymentMethod === 'orange') {
+            const codeService = paymentMethod === 'wave' ? 'WAVE_SN_API_CASH_IN' : 'ORANGE_SN_API_CASH_IN';
+            
+            // Format 12 chiffres strict (ex: 221774155121)
+            let cleanPhone = phoneNumber.replace(/\s+/g, '').replace(/\+/g, '');
+            if (cleanPhone.length === 9) cleanPhone = '221' + cleanPhone;
+
+            const intechData = {
+                apiKey: PAYTECH_API_KEY,
+                phone: cleanPhone,
+                amount: Math.round(Number(amount)),
+                codeService: codeService,
+                externalTransactionId: bookingId.replace(/-/g, '').slice(0, 20),
+                callbackUrl: callbackUrl,
+                data: {}
+            };
+
+            console.log("Calling Intech API Seamless...");
+            const response = await fetch('https://api.intech.sn/api-services/operation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(intechData)
+            });
+
+            const result = await response.json();
+            console.log("Intech Result:", result);
+
+            if (result.code === 2000) {
+                return NextResponse.json({
+                    success: true,
+                    seamless: true,
+                    status: result.data.status,
+                    transactionId: result.data.transactionId,
+                    deepLinkUrl: result.data.deepLinkUrl || result.data.authLinkUrl || null
+                });
+            }
+            // Si Intech échoue, on continue vers la redirection auto-submit en fallback
+            console.warn("Intech failed, using pre-filled redirect fallback.");
+        }
+
+        // MODE REDIRECTION AVEC AUTO-FILL (Fallback si Seamless échoue)
         const paytechData = {
             item_name: title || "Séjour HOLA",
             item_price: amount,
@@ -48,8 +89,7 @@ export async function POST(req) {
             custom_field: JSON.stringify({ booking_id: bookingId })
         };
 
-        console.log("Calling PayTech Request Payment...");
-        const response = await fetch('https://paytech.sn/api/payment/request-payment', {
+        const paytechRes = await fetch('https://paytech.sn/api/payment/request-payment', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -59,34 +99,24 @@ export async function POST(req) {
             body: JSON.stringify(paytechData)
         });
 
-        const result = await response.json();
-        console.log("PayTech Initial Result:", result);
+        const paytechResult = await paytechRes.json();
+        if (paytechResult.success !== 1) throw new Error(paytechResult.error || "Erreur PayTech");
 
-        if (result.success !== 1) {
-            throw new Error(result.error || "Erreur PayTech");
-        }
-
-        // Construction de l'URL d'Auto-Submit selon la doc officielle
-        let finalRedirectUrl = result.redirect_url;
-        
-        const cleanPhone = phoneNumber.replace(/\s+/g, '').replace(/\+/g, '');
-        const phoneWithPrefix = cleanPhone.startsWith('221') ? `+${cleanPhone}` : `+221${cleanPhone}`;
-        const phoneNoPrefix = cleanPhone.startsWith('221') ? cleanPhone.substring(3) : cleanPhone;
+        let finalRedirectUrl = paytechResult.redirect_url;
+        const cleanPhoneRaw = phoneNumber.replace(/\s+/g, '').replace(/\+/g, '');
+        const phoneNoPrefix = cleanPhoneRaw.startsWith('221') ? cleanPhoneRaw.substring(3) : cleanPhoneRaw;
 
         const autoSubmitParams = new URLSearchParams({
-            'pn': phoneWithPrefix,        // ex: +221771234567
-            'nn': phoneNoPrefix,          // ex: 771234567
-            'fn': accountHolder || "Client HOLA",
+            'pn': cleanPhoneRaw.startsWith('221') ? `+${cleanPhoneRaw}` : `+221${cleanPhoneRaw}`,
+            'nn': phoneNoPrefix,
+            'fn': accountHolder || "Client",
             'tp': paymentMethod === 'wave' ? 'Wave' : 'Orange Money',
-            'nac': '1'                    // DECLENCHE L'AUTO-SUBMIT
+            'nac': '1'
         });
-
-        finalRedirectUrl += '?' + autoSubmitParams.toString();
-        console.log("Final Auto-Submit URL:", finalRedirectUrl);
 
         return NextResponse.json({
             success: true,
-            redirect_url: finalRedirectUrl
+            redirect_url: finalRedirectUrl + '?' + autoSubmitParams.toString()
         });
 
     } catch (error) {
