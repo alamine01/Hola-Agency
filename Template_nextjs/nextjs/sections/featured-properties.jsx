@@ -88,11 +88,6 @@ export default function FeaturedProperties() {
                                             <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
                                             {property.rating || "Nouveau"}
                                         </div>
-                                        {property.sale_price && property.sale_price > 0 && (
-                                            <div className="absolute top-4 left-4 bg-amber-500 text-white text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg animate-pulse">
-                                                Promotion
-                                            </div>
-                                        )}
                                     </div>
                                     <div className="p-6 flex-1 flex flex-col">
                                         <div className="flex justify-between items-start mb-4">
@@ -116,18 +111,8 @@ export default function FeaturedProperties() {
                                         </div>
 
                                         <div className="pt-6 border-t border-slate-100 flex items-center justify-between mt-auto">
-                                            <div className="text-slate-500 text-xs font-bold uppercase tracking-wider">À partir de</div>
-                                            <div className="flex flex-col items-end">
-                                                <div className="text-lg font-bold text-[#D4AF37]">
-                                                    {(property.sale_price && property.sale_price > 0 ? property.sale_price : property.price)?.toLocaleString()} FCFA
-                                                    <span className="text-sm font-normal text-slate-400 ml-1">/nuit</span>
-                                                </div>
-                                                {property.sale_price && property.sale_price > 0 && (
-                                                    <div className="text-[10px] text-slate-400 line-through font-medium italic">
-                                                        {property.price?.toLocaleString()} FCFA
-                                                    </div>
-                                                )}
-                                            </div>
+                                            <div className="text-slate-500 text-sm">À partir de</div>
+                                            <div className="text-lg font-bold text-[#D4AF37]">{property.price?.toLocaleString()} FCFA<span className="text-sm font-normal text-slate-400">/nuit</span></div>
                                         </div>
                                     </div>
                                 </motion.div>

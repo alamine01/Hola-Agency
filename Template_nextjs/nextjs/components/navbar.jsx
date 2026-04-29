@@ -93,7 +93,7 @@ export default function Navbar() {
                                 <XIcon className="size-6" />
                             </button>
 
-                            <div className="flex items-center gap-2 text-slate-800 font-bold tracking-wider mb-8">
+                            <div className="flex items-center gap-2 text-[#D4AF37] font-bold tracking-wider mb-10">
                                 <img src="/logo.svg" alt="Logo" className="h-8 w-auto object-contain" />
                                 <span>HOLA AGENCY</span>
                             </div>
