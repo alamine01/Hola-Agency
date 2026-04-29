@@ -35,6 +35,8 @@ function PaymentContent() {
     const guests = searchParams.get('guests');
 
     const [method, setMethod] = useState('wave'); // 'wave', 'orange', 'card'
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [accountHolder, setAccountHolder] = useState('');
     const [isProcessing, setIsProcessing] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [user, setUser] = useState(null);
@@ -49,6 +51,13 @@ function PaymentContent() {
 
         const ownerId = searchParams.get('owner_id');
         const clientName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || "Utilisateur HOLA";
+
+        // Validation des champs Mobile Money
+        if ((method === 'wave' || method === 'orange') && (!phoneNumber || !accountHolder)) {
+            alert("Veuillez saisir votre numéro de téléphone et le nom du titulaire du compte.");
+            setIsProcessing(false);
+            return;
+        }
 
         try {
             // 1. Créer la réservation avec statut "en attente de paiement"
@@ -119,7 +128,10 @@ function PaymentContent() {
                 body: JSON.stringify({
                     bookingId: booking.id,
                     amount: parseFloat(amount),
-                    title: title || 'Réservation HOLA'
+                    title: title || 'Réservation HOLA',
+                    phoneNumber: phoneNumber,
+                    accountHolder: accountHolder,
+                    paymentMethod: method
                 }),
                 signal: controller.signal
             });
@@ -286,6 +298,66 @@ function PaymentContent() {
                                 </div>
                             </button>
                         </div>
+
+                        {/* Direct Mobile Money Inputs */}
+                        <AnimatePresence>
+                            {(method === 'wave' || method === 'orange') && (
+                                <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: 'auto', opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    className="overflow-hidden"
+                                >
+                                    <div className="mt-8 p-8 bg-slate-50 rounded-[2rem] border border-slate-100 space-y-6">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${method === 'wave' ? 'bg-amber-100 text-amber-600' : 'bg-orange-100 text-orange-600'}`}>
+                                                <Smartphone className="w-5 h-5" />
+                                            </div>
+                                            <div>
+                                                <h3 className="font-black text-slate-900 text-sm uppercase tracking-widest">Détails du compte</h3>
+                                                <p className="text-[10px] text-slate-400 font-bold uppercase">Saisissez vos informations {method === 'wave' ? 'Wave' : 'Orange Money'}</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Numéro de téléphone</label>
+                                                <div className="relative group">
+                                                    <input
+                                                        type="tel"
+                                                        placeholder="77 000 00 00"
+                                                        value={phoneNumber}
+                                                        onChange={(e) => setPhoneNumber(e.target.value)}
+                                                        className="w-full h-14 bg-white border-2 border-slate-100 rounded-2xl px-6 font-bold text-slate-900 focus:border-slate-900 focus:ring-0 transition-all outline-none"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nom du titulaire</label>
+                                                <div className="relative group">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Prénom Nom"
+                                                        value={accountHolder}
+                                                        onChange={(e) => setAccountHolder(e.target.value)}
+                                                        className="w-full h-14 bg-white border-2 border-slate-100 rounded-2xl px-6 font-bold text-slate-900 focus:border-slate-900 focus:ring-0 transition-all outline-none"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-start gap-3 p-4 bg-white/50 rounded-2xl border border-white">
+                                            <div className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 mt-0.5">
+                                                <ShieldCheck className="w-3 h-3" />
+                                            </div>
+                                            <p className="text-[10px] text-slate-500 font-medium leading-relaxed italic">
+                                                En cliquant sur confirmer, vous recevrez une notification sur votre téléphone pour valider le paiement de <span className="font-bold text-slate-900">{Number(amount).toLocaleString()} FCFA</span>.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
 
                     <div className="bg-slate-50 rounded-[2.5rem] p-8 border border-white flex items-center gap-6">

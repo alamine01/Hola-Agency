@@ -9,10 +9,25 @@ const PAYTECH_API_SECRET = process.env.PAYTECH_API_SECRET || 'test_api_secret';
 export async function POST(req) {
     console.log("PayTech API Route hit");
     try {
-        const { bookingId, amount, title } = await req.json();
+        const { bookingId, amount, title, phoneNumber, accountHolder, paymentMethod } = await req.json();
 
         if (!bookingId || !amount) {
             return NextResponse.json({ success: false, error: "Données incomplètes." }, { status: 400 });
+        }
+
+        // 1. Mettre à jour les métadonnées de la réservation dans Supabase
+        if (phoneNumber || accountHolder) {
+            await supabase
+                .from('bookings')
+                .update({ 
+                    metadata: { 
+                        phoneNumber, 
+                        accountHolder, 
+                        paymentMethod,
+                        updated_at: new Date().toISOString() 
+                    } 
+                })
+                .eq('id', bookingId);
         }
 
         if (!PAYTECH_API_KEY || PAYTECH_API_KEY === 'votre_cle_api_ici') {
@@ -41,8 +56,16 @@ export async function POST(req) {
             success_url: `${validSiteUrl}/dashboard/client/paiement/success`,
             ipn_url: ipnUrl,
             cancel_url: `${validSiteUrl}/dashboard/client/paiement/${bookingId}`,
-            custom_field: JSON.stringify({ booking_id: bookingId })
+            custom_field: JSON.stringify({ 
+                booking_id: bookingId,
+                customer_phone: phoneNumber,
+                customer_name: accountHolder,
+                method: paymentMethod
+            })
         };
+
+        // Note: Si le compte PayTech supporte le "Direct Checkout", on pourrait ajouter :
+        // if (paymentMethod === 'wave') paytechData.payment_method = 'wave';
 
         // 3. Appel à l'API PayTech
         const response = await fetch('https://paytech.sn/api/payment/request-payment', {
