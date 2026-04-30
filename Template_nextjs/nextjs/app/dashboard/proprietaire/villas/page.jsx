@@ -38,7 +38,7 @@ const VillaCard = ({ villa, onEdit, onDelete }) => {
     const netPrice = Math.floor(activePrice * 0.85);
 
     return (
-        <div className="bg-white rounded-[2rem] border border-slate-100 p-4 flex flex-col gap-4 hover:shadow-xl transition-all group shadow-sm relative">
+        <div className={`bg-white rounded-[2rem] border border-slate-100 p-4 flex flex-col gap-4 hover:shadow-xl transition-all group shadow-sm relative ${showMenu ? 'z-50' : ''}`}>
             {salePrice && salePrice > 0 && (
                 <div className="absolute inset-0 rounded-[2rem] overflow-hidden pointer-events-none z-10">
                     <div className="absolute top-6 -left-8 bg-amber-500 text-white text-[8px] font-black uppercase tracking-widest px-10 py-1.5 -rotate-45 shadow-lg">
@@ -99,7 +99,7 @@ const VillaCard = ({ villa, onEdit, onDelete }) => {
                         </button>
                         {showMenu && (
                             <>
-                                <div className="absolute bottom-full right-0 mb-2 w-[200px] min-w-max bg-white rounded-2xl shadow-2xl border border-slate-100 p-2 z-[100] animate-in fade-in zoom-in-95 duration-150 ring-4 ring-slate-900/5">
+                                <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-slate-100 p-2 z-[100] animate-in fade-in zoom-in-95 duration-150 ring-4 ring-slate-900/5">
                                     <button onClick={() => { setShowMenu(false); onEdit(villa); }} className="w-full text-left px-4 py-3 text-[10px] font-black text-slate-700 hover:bg-slate-50 transition-colors uppercase tracking-widest whitespace-nowrap rounded-xl">Modifier l'annonce</button>
                                     <button onClick={() => { setShowMenu(false); onDelete(villa.id); }} className="w-full text-left px-4 py-3 text-[10px] font-black text-red-600 hover:bg-red-50 transition-colors uppercase tracking-widest whitespace-nowrap rounded-xl">Supprimer l'annonce</button>
                                 </div>
