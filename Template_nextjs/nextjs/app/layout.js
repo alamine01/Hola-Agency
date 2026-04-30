@@ -16,9 +16,9 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
     return (
-        <html lang='en'>
+        <html lang='en' className="overflow-x-hidden">
             <LenisScroll />
-            <body>{children}</body>
+            <body className={`${inter.variable} font-sans overflow-x-hidden`}>{children}</body>
         </html>
     );
 }

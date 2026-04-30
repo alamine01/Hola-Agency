@@ -95,7 +95,7 @@ function LoginForm() {
             >
                 <div className="flex justify-center mb-8">
                     <Link href="/" className="flex items-center gap-2 text-[#D4AF37] hover:text-amber-500 transition-colors">
-                        <img src="/logo.svg" alt="Logo" className="h-10 w-auto object-contain" />
+                        <img src="/logo.svg" alt="Logo" className="h-10 w-14 object-contain" />
                         <span className="font-bold text-xl tracking-wider">HOLA AGENCY</span>
                     </Link>
                 </div>
