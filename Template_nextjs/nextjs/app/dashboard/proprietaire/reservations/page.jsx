@@ -259,7 +259,7 @@ const ReservationItem = ({ reservation, onStatusUpdate, onViewDetails, onOpenCha
                         {showMenu && (
                             <div
                                 onMouseLeave={() => setShowMenu(false)}
-                                className="absolute top-full right-0 mt-3 w-56 bg-white border border-slate-100 rounded-2xl shadow-2xl z-[100] p-2 overflow-visible animate-in fade-in zoom-in duration-150 ring-4 ring-slate-900/5"
+                                className="absolute top-full right-0 mt-2 w-max min-w-[220px] bg-white border border-slate-100 rounded-2xl shadow-2xl z-[100] p-2 animate-in fade-in zoom-in duration-150 ring-4 ring-slate-900/5"
                             >
                                 <button onClick={(e) => { e.stopPropagation(); setShowMenu(false); onViewDetails(reservation); }} className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-black uppercase tracking-wider text-slate-600 hover:bg-slate-50 rounded-[1.2rem] transition-all group whitespace-nowrap">
                                     <FileText className="w-4 h-4 text-slate-400 group-hover:text-amber-500" />

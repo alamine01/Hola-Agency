@@ -38,10 +38,12 @@ const VillaCard = ({ villa, onEdit, onDelete }) => {
     const netPrice = Math.floor(activePrice * 0.85);
 
     return (
-        <div className="bg-white rounded-[2rem] border border-slate-100 p-4 flex flex-col gap-4 hover:shadow-xl transition-all group shadow-sm relative overflow-hidden">
+        <div className="bg-white rounded-[2rem] border border-slate-100 p-4 flex flex-col gap-4 hover:shadow-xl transition-all group shadow-sm relative">
             {salePrice && salePrice > 0 && (
-                <div className="absolute top-6 -left-8 bg-amber-500 text-white text-[8px] font-black uppercase tracking-widest px-10 py-1.5 -rotate-45 z-10 shadow-lg">
-                    PROMO
+                <div className="absolute inset-0 rounded-[2rem] overflow-hidden pointer-events-none z-10">
+                    <div className="absolute top-6 -left-8 bg-amber-500 text-white text-[8px] font-black uppercase tracking-widest px-10 py-1.5 -rotate-45 shadow-lg">
+                        PROMO
+                    </div>
                 </div>
             )}
             <div className="relative h-48 sm:h-56 rounded-[1.5rem] overflow-hidden bg-slate-50">
@@ -97,9 +99,9 @@ const VillaCard = ({ villa, onEdit, onDelete }) => {
                         </button>
                         {showMenu && (
                             <>
-                                <div className="absolute bottom-full right-0 mb-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-100">
-                                    <button onClick={() => { setShowMenu(false); onEdit(villa); }} className="w-full text-left px-4 py-3 text-[10px] font-black text-slate-700 hover:bg-slate-50 transition-colors uppercase tracking-widest whitespace-nowrap">Modifier l'annonce</button>
-                                    <button onClick={() => { setShowMenu(false); onDelete(villa.id); }} className="w-full text-left px-4 py-3 text-[10px] font-black text-red-600 hover:bg-red-50 transition-colors uppercase tracking-widest whitespace-nowrap">Supprimer l'annonce</button>
+                                <div className="absolute bottom-full right-0 mb-2 w-[200px] min-w-max bg-white rounded-2xl shadow-2xl border border-slate-100 p-2 z-[100] animate-in fade-in zoom-in-95 duration-150 ring-4 ring-slate-900/5">
+                                    <button onClick={() => { setShowMenu(false); onEdit(villa); }} className="w-full text-left px-4 py-3 text-[10px] font-black text-slate-700 hover:bg-slate-50 transition-colors uppercase tracking-widest whitespace-nowrap rounded-xl">Modifier l'annonce</button>
+                                    <button onClick={() => { setShowMenu(false); onDelete(villa.id); }} className="w-full text-left px-4 py-3 text-[10px] font-black text-red-600 hover:bg-red-50 transition-colors uppercase tracking-widest whitespace-nowrap rounded-xl">Supprimer l'annonce</button>
                                 </div>
                                 <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)}></div>
                             </>
