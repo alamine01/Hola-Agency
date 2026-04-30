@@ -172,10 +172,10 @@ export default function AdminUsersPage() {
                                                         Modifier Rôle <ChevronDown className="w-3 h-3" />
                                                     </button>
                                                     <div className="absolute bottom-full right-0 w-48 bg-white border border-slate-100 rounded-2xl shadow-2xl z-50 p-2 hidden group-hover/menu:block animate-in fade-in slide-in-from-bottom-2 duration-150 after:content-[''] after:absolute after:top-full after:left-0 after:right-0 after:h-4">
-                                                        <button onClick={() => handleRoleChange(profile.id, 'admin')} className="w-full text-left px-4 py-2 text-[10px] font-black uppercase hover:bg-slate-50 rounded-xl transition-all">Administrateur</button>
-                                                        <button onClick={() => handleRoleChange(profile.id, 'client')} className="w-full text-left px-4 py-2 text-[10px] font-black uppercase hover:bg-slate-50 rounded-xl transition-all">Client</button>
-                                                        <button onClick={() => handleRoleChange(profile.id, 'proprietaire')} className="w-full text-left px-4 py-2 text-[10px] font-black uppercase hover:bg-slate-50 rounded-xl transition-all">Propriétaire</button>
-                                                        <button onClick={() => handleRoleChange(profile.id, 'prestataire')} className="w-full text-left px-4 py-2 text-[10px] font-black uppercase hover:bg-slate-50 rounded-xl transition-all">Prestataire</button>
+                                                        <button onClick={() => handleRoleChange(profile.id, 'admin')} className="w-full text-left px-4 py-2 text-[10px] font-black uppercase hover:bg-slate-50 rounded-xl transition-all whitespace-nowrap">Administrateur</button>
+                                                        <button onClick={() => handleRoleChange(profile.id, 'client')} className="w-full text-left px-4 py-2 text-[10px] font-black uppercase hover:bg-slate-50 rounded-xl transition-all whitespace-nowrap">Client</button>
+                                                        <button onClick={() => handleRoleChange(profile.id, 'proprietaire')} className="w-full text-left px-4 py-2 text-[10px] font-black uppercase hover:bg-slate-50 rounded-xl transition-all whitespace-nowrap">Propriétaire</button>
+                                                        <button onClick={() => handleRoleChange(profile.id, 'prestataire')} className="w-full text-left px-4 py-2 text-[10px] font-black uppercase hover:bg-slate-50 rounded-xl transition-all whitespace-nowrap">Prestataire</button>
                                                     </div>
                                                 </div>
                                             )}

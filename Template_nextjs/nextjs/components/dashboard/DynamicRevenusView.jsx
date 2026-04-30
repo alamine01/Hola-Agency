@@ -269,28 +269,28 @@ export default function DynamicRevenusView({ role = 'client' }) {
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="bg-white rounded-[2.5rem] md:rounded-[3rem] p-6 md:p-12 w-full max-w-lg shadow-2xl relative z-10"
+                            className="bg-white rounded-[2.5rem] md:rounded-[3rem] p-6 md:p-10 w-full max-w-md shadow-2xl relative z-10"
                         >
-                            <button onClick={() => setIsWithdrawModalOpen(false)} className="absolute top-8 right-8 p-3 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-50 border border-slate-50">
+                            <button onClick={() => setIsWithdrawModalOpen(false)} className="absolute top-6 right-6 p-2.5 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-50 border border-slate-50">
                                 <X className="w-5 h-5" />
                             </button>
 
-                            <div className="mb-10 text-center md:text-left">
-                                <div className="w-16 h-16 bg-amber-600 text-white rounded-[1.5rem] flex items-center justify-center mb-6 shadow-xl shadow-amber-200 mx-auto md:mx-0">
-                                    <ArrowUpRight className="w-8 h-8" />
+                            <div className="mb-6 md:mb-8 text-center md:text-left">
+                                <div className="w-14 h-14 bg-amber-600 text-white rounded-[1.2rem] flex items-center justify-center mb-5 shadow-xl shadow-amber-200 mx-auto md:mx-0">
+                                    <ArrowUpRight className="w-7 h-7" />
                                 </div>
-                                <h2 className="text-3xl font-black text-slate-900 tracking-tight uppercase mb-2">Retrait de fonds</h2>
-                                <p className="text-slate-500 font-medium italic">Transférez vos gains vers votre compte préféré.</p>
+                                <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight uppercase mb-1">Retrait de fonds</h2>
+                                <p className="text-slate-500 text-xs font-medium italic">Transférez vos gains vers votre compte préféré.</p>
                             </div>
 
-                            <div className="space-y-6">
-                                <div className="p-6 bg-slate-50 rounded-[2rem] border border-slate-100 flex items-center justify-between shadow-inner">
+                            <div className="space-y-5 md:space-y-6">
+                                <div className="p-5 bg-slate-50 rounded-[1.8rem] border border-slate-100 flex items-center justify-between shadow-inner">
                                     <div>
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Solde disponible</p>
-                                        <p className="text-2xl font-black text-slate-900">{(wallet.available || 0).toLocaleString()} <span className="text-xs">FCFA</span></p>
+                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Solde disponible</p>
+                                        <p className="text-xl md:text-2xl font-black text-slate-900">{(wallet.available || 0).toLocaleString()} <span className="text-[10px]">FCFA</span></p>
                                     </div>
-                                    <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-amber-600 shadow-sm shadow-amber-100">
-                                        <Wallet className="w-6 h-6" />
+                                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-amber-600 shadow-sm shadow-amber-100">
+                                        <Wallet className="w-5 h-5" />
                                     </div>
                                 </div>
 
@@ -301,13 +301,13 @@ export default function DynamicRevenusView({ role = 'client' }) {
                                         placeholder="Min. 5,000 FCFA"
                                         value={withdrawForm.amount}
                                         onChange={e => setWithdrawForm({ ...withdrawForm, amount: e.target.value })}
-                                        className="w-full px-6 py-5 bg-white border-2 border-slate-100 rounded-2xl outline-none focus:border-amber-600 transition-all font-black text-slate-900 text-lg shadow-sm"
+                                        className="w-full px-5 py-4 bg-white border-2 border-slate-100 rounded-2xl outline-none focus:border-amber-600 transition-all font-black text-slate-900 text-base shadow-sm"
                                     />
                                 </div>
 
                                 <div className="space-y-2">
                                     <label className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">Méthode de réception</label>
-                                    <div className="grid grid-cols-2 gap-3">
+                                    <div className="grid grid-cols-2 gap-2.5">
                                         {[
                                             { id: 'Wave', label: 'Wave' },
                                             { id: 'Orange Money', label: 'Orange Money' },
@@ -318,7 +318,7 @@ export default function DynamicRevenusView({ role = 'client' }) {
                                                 key={m.id}
                                                 type="button"
                                                 onClick={() => setWithdrawForm({ ...withdrawForm, method: m.id })}
-                                                className={`py-4 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all border-2 ${withdrawForm.method === m.id ? 'bg-slate-900 text-white border-slate-900 shadow-xl' : 'bg-white text-slate-500 border-slate-100 hover:border-amber-200'}`}
+                                                className={`py-3.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border-2 ${withdrawForm.method === m.id ? 'bg-slate-900 text-white border-slate-900 shadow-xl' : 'bg-white text-slate-500 border-slate-100 hover:border-amber-200'}`}
                                             >
                                                 {m.label}
                                             </button>
@@ -326,16 +326,16 @@ export default function DynamicRevenusView({ role = 'client' }) {
                                     </div>
                                 </div>
 
-                                <div className="pt-6">
+                                <div className="pt-4">
                                     <button
                                         onClick={handleWithdrawRequest}
                                         disabled={withdrawLoading || !withdrawForm.amount || parseInt(withdrawForm.amount) > wallet.available}
-                                        className="w-full py-5 bg-amber-600 text-white rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-xs hover:bg-slate-900 transition-all shadow-2xl shadow-amber-100 active:scale-95 disabled:opacity-50 disabled:grayscale flex items-center justify-center gap-3"
+                                        className="w-full py-4 bg-amber-600 text-white rounded-[1.2rem] font-black uppercase tracking-[0.2em] text-[10px] hover:bg-slate-900 transition-all shadow-2xl shadow-amber-100 active:scale-95 disabled:opacity-50 disabled:grayscale flex items-center justify-center gap-3"
                                     >
-                                        {withdrawLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Confirmer le retrait"}
+                                        {withdrawLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Confirmer le retrait"}
                                     </button>
-                                    <p className="text-center text-[9px] text-slate-400 mt-6 font-medium italic flex items-center justify-center gap-2">
-                                        <AlertCircle className="w-3 h-3" /> Les retraits sont traités sous un délai de 24h ouvrées.
+                                    <p className="text-center text-[8px] text-slate-400 mt-5 font-medium italic flex items-center justify-center gap-2">
+                                        <AlertCircle className="w-3 h-3" /> Traitement sous 24h ouvrées.
                                     </p>
                                 </div>
                             </div>

@@ -97,9 +97,9 @@ const VillaCard = ({ villa, onEdit, onDelete }) => {
                         </button>
                         {showMenu && (
                             <>
-                                <div className="absolute bottom-full right-0 mb-2 w-32 bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden z-20 animate-in fade-in zoom-in-95 duration-100">
-                                    <button onClick={() => { setShowMenu(false); onEdit(villa); }} className="w-full text-left px-4 py-3 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors uppercase tracking-widest">Modifier</button>
-                                    <button onClick={() => { setShowMenu(false); onDelete(villa.id); }} className="w-full text-left px-4 py-3 text-xs font-bold text-red-600 hover:bg-red-50 transition-colors uppercase tracking-widest">Supprimer</button>
+                                <div className="absolute bottom-full right-0 mb-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-100">
+                                    <button onClick={() => { setShowMenu(false); onEdit(villa); }} className="w-full text-left px-4 py-3 text-[10px] font-black text-slate-700 hover:bg-slate-50 transition-colors uppercase tracking-widest whitespace-nowrap">Modifier l'annonce</button>
+                                    <button onClick={() => { setShowMenu(false); onDelete(villa.id); }} className="w-full text-left px-4 py-3 text-[10px] font-black text-red-600 hover:bg-red-50 transition-colors uppercase tracking-widest whitespace-nowrap">Supprimer l'annonce</button>
                                 </div>
                                 <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)}></div>
                             </>
