@@ -102,12 +102,12 @@ const BookingDetailModal = ({ isOpen, onClose, reservation }) => {
                             <p className="text-lg font-bold text-slate-400 italic">-{commission.toLocaleString()} <span className="text-[10px]">FCFA</span></p>
                         </div>
                     </div>
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                         <div>
                             <p className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-1">Votre Gain Net</p>
-                            <p className="text-3xl font-black text-amber-400">{netPayout.toLocaleString()} <span className="text-sm">FCFA</span></p>
+                            <p className="text-3xl font-black text-amber-400 whitespace-nowrap">{netPayout.toLocaleString()} <span className="text-sm">FCFA</span></p>
                         </div>
-                        <div className="bg-emerald-500/10 px-4 py-2 rounded-xl border border-emerald-500/20 flex items-center gap-2">
+                        <div className="bg-emerald-500/10 px-4 py-2.5 rounded-xl border border-emerald-500/20 flex items-center gap-2 self-start sm:self-auto">
                             <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
                             <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">En attente de virement</span>
                         </div>
