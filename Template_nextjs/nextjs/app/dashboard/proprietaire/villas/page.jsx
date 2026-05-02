@@ -99,9 +99,9 @@ const VillaCard = ({ villa, onEdit, onDelete }) => {
                         </button>
                         {showMenu && (
                             <>
-                                <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-slate-100 p-2 z-[100] animate-in fade-in zoom-in-95 duration-150 ring-4 ring-slate-900/5">
-                                    <button onClick={() => { setShowMenu(false); onEdit(villa); }} className="w-full text-left px-4 py-3 text-[10px] font-black text-slate-700 hover:bg-slate-50 transition-colors uppercase tracking-widest whitespace-nowrap rounded-xl">Modifier l'annonce</button>
-                                    <button onClick={() => { setShowMenu(false); onDelete(villa.id); }} className="w-full text-left px-4 py-3 text-[10px] font-black text-red-600 hover:bg-red-50 transition-colors uppercase tracking-widest whitespace-nowrap rounded-xl">Supprimer l'annonce</button>
+                                <div className="absolute top-full right-0 mt-2 w-64 min-w-max bg-white rounded-2xl shadow-2xl border border-slate-100 p-2 z-[100] animate-in fade-in zoom-in-95 duration-150 ring-4 ring-slate-900/5">
+                                    <button onClick={() => { setShowMenu(false); onEdit(villa); }} className="w-full text-left px-4 py-3 text-[10px] font-black text-slate-700 hover:bg-slate-50 transition-colors uppercase tracking-widest whitespace-nowrap rounded-xl flex items-center shrink-0">Modifier l'annonce</button>
+                                    <button onClick={() => { setShowMenu(false); onDelete(villa.id); }} className="w-full text-left px-4 py-3 text-[10px] font-black text-red-600 hover:bg-red-50 transition-colors uppercase tracking-widest whitespace-nowrap rounded-xl flex items-center shrink-0">Supprimer l'annonce</button>
                                 </div>
                                 <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)}></div>
                             </>
@@ -258,26 +258,26 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
             <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="bg-white rounded-[2.5rem] p-6 md:p-8 w-full max-w-xl shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar"
+                className="modal-hola bg-white rounded-[2.5rem] p-6 md:p-8 shadow-2xl relative max-h-[90vh] flex flex-col overflow-hidden"
             >
                 <button onClick={onClose} className="absolute top-6 right-6 p-2.5 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-100 z-10 border border-slate-50">
                     <X className="w-5 h-5" />
                 </button>
 
-                <div className="mb-8">
+                <div className="mb-8 shrink-0">
                     <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight pr-10 uppercase">Nouvelle Annonce</h2>
                     <p className="text-slate-400 font-medium text-sm mt-1 italic">Configurez votre bien pour la plateforme HOLA</p>
                 </div>
 
-                <div className="space-y-6">
+                <div className="flex-1 overflow-y-auto pr-2 space-y-6 custom-scrollbar">
                     {/* Compact Image Uploader */}
                     <div
                         onClick={() => fileInputRef.current?.click()}
-                        className="group relative border-2 border-dashed border-slate-200 rounded-[2rem] p-4 text-center hover:border-amber-600/40 transition-all cursor-pointer bg-slate-50/30 hover:bg-white overflow-hidden min-h-[160px] flex flex-col items-center justify-center"
+                        className="group relative border-2 border-dashed border-slate-200 rounded-[2rem] p-4 text-center hover:border-amber-600/40 transition-all cursor-pointer bg-slate-50/30 hover:bg-white overflow-hidden aspect-video flex flex-col items-center justify-center"
                     >
                         {preview ? (
-                            <div className="absolute inset-0">
-                                <img src={preview} className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 w-full h-full">
+                                <img src={preview} className="w-full h-full object-cover" alt="Preview" />
                                 <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                     <Camera className="text-white w-8 h-8" />
                                 </div>

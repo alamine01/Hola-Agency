@@ -42,13 +42,13 @@ const RequestDetailsModal = ({ isOpen, onClose, request, onStatusUpdate }) => {
                     initial={{ opacity: 0, scale: 0.95, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                    className="bg-white rounded-[2.5rem] p-6 md:p-10 w-full max-w-xl shadow-2xl relative z-10 max-h-[90vh] overflow-y-auto custom-scrollbar"
+                    className="modal-hola bg-white rounded-[2.5rem] p-6 md:p-10 shadow-2xl relative z-10 max-h-[90vh] flex flex-col overflow-hidden"
                 >
                     <button onClick={onClose} className="absolute top-6 right-6 p-2.5 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-50 border border-slate-50">
                         <X className="w-5 h-5" />
                     </button>
 
-                    <div className="mb-10">
+                    <div className="mb-10 shrink-0">
                         <div className="flex items-center gap-4 mb-4">
                             <div className="px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-amber-100">
                                 Demande #{request.id.slice(0, 5)}
@@ -58,11 +58,14 @@ const RequestDetailsModal = ({ isOpen, onClose, request, onStatusUpdate }) => {
                                 {request.status}
                             </div>
                         </div>
-                        <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">{details.title || 'Service'}</h2>
-                        <p className="text-slate-400 font-medium text-sm mt-1">"Vérifiez les informations avant d'accepter la mission."</p>
+                        <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight uppercase tracking-tight">Détails de la demande</h2>
                     </div>
 
-                    <div className="space-y-8">
+                    <div className="flex-1 overflow-y-auto pr-2 space-y-8 custom-scrollbar">
+                        <div className="mb-4">
+                            <h2 className="text-xl font-black text-slate-900 tracking-tight">{details.title || 'Service'}</h2>
+                            <p className="text-slate-400 font-medium text-sm mt-1 italic">"Vérifiez les informations avant d'accepter la mission."</p>
+                        </div>
                         <div className="flex items-center gap-5 p-5 bg-slate-50/50 rounded-3xl border border-slate-100">
                             <div className="w-14 h-14 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-black text-xl">
                                 <User className="w-6 h-6" />
@@ -133,13 +136,13 @@ const GuideModal = ({ isOpen, onClose }) => {
             <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="relative bg-white rounded-[2.5rem] p-8 md:p-12 w-full max-w-xl shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar"
+                className="modal-hola relative bg-white rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative max-h-[90vh] flex flex-col overflow-hidden"
             >
-                <button onClick={onClose} className="absolute top-8 right-8 p-3 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-50 z-10">
+                <button onClick={onClose} className="absolute top-6 right-6 p-2.5 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-100 z-10 border border-slate-50">
                     <X className="w-6 h-6" />
                 </button>
 
-                <div className="mb-10 flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+                <div className="mb-10 flex flex-col md:flex-row items-center gap-6 text-center md:text-left shrink-0">
                     <div className="w-16 h-16 bg-amber-600 text-white rounded-2xl flex items-center justify-center shadow-xl shadow-amber-100 shrink-0">
                         <AlertCircle className="w-8 h-8" />
                     </div>
@@ -149,7 +152,7 @@ const GuideModal = ({ isOpen, onClose }) => {
                     </div>
                 </div>
 
-                <div className="space-y-4 mb-10 overflow-x-hidden">
+                <div className="flex-1 overflow-y-auto pr-2 space-y-4 mb-10 custom-scrollbar">
                     {[
                         { 
                             id: 1, 

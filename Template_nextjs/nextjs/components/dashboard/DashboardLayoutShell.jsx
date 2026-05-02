@@ -30,11 +30,11 @@ const NotificationDropdown = ({ isOpen, onClose, notifications, onMarkAllRead })
 
     return (
         <>
-            <div className="fixed md:absolute top-20 md:top-full left-4 right-4 md:left-auto md:right-0 mt-3 md:w-96 bg-white border border-slate-100 rounded-[2rem] shadow-2xl z-[60] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ring-4 ring-slate-900/5">
+            <div className="fixed md:absolute top-20 md:top-full left-4 right-4 md:left-auto md:right-0 mt-3 md:w-96 min-w-[300px] bg-white border border-slate-100 rounded-[2rem] shadow-2xl z-[60] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ring-4 ring-slate-900/5">
                 <div className="p-5 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
-                    <h3 className="font-black text-slate-900 text-sm uppercase tracking-widest">Notifications</h3>
+                    <h3 className="font-black text-slate-900 text-sm uppercase tracking-widest whitespace-nowrap">Notifications</h3>
                     {notifications.filter(n => !n.is_read).length > 0 && (
-                        <span className="px-2 py-0.5 bg-amber-600 text-white text-[10px] font-black rounded-full">
+                        <span className="px-2 py-0.5 bg-amber-600 text-white text-[10px] font-black rounded-full whitespace-nowrap">
                             {notifications.filter(n => !n.is_read).length} NOUVELLES
                         </span>
                     )}
@@ -74,7 +74,7 @@ const NotificationDropdown = ({ isOpen, onClose, notifications, onMarkAllRead })
 
                 <button
                     onClick={onMarkAllRead}
-                    className="w-full py-4 text-xs font-black text-amber-600 hover:bg-amber-50 transition-all uppercase tracking-widest bg-slate-50/30 disabled:opacity-50"
+                    className="w-full py-4 text-xs font-black text-amber-600 hover:bg-amber-50 transition-all uppercase tracking-widest bg-slate-50/30 disabled:opacity-50 whitespace-nowrap"
                     disabled={!notifications.some(n => !n.is_read)}
                 >
                     Marquer tout comme lu
@@ -189,65 +189,69 @@ export default function DashboardLayoutShell({ children, forcedRole }) {
             <Sidebar role={activeRole} />
 
             <div className="flex-1 lg:ml-[280px] flex flex-col min-h-screen w-full max-w-full overflow-x-hidden">
-                <header className="h-20 bg-white border-b border-slate-100 flex items-center justify-between px-4 md:px-6 lg:px-10 sticky top-0 z-40 w-full">
-                    <div className="flex items-center gap-4 flex-1">
-                        <div className="hidden md:flex items-center bg-slate-50 border border-slate-100 rounded-full px-5 py-2.5 w-full max-w-md focus-within:border-amber-600/30 focus-within:bg-white transition-all group shadow-sm shadow-slate-100">
-                            <Search className="w-4 h-4 text-slate-400 mr-2 group-focus-within:text-amber-600 transition-colors" />
-                            <input
-                                type="text"
-                                placeholder="Rechercher une réservation, un logement..."
-                                className="bg-transparent border-none outline-none text-xs font-semibold w-full placeholder:text-slate-400"
-                            />
+                <header className="h-20 bg-white border-b border-slate-100 sticky top-0 z-40 w-full px-4 md:px-6">
+                    <div className="container-dashboard flex items-center justify-between h-full">
+                        <div className="flex items-center gap-4 flex-1">
+                            <div className="hidden md:flex items-center bg-slate-50 border border-slate-100 rounded-full px-5 py-2.5 w-full max-w-md focus-within:border-amber-600/30 focus-within:bg-white transition-all group shadow-sm shadow-slate-100">
+                                <Search className="w-4 h-4 text-slate-400 mr-2 group-focus-within:text-amber-600 transition-colors" />
+                                <input
+                                    type="text"
+                                    placeholder="Rechercher une réservation, un logement..."
+                                    className="bg-transparent border-none outline-none text-xs font-semibold w-full placeholder:text-slate-400"
+                                />
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="flex items-center gap-4">
-                        <div className="relative">
-                            <button
-                                onClick={() => setIsNotifOpen(!isNotifOpen)}
-                                className={`p-2.5 rounded-full transition-all relative ${isNotifOpen ? 'bg-amber-600 text-white shadow-lg shadow-amber-100' : 'bg-slate-50 border border-slate-100 text-slate-500 hover:text-amber-600'}`}
+                        <div className="flex items-center gap-4">
+                            <div className="relative">
+                                <button
+                                    onClick={() => setIsNotifOpen(!isNotifOpen)}
+                                    className={`p-2.5 rounded-full transition-all relative ${isNotifOpen ? 'bg-amber-600 text-white shadow-lg shadow-amber-100' : 'bg-slate-50 border border-slate-100 text-slate-500 hover:text-amber-600'}`}
+                                >
+                                    <Bell className="w-5 h-5" />
+                                    {notifications.some(n => !n.is_read) && !isNotifOpen && (
+                                        <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white shadow-sm animate-pulse"></span>
+                                    )}
+                                </button>
+
+                                <NotificationDropdown
+                                    isOpen={isNotifOpen}
+                                    onClose={() => setIsNotifOpen(false)}
+                                    notifications={notifications}
+                                    onMarkAllRead={handleMarkAllRead}
+                                />
+                            </div>
+
+                            <div className="h-10 w-[1px] bg-slate-100 mx-2 hidden sm:block"></div>
+
+                            <Link
+                                href={`/dashboard/${normalize(activeRole)}/profil`}
+                                className="flex items-center gap-3 pl-2 group cursor-pointer hover:opacity-80 transition-all active:scale-95"
                             >
-                                <Bell className="w-5 h-5" />
-                                {notifications.some(n => !n.is_read) && !isNotifOpen && (
-                                    <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white shadow-sm animate-pulse"></span>
-                                )}
-                            </button>
-
-                            <NotificationDropdown
-                                isOpen={isNotifOpen}
-                                onClose={() => setIsNotifOpen(false)}
-                                notifications={notifications}
-                                onMarkAllRead={handleMarkAllRead}
-                            />
+                                <div className="hidden sm:block text-right">
+                                    <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest leading-none mb-1 group-hover:text-amber-600 transition-colors">
+                                        {profile?.role || 'CLIENT'}
+                                    </p>
+                                    <p className="text-sm font-bold text-slate-900 leading-none truncate max-w-[120px]">
+                                        {profile?.display_name || 'HOLA User'}
+                                    </p>
+                                </div>
+                                <div className="w-10 h-10 rounded-2xl bg-slate-900 border-2 border-white shadow-xl flex items-center justify-center text-white font-black text-lg group-hover:bg-amber-600 transition-colors overflow-hidden">
+                                    {profile?.avatar_url ? (
+                                        <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
+                                    ) : (
+                                        profile?.display_name?.charAt(0).toUpperCase() || <User className="w-5 h-5" />
+                                    )}
+                                </div>
+                            </Link>
                         </div>
-
-                        <div className="h-10 w-[1px] bg-slate-100 mx-2 hidden sm:block"></div>
-
-                        <Link
-                            href={`/dashboard/${normalize(activeRole)}/profil`}
-                            className="flex items-center gap-3 pl-2 group cursor-pointer hover:opacity-80 transition-all active:scale-95"
-                        >
-                            <div className="hidden sm:block text-right">
-                                <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest leading-none mb-1 group-hover:text-amber-600 transition-colors">
-                                    {profile?.role || 'CLIENT'}
-                                </p>
-                                <p className="text-sm font-bold text-slate-900 leading-none truncate max-w-[120px]">
-                                    {profile?.display_name || 'HOLA User'}
-                                </p>
-                            </div>
-                            <div className="w-10 h-10 rounded-2xl bg-slate-900 border-2 border-white shadow-xl flex items-center justify-center text-white font-black text-lg group-hover:bg-amber-600 transition-colors overflow-hidden">
-                                {profile?.avatar_url ? (
-                                    <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
-                                ) : (
-                                    profile?.display_name?.charAt(0).toUpperCase() || <User className="w-5 h-5" />
-                                )}
-                            </div>
-                        </Link>
                     </div>
                 </header>
 
                 <main className="flex-1 p-6 lg:p-10 overflow-x-hidden">
-                    {children}
+                    <div className="container-dashboard">
+                        {children}
+                    </div>
                 </main>
 
                 <footer className="py-8 px-10 border-t border-slate-100 text-slate-400 text-[10px] font-bold uppercase tracking-widest text-center italic">

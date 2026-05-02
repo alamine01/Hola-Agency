@@ -22,7 +22,6 @@ html, body {
 
 img {
     max-width: 100%;
-    height: auto;
 }
 
 body {
@@ -31,4 +30,56 @@ body {
 
 .btn {
     @apply cursor-pointer bg-gradient-to-r from-indigo-600 to-[#8A7DFF];
+}
+
+.container-hola {
+    @apply max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 w-full;
+}
+
+.container-auth {
+    @apply max-w-[450px] mx-auto w-full;
+}
+
+.container-dashboard {
+    @apply max-w-[1000px] mx-auto w-full;
+}
+
+.modal-hola {
+    max-width: 650px !important;
+    width: 100% !important;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    height: 4px;
+    width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-slate-200 rounded-full;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-300;
+}
+
+.table-responsive {
+    @apply overflow-x-auto w-full;
+}
+
+.table-responsive::-webkit-scrollbar {
+    height: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    @apply bg-slate-200 rounded-full;
 }

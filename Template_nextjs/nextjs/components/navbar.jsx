@@ -33,42 +33,44 @@ export default function Navbar() {
 
     return (
         <>
-            <nav className='sticky top-0 z-50 flex w-full items-center justify-between bg-white/80 px-4 py-4 backdrop-blur-xl md:px-16 lg:px-24 border-b border-slate-100 shadow-sm'>
-                <Link href='/' className='flex items-center gap-3 text-slate-900 hover:text-[#D4AF37] transition-colors'>
-                    <img src="/logo.svg" alt="Logo" className="h-10 w-14 object-contain" />
-                    <span className='font-black text-xl tracking-widest whitespace-nowrap'>HOLA AGENCY</span>
-                </Link>
+            <nav className='sticky top-0 z-50 w-full bg-white/80 border-b border-slate-100 shadow-sm backdrop-blur-xl'>
+                <div className="container-hola flex items-center justify-between py-4">
+                    <Link href='/' className='flex items-center gap-3 text-slate-900 hover:text-[#D4AF37] transition-colors'>
+                        <img src="/logo.svg" alt="Logo" className="h-10 w-14 object-contain" />
+                        <span className='font-black text-xl tracking-widest whitespace-nowrap'>HOLA AGENCY</span>
+                    </Link>
 
-                <div className='hidden items-center space-x-8 text-sm font-medium text-slate-600 md:flex'>
-                    {links.map((link) => (
-                        <Link key={link.name} href={link.href} className='transition hover:text-[#D4AF37]'>
-                            {link.name}
-                        </Link>
-                    ))}
-                </div>
-
-                <div className='hidden md:flex items-center gap-4'>
-                    {user ? (
-                        <Link href='/dashboard' className='flex items-center gap-2 rounded-full bg-slate-900 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-slate-800 hover:shadow-lg active:scale-95'>
-                            <LayoutDashboard className="w-4 h-4" />
-                            Mon Tableau de Bord
-                        </Link>
-                    ) : (
-                        <>
-                            <Link href='/login' className='text-sm font-medium text-slate-600 hover:text-[#D4AF37] transition'>
-                                Connexion
+                    <div className='hidden items-center space-x-8 text-sm font-medium text-slate-600 md:flex'>
+                        {links.map((link) => (
+                            <Link key={link.name} href={link.href} className='transition hover:text-[#D4AF37]'>
+                                {link.name}
                             </Link>
-                            <Link href='/register' className='flex items-center gap-2 rounded-full bg-slate-900 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800 hover:shadow-lg'>
-                                <UserCircle2 className="w-4 h-4" />
-                                S'inscrire
-                            </Link>
-                        </>
-                    )}
-                </div>
+                        ))}
+                    </div>
 
-                <button onClick={() => setIsOpen(true)} className='transition active:scale-90 md:hidden text-slate-800'>
-                    <MenuIcon className='size-6' />
-                </button>
+                    <div className='hidden md:flex items-center gap-4'>
+                        {user ? (
+                            <Link href='/dashboard' className='flex items-center gap-2 rounded-full bg-slate-900 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-slate-800 hover:shadow-lg active:scale-95'>
+                                <LayoutDashboard className="w-4 h-4" />
+                                Mon Tableau de Bord
+                            </Link>
+                        ) : (
+                            <>
+                                <Link href='/login' className='text-sm font-medium text-slate-600 hover:text-[#D4AF37] transition'>
+                                    Connexion
+                                </Link>
+                                <Link href='/register' className='flex items-center gap-2 rounded-full bg-slate-900 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800 hover:shadow-lg'>
+                                    <UserCircle2 className="w-4 h-4" />
+                                    S'inscrire
+                                </Link>
+                            </>
+                        )}
+                    </div>
+
+                    <button onClick={() => setIsOpen(true)} className='transition active:scale-90 md:hidden text-slate-800'>
+                        <MenuIcon className='size-6' />
+                    </button>
+                </div>
             </nav>
 
             {/* Mobile Menu */}

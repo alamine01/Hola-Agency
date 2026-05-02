@@ -37,18 +37,20 @@ const BookingDetailModal = ({ isOpen, onClose, reservation }) => {
             <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="bg-white rounded-[3rem] p-8 md:p-10 w-full max-w-2xl shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar"
+                className="modal-hola bg-white rounded-[3rem] p-8 md:p-10 shadow-2xl relative max-h-[90vh] flex flex-col overflow-hidden"
             >
-                <button onClick={onClose} className="absolute top-8 right-8 p-3 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-50 z-10">
-                    <X className="w-6 h-6" />
+                <button onClick={onClose} className="absolute top-6 right-6 p-2.5 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-100 z-10 border border-slate-50">
+                    <X className="w-5 h-5" />
                 </button>
 
+                <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+
                 <div className="flex flex-col md:flex-row gap-8 mb-10">
-                    <div className="w-full md:w-48 h-48 rounded-3xl overflow-hidden border border-slate-100 shadow-xl shrink-0">
-                        <img
+                    <div className="w-full md:w-56 aspect-square md:aspect-auto md:h-56 rounded-3xl overflow-hidden border border-slate-100 shadow-xl shrink-0 relative bg-slate-50">
+                        <img 
                             src={details.image || "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=400"}
-                            className="w-full h-full object-cover"
-                            alt={details.title || details.name || "Réservation"}
+                            className="absolute inset-0 w-full h-full object-cover"
+                            alt="Villa"
                         />
                     </div>
                     <div className="space-y-4">
@@ -112,6 +114,7 @@ const BookingDetailModal = ({ isOpen, onClose, reservation }) => {
                             <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">En attente de virement</span>
                         </div>
                     </div>
+                    </div>
                 </div>
             </motion.div>
         </div>
@@ -131,13 +134,13 @@ const HistoryModal = ({ isOpen, onClose }) => {
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
-            <div className="bg-white rounded-[2.5rem] p-6 md:p-10 w-full max-w-2xl shadow-2xl relative max-h-[85vh] flex flex-col">
-                <button onClick={onClose} className="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-900 rounded-xl transition-all hover:bg-slate-50 z-10">
-                    <X className="w-6 h-6" />
+            <div className="modal-hola bg-white rounded-[2.5rem] p-6 md:p-10 shadow-2xl relative max-h-[85vh] flex flex-col overflow-hidden">
+                <button onClick={onClose} className="absolute top-6 right-6 p-2.5 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-100 z-10 border border-slate-50">
+                    <X className="w-5 h-5" />
                 </button>
 
-                <div className="mb-8">
-                    <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-2 tracking-tight">Historique Complet</h2>
+                <div className="mb-8 shrink-0">
+                    <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-2 tracking-tight uppercase">Historique Complet</h2>
                     <p className="text-slate-500 font-medium text-sm italic">"Retrouvez le détail de vos transactions passées (Net calculé à 85% du brut)."</p>
                 </div>
 

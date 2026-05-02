@@ -111,7 +111,7 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
                         initial={{ opacity: 0, scale: 0.9, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                        className="relative bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden"
+                        className="modal-hola relative bg-white rounded-[2.5rem] shadow-2xl overflow-hidden"
                     >
                         <div className="p-6 md:p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
                             <h3 className="text-lg md:text-xl font-bold text-slate-900 tracking-tight">Détails de la facture</h3>
@@ -219,7 +219,7 @@ export default function ClientInvoicesPage() {
                 const isPaid = b.status === 'payee' || b.status === 'confirmee';
                 const statusMap = {
                     en_attente: 'En attente',
-                    en_attente_paiement: 'En attente de paiement',
+                    en_attente_paiement: 'En attente',
                     confirmee: 'Confirmée',
                     payee: 'Payée',
                     annulee: 'Annulée'
@@ -279,7 +279,7 @@ export default function ClientInvoicesPage() {
             </div>
 
             {/* Desktop Table View */}
-            <div className="hidden lg:block bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden mb-12">
+            <div className="hidden lg:block bg-white rounded-[2.5rem] border border-slate-100 shadow-sm table-responsive mb-12">
                 <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
                     <h2 className="text-xl font-bold text-slate-900 tracking-tight">Historique</h2>
                     <div className="relative">
@@ -302,12 +302,11 @@ export default function ClientInvoicesPage() {
                     <table className="w-full text-left">
                         <thead>
                             <tr className="bg-slate-50/30 font-black text-[10px] uppercase tracking-widest text-slate-400">
-                                <th className="px-8 py-5">Référence</th>
-                                <th className="px-8 py-5">Service</th>
-                                <th className="px-8 py-5">Date</th>
-                                <th className="px-8 py-5">Montant</th>
-                                <th className="px-8 py-5">Statut</th>
-                                <th className="px-8 py-5 text-right">Actions</th>
+                                <th className="px-8 py-5 whitespace-nowrap">Service</th>
+                                <th className="px-8 py-5 whitespace-nowrap">Date</th>
+                                <th className="px-8 py-5 whitespace-nowrap">Montant</th>
+                                <th className="px-8 py-5 whitespace-nowrap">Statut</th>
+                                <th className="px-8 py-5 text-right whitespace-nowrap">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
@@ -321,18 +320,15 @@ export default function ClientInvoicesPage() {
                                     className="hover:bg-slate-50/50 transition-colors group"
                                 >
                                     <td className="px-8 py-6">
-                                        <span className="font-bold text-slate-700 font-mono text-sm">{inv.ref}</span>
+                                        <p className="font-bold text-slate-900 text-sm truncate max-w-[200px] whitespace-nowrap">{inv.service}</p>
+                                        <p className="text-[10px] text-slate-400 font-medium italic whitespace-nowrap">{inv.location}</p>
                                     </td>
-                                    <td className="px-8 py-6">
-                                        <p className="font-bold text-slate-900 text-sm truncate max-w-[200px]">{inv.service}</p>
-                                        <p className="text-[10px] text-slate-400 font-medium italic">{inv.location}</p>
-                                    </td>
-                                    <td className="px-8 py-6 text-sm font-medium text-slate-500 italic">
+                                    <td className="px-8 py-6 text-sm font-medium text-slate-500 italic whitespace-nowrap">
                                         {inv.date}
                                     </td>
-                                    <td className="px-8 py-6 font-black text-slate-900 font-mono">{inv.amount.toLocaleString()} FCFA</td>
+                                    <td className="px-8 py-6 font-black text-slate-900 font-mono whitespace-nowrap">{inv.amount.toLocaleString()} FCFA</td>
                                     <td className="px-8 py-6">
-                                        <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${inv.isPaid ? 'bg-emerald-50 text-emerald-600' : inv.status === 'annulee' ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'}`}>
+                                        <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest whitespace-nowrap ${inv.isPaid ? 'bg-emerald-50 text-emerald-600' : inv.status === 'annulee' ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'}`}>
                                             {inv.statusLabel}
                                         </div>
                                     </td>
@@ -382,7 +378,6 @@ export default function ClientInvoicesPage() {
                                     <FileText className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5 whitespace-nowrap">{inv.ref}</p>
                                     <p className="text-sm font-bold text-slate-900 line-clamp-1">{inv.service}</p>
                                 </div>
                             </div>

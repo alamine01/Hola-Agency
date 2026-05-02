@@ -37,7 +37,7 @@ export default function PremiumServices() {
             {/* Background Texture */}
             <div className="absolute top-0 right-0 w-1/2 h-full bg-[#D4AF37]/5 rounded-l-[100px] -z-10 translate-x-1/2" />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="container-hola">
                 <div className="flex flex-col md:flex-row gap-16 items-center">
 
                     {/* Left Typography */}

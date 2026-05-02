@@ -96,7 +96,7 @@ export default function CatalogPage() {
     return (
         <div className="min-h-screen bg-slate-50 pt-24 pb-24">
             {/* Page Header */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+            <div className="container-hola mb-12">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -148,7 +148,7 @@ export default function CatalogPage() {
             </div>
 
             {/* Catalog Grid */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="container-hola">
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-32 text-[#D4AF37]">
                         <Loader2 className="w-10 h-10 animate-spin mb-4" />
@@ -169,15 +169,17 @@ export default function CatalogPage() {
                                     transition={{ delay: index * 0.1 }}
                                     className="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-[0_20px_40px_rgb(0,0,0,0.06)] transition-all duration-300 flex flex-col h-full"
                                 >
-                                    <div className="relative aspect-video overflow-hidden shrink-0 bg-slate-50 flex items-center justify-center">
+                                    <div className="relative aspect-video overflow-hidden shrink-0 bg-slate-100">
                                         {property.image ? (
                                             <img
                                                 src={property.image}
                                                 alt={property.name}
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out"
+                                                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out"
                                             />
                                         ) : (
-                                            <Home className="w-16 h-16 text-slate-300" strokeWidth={1} />
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                <Home className="w-16 h-16 text-slate-300" strokeWidth={1} />
+                                            </div>
                                         )}
                                         <div className="absolute top-4 right-4 flex flex-col gap-2">
                                             <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm text-sm font-semibold text-slate-800">

@@ -53,7 +53,7 @@ const ReservationCard = ({ item, onCancel, onChat }) => {
         confirmee: "confirmée",
         payee: "payée",
         "en_attente": "en attente",
-        "en_attente_paiement": "en attente de paiement",
+        "en_attente_paiement": "en attente",
         annulee: "annulée",
     }[status] || status.replace(/_/g, ' ');
 
@@ -68,8 +68,11 @@ const ReservationCard = ({ item, onCancel, onChat }) => {
     return (
         <div className={`bg-white rounded-2xl border border-slate-100 p-4 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 hover:shadow-md transition-shadow relative ${showMenu ? 'z-50' : ''}`}>
             <div className="flex items-center gap-4 md:gap-6">
-                <div className="w-24 h-24 rounded-xl bg-slate-100 overflow-hidden shrink-0">
-                    <img src={details.image || "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=400"} alt={details.title} className="w-full h-full object-cover" />
+                <div className="w-24 h-24 rounded-xl bg-slate-50 overflow-hidden shrink-0 relative border border-slate-100/50">
+                    <div 
+                        className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                        style={{ backgroundImage: `url(${details.image || "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=400"})` }}
+                    />
                 </div>
                 <div>
                     <h3 className="text-xl font-bold text-slate-900 mb-1">{details.title || details.name || (item.item_type === 'service' ? 'Prestation HOLA' : 'Hébergement')}</h3>
@@ -78,7 +81,7 @@ const ReservationCard = ({ item, onCancel, onChat }) => {
                     </p>
 
                     <div className="flex items-center gap-3">
-                        <span className={`text-[10px] uppercase font-bold tracking-wider px-2 py-1 rounded-md flex items-center gap-1 ${statusStyles[status] || statusStyles['en_attente']}`}>
+                        <span className={`text-[10px] uppercase font-bold tracking-wider px-2 py-1 rounded-md flex items-center gap-1 whitespace-nowrap ${statusStyles[status] || statusStyles['en_attente']}`}>
                             <StatusIcon className="w-3 h-3" /> {displayStatus}
                         </span>
                         <span className="text-xs text-slate-400">{formatDateRange(item.start_date, item.end_date)}</span>
@@ -277,7 +280,7 @@ export default function ClientActivityPage() {
                 <div className="flex p-1.5 bg-slate-100 rounded-[1.5rem] w-full lg:w-fit shadow-inner">
                     <button
                         onClick={() => setMainTab('reservations')}
-                        className={`flex-1 lg:px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${mainTab === 'reservations' ? 'bg-white text-slate-900 shadow-xl' : 'text-slate-400 hover:text-slate-600'}`}
+                        className={`flex-1 lg:px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${mainTab === 'reservations' ? 'bg-white text-slate-900 shadow-xl' : 'text-slate-400 hover:text-slate-600'}`}
                     >
                         <div className="flex items-center justify-center gap-2">
                             <Calendar className="w-3.5 h-3.5" /> Réservations
@@ -285,7 +288,7 @@ export default function ClientActivityPage() {
                     </button>
                     <button
                         onClick={() => setMainTab('favorites')}
-                        className={`flex-1 lg:px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${mainTab === 'favorites' ? 'bg-white text-slate-900 shadow-xl' : 'text-slate-400 hover:text-slate-600'}`}
+                        className={`flex-1 lg:px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${mainTab === 'favorites' ? 'bg-white text-slate-900 shadow-xl' : 'text-slate-400 hover:text-slate-600'}`}
                     >
                         <div className="flex items-center justify-center gap-2">
                             <Heart className={`w-3.5 h-3.5 ${mainTab === 'favorites' ? 'fill-red-500 text-red-500' : ''}`} /> Favoris

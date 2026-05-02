@@ -30,7 +30,14 @@ export default function DynamicRevenusView({ role = 'client' }) {
     const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
     const [selectedTx, setSelectedTx] = useState(null);
     const [withdrawLoading, setWithdrawLoading] = useState(false);
-    const [withdrawForm, setWithdrawForm] = useState({ amount: '', method: 'Wave' });
+    const [withdrawForm, setWithdrawForm] = useState({ 
+        amount: '', 
+        method: 'Wave',
+        phone: '',
+        iban: '',
+        account_holder: '',
+        email: ''
+    });
 
     useEffect(() => {
         fetchFinancialData();
@@ -99,10 +106,22 @@ export default function DynamicRevenusView({ role = 'client' }) {
         setWithdrawLoading(true);
         try {
             const { data: { user } } = await supabase.auth.getUser();
+            
+            // Build metadata based on method
+            let metadata = {};
+            if (withdrawForm.method === 'Wave' || withdrawForm.method === 'Orange Money') {
+                metadata = { phone: withdrawForm.phone };
+            } else if (withdrawForm.method === 'Virement bancaire') {
+                metadata = { iban: withdrawForm.iban, account_holder: withdrawForm.account_holder };
+            } else if (withdrawForm.method === 'PayPal') {
+                metadata = { email: withdrawForm.email };
+            }
+
             const { error } = await supabase.from('payouts').insert({
                 user_id: user.id,
                 amount: amount,
                 method: withdrawForm.method,
+                metadata: metadata, // Storing details in metadata
                 status: 'en_attente'
             });
 
@@ -269,13 +288,13 @@ export default function DynamicRevenusView({ role = 'client' }) {
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="bg-white rounded-[2.5rem] md:rounded-[3rem] p-6 md:p-10 w-full max-w-md shadow-2xl relative z-10"
+                            className="modal-hola bg-white rounded-[2.5rem] md:rounded-[3rem] p-6 md:p-10 shadow-2xl relative z-10 max-h-[90vh] flex flex-col overflow-hidden"
                         >
                             <button onClick={() => setIsWithdrawModalOpen(false)} className="absolute top-6 right-6 p-2.5 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-50 border border-slate-50">
                                 <X className="w-5 h-5" />
                             </button>
 
-                            <div className="mb-6 md:mb-8 text-center md:text-left">
+                            <div className="mb-6 md:mb-8 text-center md:text-left shrink-0">
                                 <div className="w-14 h-14 bg-amber-600 text-white rounded-[1.2rem] flex items-center justify-center mb-5 shadow-xl shadow-amber-200 mx-auto md:mx-0">
                                     <ArrowUpRight className="w-7 h-7" />
                                 </div>
@@ -283,7 +302,7 @@ export default function DynamicRevenusView({ role = 'client' }) {
                                 <p className="text-slate-500 text-xs font-medium italic">Transférez vos gains vers votre compte préféré.</p>
                             </div>
 
-                            <div className="space-y-5 md:space-y-6">
+                            <div className="flex-1 overflow-y-auto pr-2 space-y-5 md:space-y-6 custom-scrollbar">
                                 <div className="p-5 bg-slate-50 rounded-[1.8rem] border border-slate-100 flex items-center justify-between shadow-inner">
                                     <div>
                                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Solde disponible</p>
@@ -326,10 +345,86 @@ export default function DynamicRevenusView({ role = 'client' }) {
                                     </div>
                                 </div>
 
+                                <AnimatePresence mode="wait">
+                                    {(withdrawForm.method === 'Wave' || withdrawForm.method === 'Orange Money') && (
+                                        <motion.div
+                                            initial={{ opacity: 0, height: 0 }}
+                                            animate={{ opacity: 1, height: 'auto' }}
+                                            exit={{ opacity: 0, height: 0 }}
+                                            className="space-y-2 overflow-hidden"
+                                        >
+                                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">Numéro de téléphone</label>
+                                            <input
+                                                type="tel"
+                                                placeholder="7x xxx xx xx"
+                                                value={withdrawForm.phone || ''}
+                                                onChange={e => setWithdrawForm({ ...withdrawForm, phone: e.target.value })}
+                                                className="w-full px-5 py-4 bg-white border-2 border-slate-100 rounded-2xl outline-none focus:border-amber-600 transition-all font-black text-slate-900 text-base shadow-sm"
+                                            />
+                                        </motion.div>
+                                    )}
+
+                                    {withdrawForm.method === 'Virement bancaire' && (
+                                        <motion.div
+                                            initial={{ opacity: 0, height: 0 }}
+                                            animate={{ opacity: 1, height: 'auto' }}
+                                            exit={{ opacity: 0, height: 0 }}
+                                            className="space-y-4 overflow-hidden"
+                                        >
+                                            <div className="space-y-2">
+                                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">IBAN / Numéro de compte</label>
+                                                <input
+                                                    type="text"
+                                                    placeholder="SNxx xxxx xxxx xxxx xxxx"
+                                                    value={withdrawForm.iban || ''}
+                                                    onChange={e => setWithdrawForm({ ...withdrawForm, iban: e.target.value })}
+                                                    className="w-full px-5 py-4 bg-white border-2 border-slate-100 rounded-2xl outline-none focus:border-amber-600 transition-all font-black text-slate-900 text-base shadow-sm"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">Nom du titulaire</label>
+                                                <input
+                                                    type="text"
+                                                    placeholder="Nom complet tel qu'indiqué sur le RIB"
+                                                    value={withdrawForm.account_holder || ''}
+                                                    onChange={e => setWithdrawForm({ ...withdrawForm, account_holder: e.target.value })}
+                                                    className="w-full px-5 py-4 bg-white border-2 border-slate-100 rounded-2xl outline-none focus:border-amber-600 transition-all font-black text-slate-900 text-base shadow-sm"
+                                                />
+                                            </div>
+                                        </motion.div>
+                                    )}
+
+                                    {withdrawForm.method === 'PayPal' && (
+                                        <motion.div
+                                            initial={{ opacity: 0, height: 0 }}
+                                            animate={{ opacity: 1, height: 'auto' }}
+                                            exit={{ opacity: 0, height: 0 }}
+                                            className="space-y-2 overflow-hidden"
+                                        >
+                                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">Adresse Email PayPal</label>
+                                            <input
+                                                type="email"
+                                                placeholder="exemple@email.com"
+                                                value={withdrawForm.email || ''}
+                                                onChange={e => setWithdrawForm({ ...withdrawForm, email: e.target.value })}
+                                                className="w-full px-5 py-4 bg-white border-2 border-slate-100 rounded-2xl outline-none focus:border-amber-600 transition-all font-black text-slate-900 text-base shadow-sm"
+                                            />
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+
                                 <div className="pt-4">
                                     <button
                                         onClick={handleWithdrawRequest}
-                                        disabled={withdrawLoading || !withdrawForm.amount || parseInt(withdrawForm.amount) > wallet.available}
+                                        disabled={
+                                            withdrawLoading || 
+                                            !withdrawForm.amount || 
+                                            parseInt(withdrawForm.amount) > wallet.available ||
+                                            (withdrawForm.method === 'Wave' && !withdrawForm.phone) ||
+                                            (withdrawForm.method === 'Orange Money' && !withdrawForm.phone) ||
+                                            (withdrawForm.method === 'Virement bancaire' && (!withdrawForm.iban || !withdrawForm.account_holder)) ||
+                                            (withdrawForm.method === 'PayPal' && !withdrawForm.email)
+                                        }
                                         className="w-full py-4 bg-amber-600 text-white rounded-[1.2rem] font-black uppercase tracking-[0.2em] text-[10px] hover:bg-slate-900 transition-all shadow-2xl shadow-amber-100 active:scale-95 disabled:opacity-50 disabled:grayscale flex items-center justify-center gap-3"
                                     >
                                         {withdrawLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Confirmer le retrait"}
@@ -355,9 +450,9 @@ export default function DynamicRevenusView({ role = 'client' }) {
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="relative w-full max-w-lg bg-white rounded-[3rem] shadow-2xl overflow-hidden"
+                            className="modal-hola relative w-full bg-white rounded-[3rem] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
                         >
-                            <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/30">
+                            <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/30 shrink-0">
                                 <div>
                                     <p className="text-[10px] font-black text-amber-600 uppercase tracking-[0.2em] mb-1">Détails du mouvement</p>
                                     <h3 className="text-xl font-black text-slate-900 tracking-tight uppercase">Rçu de transaction</h3>
@@ -367,7 +462,7 @@ export default function DynamicRevenusView({ role = 'client' }) {
                                 </button>
                             </div>
 
-                            <div className="p-8 space-y-8">
+                            <div className="p-8 space-y-8 flex-1 overflow-y-auto custom-scrollbar">
                                 <div className="flex items-center justify-between p-6 bg-slate-50 rounded-[2rem] border border-slate-100">
                                     <div className="flex items-center gap-4">
                                         <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${selectedTx.type === 'income' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>

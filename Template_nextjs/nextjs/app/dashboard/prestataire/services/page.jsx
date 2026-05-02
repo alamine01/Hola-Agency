@@ -214,13 +214,13 @@ const AddServiceModal = ({ isOpen, onClose, onRefresh, initialData }) => {
             <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="bg-white rounded-[2.5rem] p-6 md:p-8 w-full max-w-lg shadow-2xl relative max-h-[85vh] overflow-y-auto custom-scrollbar"
+                className="modal-hola bg-white rounded-[2.5rem] p-6 md:p-8 shadow-2xl relative max-h-[90vh] flex flex-col overflow-hidden"
             >
                 <button onClick={onClose} className="absolute top-6 right-6 p-2.5 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-100 z-10 border border-slate-50">
                     <X className="w-5 h-5" />
                 </button>
 
-                <div className="mb-6">
+                <div className="mb-6 shrink-0">
                     <h2 className="text-2xl font-black text-slate-900 tracking-tight uppercase">
                         {initialData ? "Modifier le Service" : "Nouveau Service"}
                     </h2>
@@ -229,7 +229,7 @@ const AddServiceModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                     </p>
                 </div>
 
-                <div className="space-y-5">
+                <div className="flex-1 overflow-y-auto pr-2 space-y-5 custom-scrollbar">
                     {/* Compact Image Uploader */}
                     <div
                         onClick={() => fileInputRef.current?.click()}
@@ -360,13 +360,13 @@ const TipsModal = ({ isOpen, onClose }) => {
             <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="relative bg-white rounded-[2.5rem] p-8 md:p-12 w-full max-w-xl shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar"
+                className="modal-hola relative bg-white rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative max-h-[90vh] flex flex-col overflow-hidden"
             >
-                <button onClick={onClose} className="absolute top-8 right-8 p-3 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-50 z-10">
+                <button onClick={onClose} className="absolute top-6 right-6 p-2.5 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-100 z-10 border border-slate-50">
                     <X className="w-6 h-6" />
                 </button>
 
-                <div className="mb-10 flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+                <div className="mb-10 flex flex-col md:flex-row items-center gap-6 text-center md:text-left shrink-0">
                     <div className="w-16 h-16 bg-amber-500 text-white rounded-2xl flex items-center justify-center shadow-xl shadow-amber-100 shrink-0">
                         <Lightbulb className="w-8 h-8" />
                     </div>
@@ -376,7 +376,7 @@ const TipsModal = ({ isOpen, onClose }) => {
                     </div>
                 </div>
 
-                <div className="space-y-4 mb-10 overflow-x-hidden">
+                <div className="flex-1 overflow-y-auto pr-2 space-y-4 mb-10 custom-scrollbar">
                     {[
                         { 
                             id: 1, 
@@ -406,7 +406,6 @@ const TipsModal = ({ isOpen, onClose }) => {
                         </div>
                     ))}
                 </div>
-
                 <button onClick={onClose} className="w-full py-5 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] hover:bg-amber-500 hover:text-slate-900 transition-all shadow-xl active:scale-95">
                     Commencer à briller
                 </button>

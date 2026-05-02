@@ -43,7 +43,7 @@ const StatCard = ({ title, value, change, icon: Icon, color, subtitle, className
             )}
         </div>
 
-        <h3 className="text-slate-400 text-[9px] md:text-[11px] font-black mb-1 uppercase tracking-[0.2em] relative z-10">{title}</h3>
+        <h3 className="text-slate-400 text-[9px] md:text-[11px] font-black mb-1 uppercase tracking-[0.2em] relative z-10 whitespace-nowrap">{title}</h3>
         <p className="text-lg md:text-3xl font-black text-slate-900 tracking-tight truncate relative z-10">{value}</p>
         {subtitle && (
             <p className="hidden md:block text-[9px] text-slate-400 mt-2 font-medium italic relative z-10 opacity-70">
@@ -95,7 +95,7 @@ const ActivitiesModal = ({ isOpen, onClose, activities }) => (
                     initial={{ opacity: 0, scale: 0.95, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                    className="bg-white rounded-[2.5rem] p-6 md:p-10 w-full max-w-2xl shadow-2xl relative z-10 max-h-[85vh] flex flex-col"
+                    className="modal-hola bg-white rounded-[2.5rem] p-6 md:p-10 shadow-2xl relative z-10 max-h-[85vh] flex flex-col"
                 >
                     <button onClick={onClose} className="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-50 border border-slate-50">
                         <X className="w-6 h-6" />
@@ -244,7 +244,7 @@ export default function DynamicDashboardView({ role = 'client' }) {
     const isMismatch = profileRole && role && profileRole.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "") !== role;
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
+        <div className="container-hola pb-10">
             <RoleHeader role={role} name={userData?.display_name} />
 
             {isMismatch && (
@@ -325,7 +325,7 @@ export default function DynamicDashboardView({ role = 'client' }) {
                                                 ? 'bg-amber-50 text-amber-600 border-amber-100'
                                                 : 'bg-amber-50 text-amber-600 border-amber-100'
                                         }`}>
-                                        {(act.status || '...').replace(/_/g, ' ')}
+                                        {act.status === 'en_attente_paiement' ? 'en attente' : (act.status || '...').replace(/_/g, ' ')}
                                     </span>
                                 </div>
                             </div>
