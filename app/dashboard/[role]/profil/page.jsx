@@ -30,7 +30,7 @@ const Modal = ({ isOpen, onClose, title, children, footer }) => {
             <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="bg-white rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl relative"
+                className="bg-white rounded-[2.5rem] w-full max-w-md sm:max-w-lg lg:max-w-xl max-h-[90vh] overflow-y-auto overflow-hidden shadow-2xl relative"
             >
                 <div className="p-8 border-b border-slate-50 flex items-center justify-between">
                     <h3 className="text-xl font-black text-slate-900">{title}</h3>
