@@ -45,8 +45,10 @@ body {
 }
 
 .modal-hola {
-    width: 100%;
+    width: auto;
     max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
     margin-left: auto;
     margin-right: auto;
 }

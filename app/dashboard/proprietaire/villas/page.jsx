@@ -258,7 +258,7 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
             <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="modal-hola bg-white rounded-[2.5rem] p-6 md:p-8 shadow-2xl relative max-h-[90vh] flex flex-col overflow-hidden"
+                className="modal-hola bg-white rounded-[2.5rem] p-6 md:p-8 shadow-2xl relative max-h-[90vh] flex flex-col overflow-y-auto overflow-hidden w-full max-w-md sm:max-w-lg lg:max-w-xl"
             >
                 <button onClick={onClose} className="absolute top-6 right-6 p-2.5 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-100 z-10 border border-slate-50">
                     <X className="w-5 h-5" />
