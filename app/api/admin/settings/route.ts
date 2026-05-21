@@ -1,0 +1,45 @@
+import { supabase } from '@/lib/supabase';
+import { NextResponse } from 'next/server';
+
+// GET current commission percent
+export async function GET(request: Request) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthenticated' }, { status: 401 });
+  }
+  const { data, error } = await supabase
+    .from('platform_settings')
+    .select('commission_percent')
+    .single();
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+  return NextResponse.json({ commission_percent: data.commission_percent });
+}
+
+// PUT to update commission percent (admin only)
+export async function PUT(request: Request) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthenticated' }, { status: 401 });
+  }
+  // Assume role stored in app_metadata.role or user_metadata.role
+  const role = (user?.app_metadata?.role ?? user?.user_metadata?.role) as string;
+  if (role !== 'admin') {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+  const body = await request.json();
+  const percent = Number(body.commission_percent);
+  if (isNaN(percent) || percent < 0 || percent > 100) {
+    return NextResponse.json({ error: 'Invalid commission percent (0-100)' }, { status: 400 });
+  }
+  // Use a fixed id for singleton settings row
+  const { data, error } = await supabase
+    .from('platform_settings')
+    .upsert({ id: 'platform', commission_percent: percent })
+    .single();
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+  return NextResponse.json({ commission_percent: data.commission_percent });
+}
