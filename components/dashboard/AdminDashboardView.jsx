@@ -149,7 +149,7 @@ export default function AdminDashboardView() {
                     <div className="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-sm">
                         <div className="flex items-center justify-between mb-8">
                             <h2 className="text-2xl font-black text-slate-900 tracking-tight uppercase">Dernières Activités</h2>
-                            <button className="text-[10px] font-black uppercase text-amber-600 hover:text-slate-900 transition-colors tracking-widest">Voir Tout</button>
+                            <Link href="/dashboard/admin/revenus" className="text-[10px] font-black uppercase text-amber-600 hover:text-slate-900 transition-colors tracking-widest">Voir Tout</Link>
                         </div>
 
                         <div className="space-y-4">
