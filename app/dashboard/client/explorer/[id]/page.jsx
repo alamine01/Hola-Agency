@@ -43,6 +43,7 @@ export default function DashboardPropertyDetails() {
                     ...data,
                     title: data.name || data.title,
                     price: data.price,
+                    sale_price: data.sale_price,
                     image: data.image,
                     type: data.type || 'Villa',
                     location: data.location || data.city || 'Sénégal',
@@ -62,6 +63,7 @@ export default function DashboardPropertyDetails() {
                         title: sData.name,
                         location: sData.location || "Sénégal",
                         price: sData.price,
+                        sale_price: sData.sale_price,
                         image: sData.image,
                         type: 'Service',
                         description: sData.description || "Un service premium HOLA.",
@@ -91,7 +93,8 @@ export default function DashboardPropertyDetails() {
         const start = new Date(bookingData.startDate);
         const end = new Date(bookingData.endDate);
         const nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-        return nights > 0 ? nights * property.price : 0;
+        const activePrice = property.sale_price && property.sale_price > 0 ? property.sale_price : property.price;
+        return nights > 0 ? nights * activePrice : 0;
     };
 
     const handleBooking = async () => {
@@ -101,10 +104,13 @@ export default function DashboardPropertyDetails() {
             return;
         }
 
+        const activePrice = property.sale_price && property.sale_price > 0 ? property.sale_price : property.price;
+        const finalAmount = property.type === 'Service' ? activePrice : calculateTotal();
+
         const params = new URLSearchParams({
             item_id: id,
             item_type: property.type,
-            amount: property.price,
+            amount: finalAmount,
             title: property.title,
             image: property.image,
             location: property.location,
@@ -266,9 +272,16 @@ export default function DashboardPropertyDetails() {
                             className="bg-white rounded-[2.5rem] p-8 shadow-[0_30px_60px_rgb(0,0,0,0.12)] border border-slate-100"
                         >
                             <div className="mb-8">
-                                <div className="text-3xl font-black text-slate-900">
-                                    {property.price.toLocaleString()} <span className="text-sm font-normal text-slate-400">FCFA {property.type === 'Service' ? '' : '/ nuit'}</span>
+                                <div className="flex items-baseline gap-2">
+                                    <span className="text-3xl font-black text-slate-900">
+                                        {(property.sale_price && property.sale_price > 0 ? property.sale_price : property.price).toLocaleString()} <span className="text-sm font-normal text-slate-400">FCFA {property.type === 'Service' ? '' : '/ nuit'}</span>
+                                    </span>
                                 </div>
+                                {property.sale_price && property.sale_price > 0 && (
+                                    <div className="text-sm text-slate-400 line-through font-medium italic mt-1">
+                                        {property.price.toLocaleString()} FCFA
+                                    </div>
+                                )}
                             </div>
 
                             <div className="space-y-4 mb-8">
@@ -340,7 +353,7 @@ export default function DashboardPropertyDetails() {
                                 <div className="pt-6 border-t border-slate-100 mt-6">
                                     <div className="flex justify-between text-xl font-black text-slate-900">
                                         <span>Tarif service</span>
-                                        <span>{property.price.toLocaleString()} FCFA</span>
+                                        <span>{(property.sale_price && property.sale_price > 0 ? property.sale_price : property.price).toLocaleString()} FCFA</span>
                                     </div>
                                 </div>
                             )}
