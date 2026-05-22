@@ -32,9 +32,9 @@ export async function POST(req) {
             })
             .eq('id', bookingId);
 
-        const requestOrigin = req.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+        const requestOrigin = req.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'https://www.holaluxe.com';
         const isLocal = requestOrigin.includes('localhost');
-        const validSiteUrl = isLocal ? 'https://hola-agency.vercel.app' : requestOrigin;
+        const validSiteUrl = isLocal ? 'http://localhost:3000' : requestOrigin;
         const callbackUrl = `${validSiteUrl}/api/webhooks/paytech`;
         
         // TENTATIVE DE MODE 100% DIRECT (Intech API)

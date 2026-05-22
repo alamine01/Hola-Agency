@@ -21,9 +21,9 @@ export async function POST(req) {
         // Stripe attend le montant en centimes pour l'euro
         const unitAmountCents = Math.round(amountEUR * 100);
 
-        const requestOrigin = req.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'https://hola-agency.vercel.app';
+        const requestOrigin = req.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'https://www.holaluxe.com';
         const isLocal = requestOrigin.includes('localhost');
-        const validSiteUrl = isLocal ? 'http://localhost:3000' : 'https://hola-agency.vercel.app';
+        const validSiteUrl = isLocal ? 'http://localhost:3000' : requestOrigin;
 
         // Créer une session Stripe Checkout avec le SDK
         const session = await stripe.checkout.sessions.create({
