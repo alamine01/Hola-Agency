@@ -136,7 +136,10 @@ const HistoryModal = ({ isOpen, onClose, platformCommission }) => {
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
-            <div className="modal-hola bg-white rounded-[2.5rem] p-6 md:p-10 shadow-2xl relative max-h-[85vh] flex flex-col overflow-hidden w-full max-w-3xl">
+            <div 
+                className="modal-hola bg-white rounded-[2.5rem] p-6 md:p-10 shadow-2xl relative max-h-[85vh] flex flex-col overflow-hidden w-full"
+                style={{ width: '100%', maxWidth: '650px' }}
+            >
                 <button onClick={onClose} className="absolute top-6 right-6 p-2.5 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-100 z-10 border border-slate-50">
                     <X className="w-5 h-5" />
                 </button>
