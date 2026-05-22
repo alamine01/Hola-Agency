@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin as supabase } from '@/lib/supabase';
 import { sendPaymentConfirmation } from '@/lib/brevo';
 
 export async function POST(req) {
@@ -18,14 +18,29 @@ export async function POST(req) {
         } else {
             // Format PayTech (Redirection)
             const formData = await req.formData();
-            console.log("Webhook Form Data received");
+            console.log("Webhook Form Data received:", Object.fromEntries(formData.entries()));
+            
             const type_event = formData.get('type_event');
             const custom_field = formData.get('custom_field');
+            const ref_command = formData.get('ref_command');
 
-            if (type_event === 'sale_complete' && custom_field) {
-                const { booking_id } = JSON.parse(custom_field);
-                bookingId = booking_id;
+            if (type_event === 'sale_complete') {
                 isSuccess = true;
+                
+                // 1. Try custom_field
+                if (custom_field) {
+                    try {
+                        const parsed = JSON.parse(custom_field);
+                        bookingId = parsed.booking_id || parsed.bookingId;
+                    } catch (e) {
+                        console.error("Failed to parse custom_field:", e);
+                    }
+                }
+                
+                // 2. Fallback to ref_command (highly reliable direct string)
+                if (!bookingId && ref_command) {
+                    bookingId = ref_command;
+                }
             }
         }
 
