@@ -73,7 +73,8 @@ function SuccessContent() {
             <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="max-w-md w-full bg-white rounded-[3rem] p-10 shadow-2xl border border-slate-100 text-center relative overflow-hidden"
+                className="w-full max-w-sm bg-white rounded-[3rem] p-8 md:p-10 shadow-2xl border border-slate-100 text-center relative overflow-hidden mx-4"
+                style={{ maxWidth: '384px' }}
             >
                 <div className="absolute top-0 left-0 w-full h-2 bg-emerald-500" />
 
