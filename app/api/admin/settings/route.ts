@@ -15,10 +15,12 @@ const createScopedClient = (request: Request) => {
   );
 };
 
-// GET current commission percent
 export async function GET(request: Request) {
   const supabase = createScopedClient(request);
-  const { data: { user } } = await supabase.auth.getUser();
+  const authHeader = request.headers.get('Authorization');
+  const token = authHeader ? authHeader.replace('Bearer ', '') : '';
+  
+  const { data: { user } } = await supabase.auth.getUser(token);
   if (!user) {
     return NextResponse.json({ error: 'Unauthenticated' }, { status: 401 });
   }
@@ -35,7 +37,10 @@ export async function GET(request: Request) {
 // PUT to update commission percent (admin only)
 export async function PUT(request: Request) {
   const supabase = createScopedClient(request);
-  const { data: { user } } = await supabase.auth.getUser();
+  const authHeader = request.headers.get('Authorization');
+  const token = authHeader ? authHeader.replace('Bearer ', '') : '';
+
+  const { data: { user } } = await supabase.auth.getUser(token);
   if (!user) {
     return NextResponse.json({ error: 'Unauthenticated' }, { status: 401 });
   }

@@ -371,7 +371,7 @@ export default function AdminRevenusView() {
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
                             className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-sm bg-white rounded-3xl shadow-2xl z-[101] overflow-hidden flex flex-col max-h-[85vh] border border-slate-100"
                         >
-                            <div className="p-5 md:p-6 overflow-y-auto">
+                            <div className="p-8 md:p-10 overflow-y-auto">
                                 <div className="flex items-center justify-between mb-4">
                                     <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Détails du paiement</h3>
                                     <button onClick={() => setSelectedBooking(null)} className="p-2 bg-slate-50 text-slate-400 hover:text-slate-900 rounded-full transition-colors">
