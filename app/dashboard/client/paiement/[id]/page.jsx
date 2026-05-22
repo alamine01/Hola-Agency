@@ -23,31 +23,31 @@ const PaymentMethod = ({ id, title, description, icon: Icon, image, active, onCl
         whileHover={{ scale: 1.02, y: -2 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => onClick(id)}
-        className={`relative p-6 rounded-3xl border-2 transition-all cursor-pointer flex items-center gap-5 ${active
+        className={`relative p-4 sm:p-5 rounded-2xl sm:rounded-3xl border-2 transition-all cursor-pointer flex items-center gap-3 sm:gap-4 min-w-0 ${active
             ? `border-${color}-500 bg-${color}-50/50 shadow-lg shadow-${color}-900/5`
             : 'border-slate-100 bg-white hover:border-slate-200'
             }`}
     >
-        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center overflow-hidden ${active && !image ? `bg-${color}-500 text-white shadow-lg` : 'bg-slate-50 text-slate-400'
+        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center overflow-hidden shrink-0 ${active && !image ? `bg-${color}-500 text-white shadow-lg` : 'bg-slate-50 text-slate-400'
             }`}>
             {image ? (
-                <img src={image} alt={title} className="w-full h-full object-cover p-2" />
+                <img src={image} alt={title} className="w-full h-full object-cover p-1.5" />
             ) : (
-                <Icon className="w-7 h-7" />
+                <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
             )}
         </div>
-        <div className="flex-1">
-            <h3 className={`font-black uppercase tracking-widest text-[11px] mb-1 ${active ? `text-${color}-600` : 'text-slate-400'}`}>
+        <div className="flex-1 min-w-0">
+            <h3 className={`font-black uppercase tracking-widest text-[9px] sm:text-[10px] mb-0.5 truncate ${active ? `text-${color}-600` : 'text-slate-400'}`}>
                 {title}
             </h3>
-            <p className="text-sm font-bold text-slate-700">{description}</p>
+            <p className="text-xs sm:text-sm font-bold text-slate-700 truncate">{description}</p>
         </div>
         {active && (
             <motion.div
                 layoutId="check"
-                className={`w-6 h-6 rounded-full bg-${color}-500 flex items-center justify-center text-white`}
+                className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-${color}-500 flex items-center justify-center text-white shrink-0`}
             >
-                <CheckCircle2 className="w-4 h-4" />
+                <CheckCircle2 className="w-3 h-3 sm:w-4 sm:h-4" />
             </motion.div>
         )}
     </motion.div>
@@ -140,27 +140,27 @@ export default function CheckoutPage() {
     );
 
     return (
-        <div className="min-h-screen bg-slate-50 pt-20 pb-20">
+        <div className="min-h-screen bg-slate-50 pt-10 sm:pt-20 pb-20">
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
-                <div className="flex items-center justify-between mb-10">
-                    <Link href={`/logements/${booking.item_id}`} className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors font-bold uppercase tracking-widest text-[10px]">
-                        <ArrowLeft className="w-4 h-4" /> Annuler et retourner
+                <div className="flex items-center justify-between mb-6 sm:mb-10 gap-4">
+                    <Link href={`/logements/${booking.item_id}`} className="flex items-center gap-1.5 text-slate-500 hover:text-slate-900 transition-colors font-bold uppercase tracking-widest text-[9px] sm:text-[10px] shrink-0">
+                        <ArrowLeft className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Annuler et retourner</span><span className="sm:hidden">Retour</span>
                     </Link>
-                    <div className="flex items-center gap-2 bg-emerald-50 text-emerald-600 px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-emerald-100">
-                        <ShieldCheck className="w-4 h-4" /> Checkout Sécurisé HOLA
+                    <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-600 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl text-[8px] sm:text-[10px] font-black uppercase tracking-widest border border-emerald-100 shrink-0">
+                        <ShieldCheck className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Checkout Sécurisé HOLA</span><span className="sm:hidden">Sécurisé</span>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
 
                     {/* Left: Summary */}
                     <div className="space-y-8">
                         <div>
-                            <h1 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight uppercase leading-tight">
+                            <h1 className="text-2xl sm:text-3xl md:text-5xl font-black text-slate-900 mb-3 sm:mb-4 tracking-tight uppercase leading-tight">
                                 Finalisez votre <br /> <span className="text-[#D4AF37]">Réservation</span>
                             </h1>
-                            <p className="text-slate-500 font-medium italic text-lg leading-relaxed">
+                            <p className="text-slate-500 font-medium italic text-sm sm:text-lg leading-relaxed">
                                 Choisissez votre mode de paiement préféré pour confirmer votre séjour.
                             </p>
                         </div>
@@ -223,7 +223,7 @@ export default function CheckoutPage() {
                     <div className="space-y-6">
                         <div className="space-y-4">
                             <h2 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] px-2 mb-6">Modes de paiement locaux</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-2 gap-3 sm:gap-4">
                                 <PaymentMethod
                                     id="wave"
                                     title="Wave"
