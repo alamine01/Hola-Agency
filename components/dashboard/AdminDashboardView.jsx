@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 const AdminStatCard = ({ title, value, icon: Icon, color, trend }) => (
     <motion.div
@@ -130,15 +131,15 @@ export default function AdminDashboardView() {
                                 { label: "Gérer les logements", icon: Home, link: "/dashboard/admin/logements" },
                                 { label: "Gérer les services", icon: Briefcase, link: "/dashboard/admin/services" },
                                 { label: "Vérifier les revenus", icon: TrendingUp, link: "/dashboard/admin/revenus" },
-                                { label: "Paramètres plateforme", icon: Settings, link: "/dashboard/admin/settings" }
+                                { label: "Modifier la commission (%)", icon: Settings, link: "/dashboard/admin/settings" }
                             ].map((action, i) => (
-                                <a key={i} href={action.link} className="flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5 transition-all group-hover:translate-x-1">
+                                <Link key={i} href={action.link} className="flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5 transition-all group-hover:translate-x-1">
                                     <div className="flex items-center gap-3">
                                         <action.icon className="w-5 h-5 text-amber-400" />
                                         <span className="text-[10px] font-black uppercase tracking-widest">{action.label}</span>
                                     </div>
                                     <ChevronRight className="w-4 h-4 opacity-50" />
-                                </a>
+                                </Link>
                             ))}
                         </div>
                     </div>
