@@ -14,7 +14,7 @@ export async function GET(request: Request) {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-  return NextResponse.json({ commission_percent: data.commission_percent });
+  return NextResponse.json({ commission_percent: (data as any)?.commission_percent });
 }
 
 // PUT to update commission percent (admin only)
@@ -37,9 +37,10 @@ export async function PUT(request: Request) {
   const { data, error } = await supabase
     .from('platform_settings')
     .upsert({ id: 'platform', commission_percent: percent })
+    .select()
     .single();
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-  return NextResponse.json({ commission_percent: data.commission_percent });
+  return NextResponse.json({ commission_percent: (data as any)?.commission_percent });
 }

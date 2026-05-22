@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
-import { usePlatformCommission } from '@/context/PlatformCommissionContext';
+import { usePlatformCommission } from '@/app/context/PlatformCommissionContext';
 import Link from 'next/link';
 
 export default function AdminSettingsPage() {
