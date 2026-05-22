@@ -127,18 +127,35 @@ export async function GET(req) {
             }
         }
 
-        const BREVO_KEY_EXISTS = !!process.env.BREVO_API_KEY;
-        const BREVO_KEY_LENGTH = process.env.BREVO_API_KEY ? process.env.BREVO_API_KEY.length : 0;
+        const rawBrevoKey = process.env.BREVO_API_KEY || '';
+        const cleanedBrevoKey = rawBrevoKey.trim().replace(/^["']|["']$/g, '');
+        const BREVO_KEY_EXISTS = !!rawBrevoKey;
+        const BREVO_KEY_LENGTH = rawBrevoKey.length;
+        const CLEANED_BREVO_KEY_LENGTH = cleanedBrevoKey.length;
+        const MASKED_BREVO_KEY = rawBrevoKey ? `${rawBrevoKey.slice(0, 15)}...${rawBrevoKey.slice(-15)}` : 'none';
 
         let clientEmailResult = null;
         let ownerEmailResult = null;
 
         if (clientEmail) {
             try {
-                clientEmailResult = await sendEmail({
-                    to: clientEmail,
-                    subject: "[TEST-DIAGNOSTIC] Confirmation de paiement - HOLA AGENCY",
-                    htmlText: `<h3>Ceci est un e-mail de diagnostic technique.</h3><p>Paiement reçu pour la réservation ${booking.metadata?.title || 'du logement'}.</p>`
+                // Temporarily override sendEmail fetch to use cleaned key for diagnostic
+                clientEmailResult = await fetch("https://api.brevo.com/v3/smtp/email", {
+                    method: "POST",
+                    headers: {
+                        "accept": "application/json",
+                        "api-key": cleanedBrevoKey,
+                        "content-type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        sender: { name: "Hola Agency", email: "contact@holaluxe.com" },
+                        to: [{ email: clientEmail }],
+                        subject: "[TEST-DIAGNOSTIC] Confirmation de paiement - HOLA AGENCY",
+                        htmlContent: `<h3>Ceci est un e-mail de diagnostic technique.</h3><p>Paiement reçu pour la réservation ${booking.metadata?.title || 'du logement'}.</p>`
+                    })
+                }).then(async r => {
+                    const txt = await r.text();
+                    return { status: r.status, statusText: r.statusText, body: txt };
                 });
             } catch (err) {
                 clientEmailResult = { error: err.message };
@@ -147,10 +164,22 @@ export async function GET(req) {
 
         if (ownerEmail) {
             try {
-                ownerEmailResult = await sendEmail({
-                    to: ownerEmail,
-                    subject: "[TEST-DIAGNOSTIC] Notification Propriétaire - HOLA AGENCY",
-                    htmlText: `<h3>Ceci est un e-mail de diagnostic technique pour le propriétaire.</h3><p>Paiement reçu pour la réservation ${booking.metadata?.title || 'du logement'}.</p>`
+                ownerEmailResult = await fetch("https://api.brevo.com/v3/smtp/email", {
+                    method: "POST",
+                    headers: {
+                        "accept": "application/json",
+                        "api-key": cleanedBrevoKey,
+                        "content-type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        sender: { name: "Hola Agency", email: "contact@holaluxe.com" },
+                        to: [{ email: ownerEmail }],
+                        subject: "[TEST-DIAGNOSTIC] Notification Propriétaire - HOLA AGENCY",
+                        htmlContent: `<h3>Ceci est un e-mail de diagnostic technique pour le propriétaire.</h3><p>Paiement reçu pour la réservation ${booking.metadata?.title || 'du logement'}.</p>`
+                    })
+                }).then(async r => {
+                    const txt = await r.text();
+                    return { status: r.status, statusText: r.statusText, body: txt };
                 });
             } catch (err) {
                 ownerEmailResult = { error: err.message };
@@ -163,6 +192,8 @@ export async function GET(req) {
             env: {
                 BREVO_KEY_EXISTS,
                 BREVO_KEY_LENGTH,
+                CLEANED_BREVO_KEY_LENGTH,
+                MASKED_BREVO_KEY,
                 supabaseUrlExists: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
                 supabaseServiceKeyExists: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
                 supabaseServiceKeyLength: process.env.SUPABASE_SERVICE_ROLE_KEY ? process.env.SUPABASE_SERVICE_ROLE_KEY.length : 0
