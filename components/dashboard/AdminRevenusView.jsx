@@ -363,7 +363,7 @@ export default function AdminRevenusView() {
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-md bg-white rounded-[2rem] shadow-2xl z-[101] overflow-hidden flex flex-col max-h-[90vh]"
+                            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-[400px] bg-white rounded-[2rem] shadow-2xl z-[101] overflow-hidden flex flex-col max-h-[90vh]"
                         >
                             <div className="p-5 md:p-6 overflow-y-auto">
                                 <div className="flex items-center justify-between mb-4">
@@ -425,10 +425,21 @@ export default function AdminRevenusView() {
                                             ))}
                                         </div>
                                     ) : (
-                                        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-2">
-                                            <AlertCircle className="w-4 h-4 text-slate-400" />
-                                            <span className="text-xs font-bold text-slate-500">Aucune donnée de transaction liée.</span>
-                                        </div>
+                                        selectedBooking.status === 'en_attente_paiement' || selectedBooking.status === 'en_attente' ? (
+                                            <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                                                    <Clock className="w-4 h-4" />
+                                                </div>
+                                                <p className="text-xs font-bold text-amber-800 leading-tight">Le client n'a pas encore procédé au paiement.</p>
+                                            </div>
+                                        ) : (
+                                            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center shrink-0">
+                                                    <AlertCircle className="w-4 h-4" />
+                                                </div>
+                                                <p className="text-xs font-bold text-slate-500 leading-tight">Aucune donnée de transaction liée.</p>
+                                            </div>
+                                        )
                                     )}
                                 </div>
                             </div>
