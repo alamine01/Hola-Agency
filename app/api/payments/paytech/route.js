@@ -16,22 +16,26 @@ export async function POST(req) {
         }
 
         // 1. Mettre à jour les métadonnées de la réservation
+        const { data: currentBooking } = await supabase.from('bookings').select('metadata').eq('id', bookingId).single();
+        const currentMeta = currentBooking?.metadata || {};
+
         await supabase
             .from('bookings')
             .update({ 
                 metadata: { 
+                    ...currentMeta,
                     phoneNumber, 
                     accountHolder, 
-                    paymentMethod,
+                    payment_method: paymentMethod === 'wave' ? 'Wave' : (paymentMethod === 'orange' ? 'Orange Money' : paymentMethod),
                     updated_at: new Date().toISOString() 
                 } 
             })
             .eq('id', bookingId);
 
-        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-        const isLocal = siteUrl.includes('localhost');
-        const callbackUrl = isLocal ? 'https://holaluxe.com/api/webhooks/paytech' : `${siteUrl}/api/webhooks/paytech`;
-        const validSiteUrl = isLocal ? 'https://holaluxe.com' : siteUrl;
+        const requestOrigin = req.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+        const isLocal = requestOrigin.includes('localhost');
+        const validSiteUrl = isLocal ? 'https://hola-agency.vercel.app' : requestOrigin;
+        const callbackUrl = `${validSiteUrl}/api/webhooks/paytech`;
         
         // TENTATIVE DE MODE 100% DIRECT (Intech API)
         if (paymentMethod === 'wave' || paymentMethod === 'orange') {
@@ -46,7 +50,7 @@ export async function POST(req) {
                 service: codeService,
                 phoneNumber: cleanPhone,
                 amount: Math.round(Number(amount)),
-                externalId: bookingId.replace(/-/g, '').slice(0, 20),
+                externalId: bookingId,
                 callbackUrl: callbackUrl,
                 data: "{}"
             };
