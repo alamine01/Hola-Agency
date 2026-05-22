@@ -416,6 +416,24 @@ export default function AdminRevenusView() {
                                         )}
                                     </div>
 
+                                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-3">Répartition Financière</span>
+                                        <div className="space-y-2">
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-[10px] font-bold text-slate-500 uppercase">Payé par le client</span>
+                                                <span className="text-xs font-black text-slate-900">{selectedBooking.amount.toLocaleString()} FCFA</span>
+                                            </div>
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-[10px] font-bold text-slate-500 uppercase">Commission HOLA (15%)</span>
+                                                <span className="text-xs font-black text-amber-600">+{Math.floor(selectedBooking.amount * 0.15).toLocaleString()} FCFA</span>
+                                            </div>
+                                            <div className="pt-2 border-t border-slate-200 flex justify-between items-center">
+                                                <span className="text-[10px] font-black text-slate-900 uppercase">Revenu net Propriétaire</span>
+                                                <span className="text-sm font-black text-emerald-600">{Math.floor(selectedBooking.amount * 0.85).toLocaleString()} FCFA</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     {selectedBooking.payments && selectedBooking.payments.length > 0 ? (
                                         <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
                                             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-3">Historique Transaction</span>
@@ -431,22 +449,20 @@ export default function AdminRevenusView() {
                                                 </div>
                                             ))}
                                         </div>
+                                    ) : (selectedBooking.status === 'payee' || selectedBooking.status === 'confirmee') ? (
+                                        <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100 flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+                                                <CheckCircle2 className="w-4 h-4" />
+                                            </div>
+                                            <p className="text-xs font-bold text-emerald-800 leading-tight">Paiement validé avec succès (manuel ou externe).</p>
+                                        </div>
                                     ) : (
-                                        selectedBooking.status === 'en_attente_paiement' || selectedBooking.status === 'en_attente' ? (
-                                            <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
-                                                    <Clock className="w-4 h-4" />
-                                                </div>
-                                                <p className="text-xs font-bold text-amber-800 leading-tight">Le client n'a pas encore procédé au paiement.</p>
+                                        <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                                                <Clock className="w-4 h-4" />
                                             </div>
-                                        ) : (
-                                            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center shrink-0">
-                                                    <AlertCircle className="w-4 h-4" />
-                                                </div>
-                                                <p className="text-xs font-bold text-slate-500 leading-tight">Aucune donnée de transaction liée.</p>
-                                            </div>
-                                        )
+                                            <p className="text-xs font-bold text-amber-800 leading-tight">Le client n'a pas encore procédé au paiement.</p>
+                                        </div>
                                     )}
                                 </div>
                             </div>
