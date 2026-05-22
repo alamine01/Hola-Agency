@@ -441,7 +441,6 @@ export default function ProprietaireReservationsPage() {
                         ))}
                     </div>
                 )}
-                )}
             </div>
 
             <BookingDetailModal
