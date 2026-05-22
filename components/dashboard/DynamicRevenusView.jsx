@@ -291,6 +291,7 @@ export default function DynamicRevenusView({ role = 'client' }) {
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
                             className="modal-hola bg-white rounded-[2.5rem] md:rounded-[3rem] p-6 md:p-10 shadow-2xl relative z-10 max-h-[90vh] flex flex-col overflow-hidden"
+                            style={{ width: '100%', maxWidth: '450px' }}
                         >
                             <button onClick={() => setIsWithdrawModalOpen(false)} className="absolute top-6 right-6 p-2.5 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-50 border border-slate-50">
                                 <X className="w-5 h-5" />
@@ -453,6 +454,7 @@ export default function DynamicRevenusView({ role = 'client' }) {
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
                             className="modal-hola relative w-full bg-white rounded-[3rem] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
+                            style={{ width: '100%', maxWidth: '550px' }}
                         >
                             <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/30 shrink-0">
                                 <div>
