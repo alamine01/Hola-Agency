@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 import { usePlatformCommission } from '@/app/context/PlatformCommissionContext';
 
 const BookingDetailModal = ({ isOpen, onClose, reservation, platformCommission }) => {
