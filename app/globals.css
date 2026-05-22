@@ -44,15 +44,11 @@ body {
     @apply max-w-[1000px] mx-auto w-full;
 }
 
-@layer components {
-    .modal-hola {
-        width: auto;
-        max-width: 90vw;
-        max-height: 90vh;
-        overflow-y: auto;
-        margin-left: auto;
-        margin-right: auto;
-    }
+.modal-hola {
+    max-height: 90vh;
+    overflow-y: auto;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
