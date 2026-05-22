@@ -121,7 +121,7 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
                             </button>
                         </div>
 
-                        <div className="p-5 md:p-6">
+                        <div className="p-5 md:p-6 space-y-4">
                             <div className="flex items-center gap-4 mb-6">
                                 <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600 shrink-0">
                                     <FileText className="w-8 h-8" />
@@ -132,56 +132,55 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
                                 </div>
                             </div>
 
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <p className="text-[9px] uppercase font-black text-slate-400 tracking-widest mb-1.5">Date d'émission</p>
-                                        <div className="flex items-center gap-2 text-slate-700 font-bold italic">
-                                            <Calendar className="w-4 h-4 text-amber-400" /> {invoice.date}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <p className="text-[9px] uppercase font-black text-slate-400 tracking-widest mb-1.5">Mode de paiement</p>
-                                        <div className="flex items-center gap-1.5 text-slate-700 font-bold italic text-xs">
-                                            <CreditCard className="w-3.5 h-3.5 text-amber-400" /> <span className="truncate">{invoice.method}</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <p className="text-[9px] uppercase font-black text-slate-400 tracking-widest mb-1.5">Lieu</p>
-                                        <div className="flex items-center gap-1.5 text-slate-700 font-bold italic text-xs">
-                                            <MapPin className="w-4 h-4 text-amber-400" /> {invoice.location}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <p className="text-[9px] uppercase font-black text-slate-400 tracking-widest mb-1.5">Séjour</p>
-                                        <div className="flex items-center gap-1.5 text-slate-700 font-bold italic text-xs">
-                                            <Calendar className="w-3.5 h-3.5 text-amber-400" /> <span className="truncate">{invoice.dates}</span>
-                                        </div>
-                                    </div>
-                                </div>
-
+                            <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <p className="text-[9px] uppercase font-black text-slate-400 tracking-widest mb-1.5">Statut de la transaction</p>
-                                    <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${invoice.isPaid ? 'bg-emerald-50 text-emerald-600' : invoice.status === 'annulee' ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'}`}>
-                                        {invoice.isPaid ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Clock className="w-3.5 h-3.5" />}
-                                        {invoice.statusLabel}
+                                    <p className="text-[9px] uppercase font-black text-slate-400 tracking-widest mb-1.5">Date d'émission</p>
+                                    <div className="flex items-center gap-2 text-slate-700 font-bold italic">
+                                        <Calendar className="w-4 h-4 text-amber-400" /> {invoice.date}
                                     </div>
                                 </div>
+                                <div>
+                                    <p className="text-[9px] uppercase font-black text-slate-400 tracking-widest mb-1.5">Mode de paiement</p>
+                                    <div className="flex items-center gap-1.5 text-slate-700 font-bold italic text-xs">
+                                        <CreditCard className="w-3.5 h-3.5 text-amber-400" /> <span className="truncate">{invoice.method}</span>
+                                    </div>
+                                </div>
+                            </div>
 
-                                <div className="pt-5 mt-5 border-t border-slate-100 flex flex-col items-center gap-4">
-                                    <div className="text-center w-full flex justify-between items-center">
-                                        <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest">Total</p>
-                                        <p className="text-xl font-black text-slate-900 font-mono tracking-tighter">{invoice.amount.toLocaleString()} FCFA</p>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p className="text-[9px] uppercase font-black text-slate-400 tracking-widest mb-1.5">Lieu</p>
+                                    <div className="flex items-center gap-1.5 text-slate-700 font-bold italic text-xs">
+                                        <MapPin className="w-4 h-4 text-amber-400" /> {invoice.location}
                                     </div>
-                                    <button
-                                        onClick={handleDownloadPDF}
-                                        className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-amber-600 transition-all active:scale-95 shadow-lg w-full text-sm"
-                                    >
-                                        <Download className="w-5 h-5" /> Télécharger PDF
-                                    </button>
                                 </div>
+                                <div>
+                                    <p className="text-[9px] uppercase font-black text-slate-400 tracking-widest mb-1.5">Séjour</p>
+                                    <div className="flex items-center gap-1.5 text-slate-700 font-bold italic text-xs">
+                                        <Calendar className="w-3.5 h-3.5 text-amber-400" /> <span className="truncate">{invoice.dates}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p className="text-[9px] uppercase font-black text-slate-400 tracking-widest mb-1.5">Statut de la transaction</p>
+                                <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${invoice.isPaid ? 'bg-emerald-50 text-emerald-600' : invoice.status === 'annulee' ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'}`}>
+                                    {invoice.isPaid ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Clock className="w-3.5 h-3.5" />}
+                                    {invoice.statusLabel}
+                                </div>
+                            </div>
+
+                            <div className="pt-5 mt-5 border-t border-slate-100 flex flex-col items-center gap-4">
+                                <div className="text-center w-full flex justify-between items-center">
+                                    <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest">Total</p>
+                                    <p className="text-xl font-black text-slate-900 font-mono tracking-tighter">{invoice.amount.toLocaleString()} FCFA</p>
+                                </div>
+                                <button
+                                    onClick={handleDownloadPDF}
+                                    className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-amber-600 transition-all active:scale-95 shadow-lg w-full text-sm"
+                                >
+                                    <Download className="w-5 h-5" /> Télécharger PDF
+                                </button>
                             </div>
                         </div>
                     </motion.div>
