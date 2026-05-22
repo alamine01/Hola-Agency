@@ -463,9 +463,9 @@ export default function DynamicRevenusView({ role = 'client' }) {
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
                             className="modal-hola relative w-full bg-white rounded-[3rem] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
-                            style={{ width: '100%', maxWidth: '550px' }}
+                            style={{ width: '100%', maxWidth: '450px' }}
                         >
-                            <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/30 shrink-0">
+                            <div className="p-6 border-b border-slate-50 flex items-center justify-between bg-slate-50/30 shrink-0">
                                 <div>
                                     <p className="text-[10px] font-black text-amber-600 uppercase tracking-[0.2em] mb-1">Détails du mouvement</p>
                                     <h3 className="text-xl font-black text-slate-900 tracking-tight uppercase">Reçu de transaction</h3>
@@ -475,9 +475,9 @@ export default function DynamicRevenusView({ role = 'client' }) {
                                 </button>
                             </div>
 
-                            <div className="p-8 space-y-8 flex-1 overflow-y-auto custom-scrollbar">
-                                <div className="flex items-center justify-between p-6 bg-slate-50 rounded-[2rem] border border-slate-100">
-                                    <div className="flex items-center gap-4">
+                            <div className="p-6 space-y-6 flex-1 overflow-y-auto custom-scrollbar">
+                                <div className="flex items-center justify-between p-5 bg-slate-50 rounded-[2rem] border border-slate-100">
+                                    <div className="flex items-center gap-3">
                                         <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${selectedTx.type === 'income' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
                                             {selectedTx.type === 'income' ? <ArrowDownLeft className="w-6 h-6" /> : <ArrowUpRight className="w-6 h-6" />}
                                         </div>

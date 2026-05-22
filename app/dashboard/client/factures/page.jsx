@@ -111,7 +111,8 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
                         initial={{ opacity: 0, scale: 0.9, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                        className="modal-hola relative bg-white rounded-[2.5rem] shadow-2xl overflow-hidden w-full max-w-[400px]"
+                        className="modal-hola relative bg-white rounded-[2.5rem] shadow-2xl overflow-hidden w-[95%]"
+                        style={{ maxWidth: '350px' }}
                     >
                         <div className="p-5 md:p-6 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
                             <h3 className="text-lg font-bold text-slate-900 tracking-tight">Détails de la facture</h3>

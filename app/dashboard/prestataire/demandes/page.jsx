@@ -44,7 +44,8 @@ const RequestDetailsModal = ({ isOpen, onClose, request, onStatusUpdate, platfor
                     initial={{ opacity: 0, scale: 0.95, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                    className="modal-hola bg-white rounded-[2.5rem] p-6 md:p-10 shadow-2xl relative z-10 max-h-[90vh] flex flex-col overflow-y-auto overflow-hidden w-full max-w-md sm:max-w-lg lg:max-w-xl"
+                    className="modal-hola bg-white rounded-[2.5rem] p-5 md:p-6 shadow-2xl relative z-10 max-h-[90vh] flex flex-col overflow-y-auto overflow-hidden w-[95%]"
+                    style={{ maxWidth: '400px' }}
                 >
                     <button onClick={onClose} className="absolute top-6 right-6 p-2.5 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-50 border border-slate-50">
                         <X className="w-5 h-5" />
@@ -138,7 +139,8 @@ const GuideModal = ({ isOpen, onClose }) => {
             <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="modal-hola relative bg-white rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative max-h-[90vh] flex flex-col overflow-hidden w-full max-w-2xl"
+                className="modal-hola relative bg-white rounded-[2.5rem] p-6 md:p-8 shadow-2xl relative max-h-[90vh] flex flex-col overflow-hidden w-[95%]"
+                style={{ maxWidth: '400px' }}
             >
                 <button onClick={onClose} className="absolute top-6 right-6 p-2.5 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-100 z-10 border border-slate-50">
                     <X className="w-6 h-6" />
