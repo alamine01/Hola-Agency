@@ -192,14 +192,7 @@ export default function DashboardLayoutShell({ children, forcedRole }) {
                 <header className="h-20 bg-white border-b border-slate-100 sticky top-0 z-40 w-full px-4 md:px-6">
                     <div className="container-dashboard flex items-center justify-between h-full">
                         <div className="flex items-center gap-4 flex-1">
-                            <div className="hidden md:flex items-center bg-slate-50 border border-slate-100 rounded-full px-5 py-2.5 w-full max-w-md focus-within:border-amber-600/30 focus-within:bg-white transition-all group shadow-sm shadow-slate-100">
-                                <Search className="w-4 h-4 text-slate-400 mr-2 group-focus-within:text-amber-600 transition-colors" />
-                                <input
-                                    type="text"
-                                    placeholder="Rechercher une réservation, un logement..."
-                                    className="bg-transparent border-none outline-none text-xs font-semibold w-full placeholder:text-slate-400"
-                                />
-                            </div>
+                            {/* Search bar removed per user request */}
                         </div>
 
                         <div className="flex items-center gap-4">
