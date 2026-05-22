@@ -18,8 +18,9 @@ import {
     Settings,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { X } from 'lucide-react';
 
 const AdminStatCard = ({ title, value, icon: Icon, color, trend }) => (
     <motion.div
@@ -55,6 +56,57 @@ export default function AdminDashboardView() {
         revenue: 0
     });
     const [recentBookings, setRecentBookings] = useState([]);
+    const [isRevenueModalOpen, setIsRevenueModalOpen] = useState(false);
+    const [revenueData, setRevenueData] = useState({ total: 0, available: 0, pending: 0, userName: '' });
+
+    const handleOpenRevenueModal = async (booking) => {
+        const userId = booking.owner_id || booking.provider_id;
+        if (!userId) return;
+        const { data: profile } = await supabase.from('profiles').select('display_name').eq('id', userId).single();
+        const { data: userBookings, error } = await supabase.from('bookings')
+            .select('amount,status')
+            .or(`owner_id.eq.${userId},provider_id.eq.${userId}`);
+        if (error) console.error(error);
+        let total = 0, available = 0, pending = 0;
+        userBookings?.forEach((b) => {
+            total += Number(b.amount);
+            if (b.status === 'payee' || b.status === 'confirmee') available += Number(b.amount);
+            else pending += Number(b.amount);
+        });
+        setRevenueData({ total, available, pending, userName: profile?.display_name || 'Utilisateur' });
+        setIsRevenueModalOpen(true);
+    };
+
+    const RevenueModal = ({ isOpen, onClose, data }) => {
+        if (!isOpen) return null;
+        return (
+            <AnimatePresence>
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm"
+                >
+                    <motion.div
+                        initial={{ scale: 0.9, y: 20 }}
+                        animate={{ scale: 1, y: 0 }}
+                        exit={{ scale: 0.9, y: 20 }}
+                        className="bg-white rounded-[2.5rem] p-8 w-[95%] max-w-md shadow-2xl relative"
+                    >
+                        <button onClick={onClose} className="absolute top-4 right-4 p-2 hover:bg-slate-100 rounded-full transition-colors">
+                            <X className="w-5 h-5 text-slate-500" />
+                        </button>
+                        <h3 className="text-xl font-black text-slate-900 mb-4">Revenus de {data.userName}</h3>
+                        <div className="space-y-3">
+                            <div className="flex justify-between"><span>Total</span><span className="font-black">{data.total.toLocaleString()} FCFA</span></div>
+                            <div className="flex justify-between"><span>Disponible</span><span className="font-black text-emerald-600">{data.available.toLocaleString()} FCFA</span></div>
+                            <div className="flex justify-between"><span>En attente</span><span className="font-black text-amber-600">{data.pending.toLocaleString()} FCFA</span></div>
+                        </div>
+                    </motion.div>
+                </motion.div>
+            </AnimatePresence>
+        );
+    };
 
     useEffect(() => {
         fetchAdminData();
@@ -150,6 +202,7 @@ export default function AdminDashboardView() {
                         <div className="flex items-center justify-between mb-8">
                             <h2 className="text-2xl font-black text-slate-900 tracking-tight uppercase">Dernières Activités</h2>
                             <Link href="/dashboard/admin/revenus" className="text-[10px] font-black uppercase text-amber-600 hover:text-slate-900 transition-colors tracking-widest">Voir Tout</Link>
+                <RevenueModal isOpen={isRevenueModalOpen} onClose={() => setIsRevenueModalOpen(false)} data={revenueData} />
                         </div>
 
                         <div className="space-y-4">

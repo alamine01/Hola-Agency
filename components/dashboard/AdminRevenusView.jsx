@@ -314,7 +314,7 @@ export default function AdminRevenusView() {
                                                     <ArrowUpLeft className="w-5 h-5 md:w-6 md:h-6" />
                                                 </div>
                                                 <div>
-                                                    <h4 className="font-black text-slate-900 uppercase tracking-tight text-[11px] md:text-sm mb-0.5 md:mb-1 truncate max-w-[120px] md:max-w-none">{p.profiles?.display_name || 'Utilisateur'}</h4>
+                                                    <h4 className="font-black text-slate-900 uppercase tracking-tight text-[11px] md:text-sm mb-0.5 md:mb-1 truncate max-w-[120px] md:max-w-none">{p.profiles?.display_name}</h4>
                                                     <p className="text-[9px] md:text-[10px] font-black text-amber-600 uppercase tracking-widest">{p.method}</p>
                                                 </div>
                                             </div>
