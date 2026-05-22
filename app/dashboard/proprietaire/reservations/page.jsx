@@ -371,7 +371,7 @@ export default function ProprietaireReservationsPage() {
             }
         } catch (err) {
             console.error("Unexpected error:", err);
-            alert("Une erreur inattendue est survenue lors de la synchronisation.");
+            alert("Une erreur inattendue est survenue lors de la synchronisation: " + (err.message || String(err)));
         }
         setLoading(false);
     };
