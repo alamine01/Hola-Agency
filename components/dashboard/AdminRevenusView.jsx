@@ -48,7 +48,7 @@ export default function AdminRevenusView() {
             // Fetch Bookings
             const { data: bData, error: bError } = await supabase
                 .from('bookings')
-                .select('*, payments(*)')
+                .select('*')
                 .order('created_at', { ascending: false });
 
             // Fetch Payouts
@@ -84,6 +84,24 @@ export default function AdminRevenusView() {
             fetchAdminData();
         } catch (error) {
             alert("Erreur validation: " + error.message);
+        }
+    };
+
+    const handleSelectBooking = async (book) => {
+        setSelectedBooking(book); // Show modal immediately
+        
+        // Fetch payments separately to avoid missing foreign key relation errors
+        const { data: payments, error } = await supabase
+            .from('payments')
+            .select('*')
+            .eq('booking_id', book.id);
+            
+        if (!error && payments) {
+            setSelectedBooking(prev => {
+                // Prevent overriding if user closed modal already
+                if (!prev || prev.id !== book.id) return prev;
+                return { ...prev, payments };
+            });
         }
     };
 
@@ -237,7 +255,7 @@ export default function AdminRevenusView() {
                                 {filteredBookings.map((book) => (
                                     <div 
                                         key={book.id} 
-                                        onClick={() => setSelectedBooking(book)}
+                                        onClick={() => handleSelectBooking(book)}
                                         className="p-4 md:p-6 bg-white rounded-[2rem] border border-slate-50 hover:border-amber-600/30 transition-all shadow-sm cursor-pointer hover:shadow-lg"
                                     >
                                         <div className="flex items-center justify-between mb-4">
