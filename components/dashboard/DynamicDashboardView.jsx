@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
+import { usePlatformCommission } from '@/app/context/PlatformCommissionContext';
 
 const StatCard = ({ title, value, change, icon: Icon, color, subtitle, className = "" }) => (
     <motion.div
@@ -154,6 +155,7 @@ export default function DynamicDashboardView({ role = 'client' }) {
     const [activities, setActivities] = useState([]);
     const [stats, setStats] = useState([]);
     const [profileRole, setProfileRole] = useState(null);
+    const { commission: platformCommission } = usePlatformCommission();
 
     useEffect(() => {
         const checkMismatch = async () => {
@@ -209,13 +211,13 @@ export default function DynamicDashboardView({ role = 'client' }) {
                 ]);
 
                 const totalGain = (bookingsData.data || []).reduce((acc, curr) => acc + curr.amount, 0);
-                const netGain = Math.floor(totalGain * 0.85);
+                const netGain = Math.floor(totalGain * (1 - (platformCommission / 100)));
                 const formatRevenue = (val) => {
                     return `${val.toLocaleString()} FCFA`;
                 };
 
                 dashboardStats = [
-                    { title: "Revenu Net Global", value: formatRevenue(netGain), change: null, icon: TrendingUp, color: "bg-emerald-600", subtitle: "Total net versé après commission 15%" },
+                    { title: "Revenu Net Global", value: formatRevenue(netGain), change: null, icon: TrendingUp, color: "bg-emerald-600", subtitle: `Total net versé après commission ${platformCommission}%` },
                     { title: "Mes Villas", value: villasCount.count || 0, change: null, icon: Home, color: "bg-slate-900" },
                     { title: "Réservations", value: (bookingsData.data || []).length, change: null, icon: Calendar, color: "bg-amber-600" },
                 ];
@@ -229,10 +231,10 @@ export default function DynamicDashboardView({ role = 'client' }) {
                 ]);
 
                 const totalGain = (bookingsData.data || []).reduce((acc, curr) => acc + curr.amount, 0);
-                const netGain = Math.floor(totalGain * 0.85);
+                const netGain = Math.floor(totalGain * (1 - (platformCommission / 100)));
 
                 dashboardStats = [
-                    { title: "Gains de Service", value: `${netGain.toLocaleString()} FCFA`, change: null, icon: TrendingUp, color: "bg-emerald-600", subtitle: "Après commission HOLA (-15%)" },
+                    { title: "Gains de Service", value: `${netGain.toLocaleString()} FCFA`, change: null, icon: TrendingUp, color: "bg-emerald-600", subtitle: `Après commission HOLA (-${platformCommission}%)` },
                     { title: "Mes Prestations", value: servicesCount.count || 0, change: null, icon: Star, color: "bg-amber-500" },
                     { title: "Demandes", value: (bookingsData.data || []).length, change: null, icon: Users, color: "bg-slate-900" },
                 ];
@@ -407,12 +409,12 @@ export default function DynamicDashboardView({ role = 'client' }) {
                                                     <span className="text-xs font-black text-slate-900">{(selectedActivity.amount || 0).toLocaleString()} FCFA</span>
                                                 </div>
                                                 <div className="flex justify-between items-center">
-                                                    <span className="text-[10px] font-bold text-slate-500 uppercase">Commission HOLA (15%)</span>
-                                                    <span className="text-xs font-black text-red-500">-{Math.floor((selectedActivity.amount || 0) * 0.15).toLocaleString()} FCFA</span>
+                                                    <span className="text-[10px] font-bold text-slate-500 uppercase">Commission HOLA ({platformCommission}%)</span>
+                                                    <span className="text-xs font-black text-red-500">-{Math.floor((selectedActivity.amount || 0) * (platformCommission / 100)).toLocaleString()} FCFA</span>
                                                 </div>
                                                 <div className="pt-2 border-t border-slate-200 flex justify-between items-center">
                                                     <span className="text-[10px] font-black text-slate-900 uppercase">Votre Revenu Net</span>
-                                                    <span className="text-sm font-black text-emerald-600">{Math.floor((selectedActivity.amount || 0) * 0.85).toLocaleString()} FCFA</span>
+                                                    <span className="text-sm font-black text-emerald-600">{Math.floor((selectedActivity.amount || 0) * (1 - (platformCommission / 100))).toLocaleString()} FCFA</span>
                                                 </div>
                                             </div>
                                         </div>

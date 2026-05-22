@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePlatformCommission } from '@/app/context/PlatformCommissionContext';
 
 export default function AdminRevenusView() {
     const [loading, setLoading] = useState(true);
@@ -37,6 +38,7 @@ export default function AdminRevenusView() {
         commission: 0,
         net: 0
     });
+    const { commission: platformCommission } = usePlatformCommission();
 
     useEffect(() => {
         fetchAdminData();
@@ -157,11 +159,11 @@ export default function AdminRevenusView() {
             }
         });
 
-        const commission = Math.floor(total * 0.15);
+        const commission = Math.floor(total * (platformCommission / 100));
         const net = total - commission;
 
         setStats({ total, pending, commission, net });
-    }, [filteredBookings]);
+    }, [filteredBookings, platformCommission]);
 
     const exportToCSV = () => {
         const dataToExport = activeTab === 'incomes' ? filteredBookings : payouts;
@@ -205,7 +207,7 @@ export default function AdminRevenusView() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 {[
                     { label: "Volume Global", value: stats.total, icon: Wallet, color: "bg-amber-600" },
-                    { label: "Commissions (15%)", value: stats.commission, icon: Briefcase, color: "bg-amber-500" },
+                    { label: `Commissions (${platformCommission}%)`, value: stats.commission, icon: Briefcase, color: "bg-amber-500" },
                     { label: "Transactions Net", value: stats.net, icon: TrendingUp, color: "bg-emerald-600" },
                     { label: "Flux en attente", value: stats.pending, icon: Clock, color: "bg-slate-900" }
                 ].map((s, i) => (
@@ -424,12 +426,12 @@ export default function AdminRevenusView() {
                                                 <span className="text-xs font-black text-slate-900">{selectedBooking.amount.toLocaleString()} FCFA</span>
                                             </div>
                                             <div className="flex justify-between items-center">
-                                                <span className="text-[10px] font-bold text-slate-500 uppercase">Commission HOLA (15%)</span>
-                                                <span className="text-xs font-black text-amber-600">+{Math.floor(selectedBooking.amount * 0.15).toLocaleString()} FCFA</span>
+                                                <span className="text-[10px] font-bold text-slate-500 uppercase">Commission HOLA ({platformCommission}%)</span>
+                                                <span className="text-xs font-black text-amber-600">+{Math.floor(selectedBooking.amount * (platformCommission / 100)).toLocaleString()} FCFA</span>
                                             </div>
                                             <div className="pt-2 border-t border-slate-200 flex justify-between items-center">
                                                 <span className="text-[10px] font-black text-slate-900 uppercase">Revenu net Propriétaire</span>
-                                                <span className="text-sm font-black text-emerald-600">{Math.floor(selectedBooking.amount * 0.85).toLocaleString()} FCFA</span>
+                                                <span className="text-sm font-black text-emerald-600">{Math.floor(selectedBooking.amount * (1 - (platformCommission / 100))).toLocaleString()} FCFA</span>
                                             </div>
                                         </div>
                                     </div>

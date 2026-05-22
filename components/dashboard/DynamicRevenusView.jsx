@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePlatformCommission } from '@/app/context/PlatformCommissionContext';
 
 export default function DynamicRevenusView({ role = 'client' }) {
     const [loading, setLoading] = useState(true);
@@ -38,6 +39,7 @@ export default function DynamicRevenusView({ role = 'client' }) {
         account_holder: '',
         email: ''
     });
+    const { commission: platformCommission } = usePlatformCommission();
 
     useEffect(() => {
         fetchFinancialData();
@@ -73,7 +75,7 @@ export default function DynamicRevenusView({ role = 'client' }) {
             let withdrawn = 0;
 
             (bookingsData || []).forEach(b => {
-                const net = Math.floor(b.amount * 0.85);
+                const net = Math.floor(b.amount * (1 - (platformCommission / 100)));
                 if (b.is_validated) {
                     available += net;
                 } else {
@@ -143,7 +145,7 @@ export default function DynamicRevenusView({ role = 'client' }) {
                 date: b.created_at,
                 type: 'income',
                 title: `Réservation #${b.id.slice(0, 5)}`,
-                amount: Math.floor(b.amount * 0.85),
+                amount: Math.floor(b.amount * (1 - (platformCommission / 100))),
                 status: b.is_validated ? 'validated' : 'pending',
                 subtitle: b.item_type
             })),
@@ -158,7 +160,7 @@ export default function DynamicRevenusView({ role = 'client' }) {
             }))
         ];
         return list.sort((a, b) => new Date(b.date) - new Date(a.date));
-    }, [bookings, payouts]);
+    }, [bookings, payouts, platformCommission]);
 
     if (loading) {
         return (

@@ -28,14 +28,17 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePlatformCommission } from '@/app/context/PlatformCommissionContext';
 
 const VillaCard = ({ villa, onEdit, onDelete }) => {
     const [showMenu, setShowMenu] = useState(false);
-    // Calcul du net (85% du prix brut comme dans le PHP original)
+    const { commission: platformCommission } = usePlatformCommission();
+    
+    // Calcul du net
     const priceValue = villa.price || 0;
     const salePrice = villa.sale_price;
     const activePrice = salePrice && salePrice > 0 ? salePrice : priceValue;
-    const netPrice = Math.floor(activePrice * 0.85);
+    const netPrice = Math.floor(activePrice * (1 - (platformCommission / 100)));
 
     return (
         <div className={`bg-white rounded-[2rem] border border-slate-100 p-4 flex flex-col gap-4 hover:shadow-xl transition-all group shadow-sm relative ${showMenu ? 'z-50' : ''}`}>
@@ -77,7 +80,7 @@ const VillaCard = ({ villa, onEdit, onDelete }) => {
 
                 <div className="flex items-center justify-between pt-4 border-t border-slate-50/80">
                     <div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Revenu Net (-15%)</p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Revenu Net (-{platformCommission}%)</p>
                         <p className="font-black text-amber-600 text-lg">{netPrice.toLocaleString()} <span className="text-[10px] font-bold">FCFA</span></p>
                         <div className="flex items-center gap-2 mt-1">
                             {salePrice && salePrice > 0 ? (
@@ -258,7 +261,7 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
             <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="modal-hola bg-white rounded-[2.5rem] p-6 md:p-8 shadow-2xl relative max-h-[90vh] flex flex-col overflow-hidden w-full max-w-lg"
+                className="modal-hola bg-white rounded-[2.5rem] p-6 md:p-8 shadow-2xl relative max-h-[90vh] flex flex-col overflow-hidden w-full max-w-sm"
             >
                 <button onClick={onClose} className="absolute top-6 right-6 p-2.5 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-100 z-10 border border-slate-50">
                     <X className="w-5 h-5" />
@@ -295,7 +298,7 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                     </div>
 
                     <div className="space-y-5">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div className="grid grid-cols-1 gap-5">
                             <div className="space-y-2">
                                 <label className="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] pl-1">Nom du logement</label>
                                 <input
@@ -320,7 +323,7 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-5">
+                        <div className="grid grid-cols-1 gap-5">
                             <div className="space-y-2">
                                 <label className="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] pl-1">Ville</label>
                                 <div className="relative">
@@ -349,7 +352,7 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] pl-1 text-center block">Chambres</label>
                                 <input

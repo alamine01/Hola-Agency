@@ -21,12 +21,13 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
+import { usePlatformCommission } from '@/app/context/PlatformCommissionContext';
 
-const RequestDetailsModal = ({ isOpen, onClose, request, onStatusUpdate }) => {
+const RequestDetailsModal = ({ isOpen, onClose, request, onStatusUpdate, platformCommission }) => {
     if (!isOpen || !request) return null;
 
     const details = request.metadata || {};
-    const netPayout = Math.floor(request.amount * 0.85);
+    const netPayout = Math.floor(request.amount * (1 - (platformCommission / 100)));
 
     return (
         <AnimatePresence>
@@ -91,7 +92,7 @@ const RequestDetailsModal = ({ isOpen, onClose, request, onStatusUpdate }) => {
 
                         <div className="p-6 bg-slate-900 rounded-[2rem] text-white flex items-center justify-between shadow-2xl shadow-slate-200">
                             <div>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Votre Gain Net (-15%)</p>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Votre Gain Net (-{platformCommission}%)</p>
                                 <p className="text-2xl font-black">{netPayout.toLocaleString()} <span className="text-xs">FCFA</span></p>
                             </div>
                             <div className="text-right">
@@ -244,6 +245,7 @@ export default function DemandesPage() {
     const [isGuideOpen, setIsGuideOpen] = useState(false);
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { commission: platformCommission } = usePlatformCommission();
 
     useEffect(() => {
         fetchRequests();
@@ -402,6 +404,7 @@ export default function DemandesPage() {
                 onClose={() => setIsModalOpen(false)}
                 request={selectedRequest}
                 onStatusUpdate={handleStatusUpdate}
+                platformCommission={platformCommission}
             />
         </div>
     );

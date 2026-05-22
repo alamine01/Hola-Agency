@@ -21,15 +21,15 @@ import {
     Loader2,
     Shield
 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { usePlatformCommission } from '@/app/context/PlatformCommissionContext';
 
-const BookingDetailModal = ({ isOpen, onClose, reservation }) => {
+const BookingDetailModal = ({ isOpen, onClose, reservation, platformCommission }) => {
     if (!isOpen || !reservation) return null;
 
     const details = reservation.metadata || {};
-    const netPayout = Math.floor(reservation.amount * 0.85);
+    const netPayout = Math.floor(reservation.amount * (1 - (platformCommission / 100)));
     const commission = reservation.amount - netPayout;
 
     return (
@@ -100,7 +100,7 @@ const BookingDetailModal = ({ isOpen, onClose, reservation }) => {
                             <p className="text-2xl font-black">{reservation.amount.toLocaleString()} <span className="text-xs">FCFA</span></p>
                         </div>
                         <div className="text-right">
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Commission HOLA (15%)</p>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Commission HOLA ({platformCommission}%)</p>
                             <p className="text-lg font-bold text-slate-400 italic">-{commission.toLocaleString()} <span className="text-[10px]">FCFA</span></p>
                         </div>
                     </div>
@@ -121,7 +121,7 @@ const BookingDetailModal = ({ isOpen, onClose, reservation }) => {
     );
 };
 
-const HistoryModal = ({ isOpen, onClose }) => {
+const HistoryModal = ({ isOpen, onClose, platformCommission }) => {
     if (!isOpen) return null;
 
     const historyItems = [
@@ -141,12 +141,12 @@ const HistoryModal = ({ isOpen, onClose }) => {
 
                 <div className="mb-8 shrink-0">
                     <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-2 tracking-tight uppercase">Historique Complet</h2>
-                    <p className="text-slate-500 font-medium text-sm italic">"Retrouvez le détail de vos transactions passées (Net calculé à 85% du brut)."</p>
+                    <p className="text-slate-500 font-medium text-sm italic">Retrouvez le détail de vos transactions passées (Net calculé à {100 - platformCommission}% du brut).</p>
                 </div>
 
                 <div className="flex-1 overflow-y-auto pr-2 space-y-4 custom-scrollbar">
                     {historyItems.map((item, idx) => {
-                        const netAmount = Math.floor(parseInt(item.amount.replace(/[^0-9]/g, '')) * 0.85);
+                        const netAmount = Math.floor(parseInt(item.amount.replace(/[^0-9]/g, '')) * (1 - (platformCommission / 100)));
                         return (
                             <div key={idx} className="flex items-center justify-between p-4 rounded-2xl border border-slate-50 hover:bg-slate-50/50 transition-all group">
                                 <div className="flex items-center gap-4">
@@ -181,7 +181,7 @@ const HistoryModal = ({ isOpen, onClose }) => {
     );
 };
 
-const ReservationItem = ({ reservation, onStatusUpdate, onViewDetails, onOpenChat }) => {
+const ReservationItem = ({ reservation, onStatusUpdate, onViewDetails, onOpenChat, platformCommission }) => {
     const [showMenu, setShowMenu] = useState(false);
     const details = reservation.metadata || {};
 
@@ -193,7 +193,7 @@ const ReservationItem = ({ reservation, onStatusUpdate, onViewDetails, onOpenCha
     };
 
     const priceValue = reservation.amount;
-    const netPayout = Math.floor(priceValue * 0.85);
+    const netPayout = Math.floor(priceValue * (1 - (platformCommission / 100)));
 
     const formattedDate = reservation.start_date
         ? new Date(reservation.start_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
@@ -292,6 +292,7 @@ export default function ProprietaireReservationsPage() {
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
+    const { commission: platformCommission } = usePlatformCommission();
 
     useEffect(() => {
         fetchBookings();
@@ -404,7 +405,7 @@ export default function ProprietaireReservationsPage() {
             <div className="mb-8 md:mb-12 text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                     <h1 className="text-2xl md:text-4xl font-black text-slate-900 mb-2 tracking-tight uppercase">Demandes & Réservations</h1>
-                    <p className="text-sm md:text-base text-slate-500 font-medium italic opacity-80">Gérez vos revenus locatifs en accord avec le règlement HOLA (-15% commission).</p>
+                    <p className="text-sm md:text-base text-slate-500 font-medium italic opacity-80">Gérez vos revenus locatifs en accord avec le règlement HOLA (-{platformCommission}% commission).</p>
                 </div>
                 {loading && <div className="flex items-center gap-2 text-amber-500 font-black text-[10px] uppercase tracking-widest"><Loader2 className="w-4 h-4 animate-spin" /> Synchronisation...</div>}
             </div>
@@ -418,6 +419,7 @@ export default function ProprietaireReservationsPage() {
                             onStatusUpdate={handleStatusUpdate}
                             onViewDetails={setSelectedReservation}
                             onOpenChat={handleOpenChat}
+                            platformCommission={platformCommission}
                         />
                     ))
                 ) : !loading ? (
@@ -456,12 +458,14 @@ export default function ProprietaireReservationsPage() {
             <HistoryModal
                 isOpen={isHistoryOpen}
                 onClose={() => setIsHistoryOpen(false)}
+                platformCommission={platformCommission}
             />
 
             <BookingDetailModal
                 isOpen={!!selectedReservation}
                 reservation={selectedReservation}
                 onClose={() => setSelectedReservation(null)}
+                platformCommission={platformCommission}
             />
         </div>
     );
