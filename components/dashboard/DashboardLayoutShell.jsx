@@ -104,69 +104,98 @@ export default function DashboardLayoutShell({ children, forcedRole }) {
     const activeRole = forcedRole || profile?.role || urlRole;
 
     useEffect(() => {
+        let cleanupChannels = null;
+
+        const loadProfile = async (userId) => {
+            // Fetch Profile
+            const { data: profData } = await supabase
+                .from('profiles')
+                .select('display_name, avatar_url, role')
+                .eq('id', userId)
+                .single();
+
+            if (profData) {
+                setProfile(profData);
+            }
+
+            // Fetch Notifications
+            const { data: notifData } = await supabase
+                .from('notifications')
+                .select('*')
+                .eq('user_id', userId)
+                .order('created_at', { ascending: false })
+                .limit(10);
+            if (notifData) setNotifications(notifData);
+
+            // Realtime Notifications
+            const notifChannel = supabase
+                .channel(`notif_realtime_${userId}_${Math.random().toString(36).substring(7)}`)
+                .on('postgres_changes', {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'notifications',
+                    filter: `user_id=eq.${userId}`
+                }, (payload) => {
+                    setNotifications(prev => [payload.new, ...prev]);
+                })
+                .subscribe();
+
+            // Realtime Profile
+            const profileChannel = supabase
+                .channel(`profile_realtime_${userId}_${Math.random().toString(36).substring(7)}`)
+                .on('postgres_changes', {
+                    event: 'UPDATE',
+                    schema: 'public',
+                    table: 'profiles',
+                    filter: `id=eq.${userId}`
+                }, (payload) => {
+                    setProfile(prev => ({
+                        ...prev,
+                        display_name: payload.new.display_name,
+                        avatar_url: payload.new.avatar_url,
+                        role: payload.new.role
+                    }));
+                })
+                .subscribe();
+
+            cleanupChannels = () => {
+                supabase.removeChannel(notifChannel);
+                supabase.removeChannel(profileChannel);
+            };
+        };
+
         const fetchInitialData = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
-                // Fetch Profile
-                const { data: profData } = await supabase
-                    .from('profiles')
-                    .select('display_name, avatar_url, role')
-                    .eq('id', user.id)
-                    .single();
-
-                if (profData) {
-                    setProfile(profData);
-                }
-
-                // Fetch Notifications
-                const { data: notifData } = await supabase
-                    .from('notifications')
-                    .select('*')
-                    .eq('user_id', user.id)
-                    .order('created_at', { ascending: false })
-                    .limit(10);
-                if (notifData) setNotifications(notifData);
-
-                // Realtime Notifications
-                const notifChannel = supabase
-                    .channel(`notif_realtime_${user.id}_${Math.random().toString(36).substring(7)}`)
-                    .on('postgres_changes', {
-                        event: 'INSERT',
-                        schema: 'public',
-                        table: 'notifications',
-                        filter: `user_id=eq.${user.id}`
-                    }, (payload) => {
-                        setNotifications(prev => [payload.new, ...prev]);
-                    })
-                    .subscribe();
-
-                // Realtime Profile
-                const profileChannel = supabase
-                    .channel(`profile_realtime_${user.id}_${Math.random().toString(36).substring(7)}`)
-                    .on('postgres_changes', {
-                        event: 'UPDATE',
-                        schema: 'public',
-                        table: 'profiles',
-                        filter: `id=eq.${user.id}`
-                    }, (payload) => {
-                        setProfile(prev => ({
-                            ...prev,
-                            display_name: payload.new.display_name,
-                            avatar_url: payload.new.avatar_url,
-                            role: payload.new.role
-                        }));
-                    })
-                    .subscribe();
-
-                return () => {
-                    supabase.removeChannel(notifChannel);
-                    supabase.removeChannel(profileChannel);
-                };
+                await loadProfile(user.id);
             }
             setLoading(false);
         };
 
         fetchInitialData();
+
+        // Listen to auth state changes (session refresh, sign out, etc.)
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            if (event === 'SIGNED_OUT' || !session) {
+                setProfile(null);
+                router.push('/login');
+            } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+                // Re-fetch profile on token refresh to prevent stale 'HOLA User'
+                const { data: profData } = await supabase
+                    .from('profiles')
+                    .select('display_name, avatar_url, role')
+                    .eq('id', session.user.id)
+                    .single();
+                if (profData) {
+                    setProfile(profData);
+                }
+            }
+        });
+
+        return () => {
+            subscription?.unsubscribe();
+            cleanupChannels?.();
+        };
     }, []);
 
     const handleMarkAllRead = async () => {
