@@ -52,7 +52,8 @@ export default function AdminSettingsPage() {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="modal-hola w-full max-w-sm bg-white p-8 md:p-10 rounded-3xl shadow-2xl border border-slate-100"
+        className="modal-hola bg-white p-8 md:p-10 rounded-3xl shadow-2xl border border-slate-100"
+        style={{ width: '100%', maxWidth: '400px' }}
       >
         <h1 className="text-2xl font-black text-slate-900 mb-6 text-center">
           Paramètres de la plateforme
