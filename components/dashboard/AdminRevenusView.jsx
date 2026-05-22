@@ -51,6 +51,10 @@ export default function AdminRevenusView() {
                 .select('*')
                 .order('created_at', { ascending: false });
 
+            if (bError) {
+                console.error("Erreur de récupération des réservations:", bError);
+            }
+
             // Fetch Payouts
             const { data: pData, error: pError } = await supabase
                 .from('payouts')
@@ -63,10 +67,12 @@ export default function AdminRevenusView() {
                 `)
                 .order('created_at', { ascending: false });
 
-            if (pError) console.error("Payouts Error:", pError);
+            if (pError) {
+                console.error("Erreur de récupération des paiements (payouts):", pError);
+            }
 
-            if (bData) setBookings(bData);
-            if (pData) setPayouts(pData);
+            setBookings(bData || []);
+            setPayouts(pData || []);
         } catch (error) {
             console.error(error);
         }
@@ -363,7 +369,7 @@ export default function AdminRevenusView() {
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-[400px] bg-white rounded-[2rem] shadow-2xl z-[101] overflow-hidden flex flex-col max-h-[90vh]"
+                            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-sm bg-white rounded-3xl shadow-2xl z-[101] overflow-hidden flex flex-col max-h-[85vh] border border-slate-100"
                         >
                             <div className="p-5 md:p-6 overflow-y-auto">
                                 <div className="flex items-center justify-between mb-4">
@@ -382,7 +388,7 @@ export default function AdminRevenusView() {
                                         </span>
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 gap-4">
                                         <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
                                             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Client</span>
                                             <span className="text-sm font-bold text-slate-900 block truncate" title={selectedBooking.metadata?.client_name}>
