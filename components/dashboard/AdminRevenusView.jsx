@@ -373,99 +373,99 @@ export default function AdminRevenusView() {
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-sm bg-white rounded-3xl shadow-2xl z-[101] overflow-hidden flex flex-col max-h-[85vh] border border-slate-100"
-                            style={{ maxWidth: '384px' }}
+                            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] bg-white rounded-3xl shadow-2xl z-[101] overflow-hidden flex flex-col max-h-[85vh] border border-slate-100"
+                            style={{ maxWidth: '420px' }}
                         >
-                            <div className="p-8 md:p-10 overflow-y-auto">
-                                <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Détails du paiement</h3>
-                                    <button onClick={() => setSelectedBooking(null)} className="p-2 bg-slate-50 text-slate-400 hover:text-slate-900 rounded-full transition-colors">
-                                        <XCircle className="w-6 h-6" />
+                            <div className="p-6 overflow-y-auto">
+                                <div className="flex items-center justify-between mb-6">
+                                    <h3 className="text-base font-black text-slate-900 uppercase tracking-tight">Détails du paiement</h3>
+                                    <button onClick={() => setSelectedBooking(null)} className="p-1.5 bg-slate-50 text-slate-400 hover:text-slate-900 rounded-full transition-colors">
+                                        <XCircle className="w-5 h-5" />
                                     </button>
                                 </div>
 
-                                <div className="space-y-6">
-                                    <div className="flex flex-col p-5 bg-amber-50 rounded-2xl border border-amber-100/50">
-                                        <span className="text-[10px] font-black text-amber-900/50 uppercase tracking-widest mb-1">Montant Total</span>
-                                        <span className="text-3xl font-black text-amber-600">{selectedBooking.amount.toLocaleString()} <span className="text-sm">FCFA</span></span>
-                                        <span className={`mt-3 self-start px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${selectedBooking.status === 'payee' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-200/50 text-amber-800'}`}>
+                                <div className="space-y-4">
+                                    <div className="flex flex-col p-4 bg-amber-50 rounded-2xl border border-amber-100/50">
+                                        <span className="text-[9px] font-black text-amber-900/50 uppercase tracking-widest mb-0.5">Montant Total</span>
+                                        <span className="text-2xl font-black text-amber-600">{selectedBooking.amount.toLocaleString()} <span className="text-xs">FCFA</span></span>
+                                        <span className={`mt-2 self-start px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest ${selectedBooking.status === 'payee' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-200/50 text-amber-800'}`}>
                                             Statut: {selectedBooking.status.replace(/_/g, ' ')}
                                         </span>
                                     </div>
 
-                                    <div className="grid grid-cols-1 gap-4">
-                                        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Client</span>
-                                            <span className="text-sm font-bold text-slate-900 block truncate" title={selectedBooking.metadata?.client_name}>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                            <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Client</span>
+                                            <span className="text-xs font-bold text-slate-900 block truncate" title={selectedBooking.metadata?.client_name}>
                                                 {selectedBooking.metadata?.client_name || 'Inconnu'}
                                             </span>
                                         </div>
-                                        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Date</span>
-                                            <span className="text-sm font-bold text-slate-900">
+                                        <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                            <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Date</span>
+                                            <span className="text-xs font-bold text-slate-900 block truncate">
                                                 {new Date(selectedBooking.created_at).toLocaleDateString()}
                                             </span>
                                         </div>
                                     </div>
 
-                                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Logement / Service</span>
-                                        <span className="text-sm font-bold text-slate-900 block truncate" title={selectedBooking.metadata?.title || selectedBooking.item_type}>
+                                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-1">Logement / Service</span>
+                                        <span className="text-xs font-bold text-slate-900 block truncate" title={selectedBooking.metadata?.title || selectedBooking.item_type}>
                                             {selectedBooking.metadata?.title || selectedBooking.item_type}
                                         </span>
                                         {selectedBooking.start_date && (
-                                            <span className="text-[10px] font-medium text-slate-500 block mt-1">
+                                            <span className="text-[9px] font-medium text-slate-500 block mt-0.5">
                                                 Du {new Date(selectedBooking.start_date).toLocaleDateString()} au {new Date(selectedBooking.end_date).toLocaleDateString()}
                                             </span>
                                         )}
                                     </div>
 
-                                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-3">Répartition Financière</span>
-                                        <div className="space-y-2">
+                                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-2">Répartition Financière</span>
+                                        <div className="space-y-1.5">
                                             <div className="flex justify-between items-center">
-                                                <span className="text-[10px] font-bold text-slate-500 uppercase">Payé par le client</span>
-                                                <span className="text-xs font-black text-slate-900">{selectedBooking.amount.toLocaleString()} FCFA</span>
+                                                <span className="text-[9px] font-bold text-slate-500 uppercase">Payé par client</span>
+                                                <span className="text-[10px] font-black text-slate-900">{selectedBooking.amount.toLocaleString()} FCFA</span>
                                             </div>
                                             <div className="flex justify-between items-center">
-                                                <span className="text-[10px] font-bold text-slate-500 uppercase">Commission HOLA ({platformCommission}%)</span>
-                                                <span className="text-xs font-black text-amber-600">+{Math.floor(selectedBooking.amount * (platformCommission / 100)).toLocaleString()} FCFA</span>
+                                                <span className="text-[9px] font-bold text-slate-500 uppercase">Commission HOLA ({platformCommission}%)</span>
+                                                <span className="text-[10px] font-black text-amber-600">+{Math.floor(selectedBooking.amount * (platformCommission / 100)).toLocaleString()} FCFA</span>
                                             </div>
-                                            <div className="pt-2 border-t border-slate-200 flex justify-between items-center">
-                                                <span className="text-[10px] font-black text-slate-900 uppercase">Revenu net Propriétaire</span>
-                                                <span className="text-sm font-black text-emerald-600">{Math.floor(selectedBooking.amount * (1 - (platformCommission / 100))).toLocaleString()} FCFA</span>
+                                            <div className="pt-1.5 border-t border-slate-200 flex justify-between items-center">
+                                                <span className="text-[9px] font-black text-slate-900 uppercase">Revenu net</span>
+                                                <span className="text-xs font-black text-emerald-600">{Math.floor(selectedBooking.amount * (1 - (platformCommission / 100))).toLocaleString()} FCFA</span>
                                             </div>
                                         </div>
                                     </div>
 
                                     {selectedBooking.payments && selectedBooking.payments.length > 0 ? (
-                                        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-3">Historique Transaction</span>
+                                        <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                            <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-2">Historique</span>
                                             {selectedBooking.payments.map((payment) => (
-                                                <div key={payment.id} className="flex items-center justify-between py-2 border-t border-slate-200/60 first:border-0 first:pt-0">
+                                                <div key={payment.id} className="flex items-center justify-between py-1.5 border-t border-slate-200/60 first:border-0 first:pt-0">
                                                     <div>
-                                                        <p className="text-[10px] font-black text-slate-900 uppercase">{payment.provider}</p>
-                                                        <p className="text-[8px] font-bold text-slate-400">{payment.provider_id || 'ID N/A'}</p>
+                                                        <p className="text-[9px] font-black text-slate-900 uppercase">{payment.provider}</p>
+                                                        <p className="text-[7px] font-bold text-slate-400">{payment.provider_id || 'ID N/A'}</p>
                                                     </div>
-                                                    <span className={`text-[9px] font-black uppercase px-2 py-1 rounded ${payment.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-500'}`}>
+                                                    <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded ${payment.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-500'}`}>
                                                         {payment.status}
                                                     </span>
                                                 </div>
                                             ))}
                                         </div>
                                     ) : (selectedBooking.status === 'payee' || selectedBooking.status === 'confirmee') ? (
-                                        <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100 flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
-                                                <CheckCircle2 className="w-4 h-4" />
+                                        <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-100 flex items-center gap-2">
+                                            <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+                                                <CheckCircle2 className="w-3 h-3" />
                                             </div>
-                                            <p className="text-xs font-bold text-emerald-800 leading-tight">Paiement validé avec succès (manuel ou externe).</p>
+                                            <p className="text-[10px] font-bold text-emerald-800 leading-tight">Paiement validé avec succès.</p>
                                         </div>
                                     ) : (
-                                        <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
-                                                <Clock className="w-4 h-4" />
+                                        <div className="p-3 bg-amber-50 rounded-xl border border-amber-100 flex items-center gap-2">
+                                            <div className="w-6 h-6 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                                                <Clock className="w-3 h-3" />
                                             </div>
-                                            <p className="text-xs font-bold text-amber-800 leading-tight">Le client n'a pas encore procédé au paiement.</p>
+                                            <p className="text-[10px] font-bold text-amber-800 leading-tight">Le client n'a pas encore procédé au paiement.</p>
                                         </div>
                                     )}
                                 </div>
