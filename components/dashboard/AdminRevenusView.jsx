@@ -370,6 +370,7 @@ export default function AdminRevenusView() {
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
                             className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-sm bg-white rounded-3xl shadow-2xl z-[101] overflow-hidden flex flex-col max-h-[85vh] border border-slate-100"
+                            style={{ maxWidth: '384px' }}
                         >
                             <div className="p-8 md:p-10 overflow-y-auto">
                                 <div className="flex items-center justify-between mb-4">
