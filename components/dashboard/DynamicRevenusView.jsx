@@ -455,7 +455,7 @@ export default function DynamicRevenusView({ role = 'client' }) {
                             <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/30 shrink-0">
                                 <div>
                                     <p className="text-[10px] font-black text-amber-600 uppercase tracking-[0.2em] mb-1">Détails du mouvement</p>
-                                    <h3 className="text-xl font-black text-slate-900 tracking-tight uppercase">Rçu de transaction</h3>
+                                    <h3 className="text-xl font-black text-slate-900 tracking-tight uppercase">Reçu de transaction</h3>
                                 </div>
                                 <button onClick={() => setSelectedTx(null)} className="p-3 bg-white border border-slate-100 rounded-2xl text-slate-400 hover:text-slate-900 transition-all">
                                     <X className="w-5 h-5" />
@@ -500,8 +500,8 @@ export default function DynamicRevenusView({ role = 'client' }) {
                                         <p className="text-[10px] font-black text-amber-300 uppercase tracking-[0.2em]">Montant Total</p>
                                         <p className="text-xs text-amber-400 font-medium italic">Commission incluse</p>
                                     </div>
-                                    <p className="text-3xl font-black tracking-tighter">
-                                        {selectedTx.amount.toLocaleString()} <span className="text-sm font-bold">FCFA</span>
+                                    <p className="text-xl sm:text-2xl font-black tracking-tighter text-right">
+                                        {selectedTx.amount.toLocaleString()} <span className="text-xs sm:text-sm font-bold">FCFA</span>
                                     </p>
                                 </div>
                             </div>
