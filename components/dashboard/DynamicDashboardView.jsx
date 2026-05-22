@@ -108,7 +108,15 @@ const ActivitiesModal = ({ isOpen, onClose, activities }) => (
 
                     <div className="flex-1 overflow-y-auto pr-2 space-y-4 custom-scrollbar">
                         {activities.map((act) => (
-                            <div key={act.id} className="flex items-center justify-between p-5 rounded-3xl border border-slate-50 hover:bg-slate-50/50 transition-all group">
+                            <div 
+                                key={act.id} 
+                                onClick={() => {
+                                    onClose(); // Fermer le grand journal
+                                    // Utiliser un événement personnalisé pour ouvrir les détails ou on peut passer une callback depuis le parent
+                                    window.dispatchEvent(new CustomEvent('openActivityDetails', { detail: act }));
+                                }}
+                                className="flex items-center justify-between p-5 rounded-3xl border border-slate-50 hover:bg-slate-50/50 transition-all group cursor-pointer"
+                            >
                                 <div className="flex items-center gap-4">
                                     <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform shadow-sm">
                                         <ArrowDownLeft className="w-6 h-6" />
@@ -140,6 +148,7 @@ const ActivitiesModal = ({ isOpen, onClose, activities }) => (
 
 export default function DynamicDashboardView({ role = 'client' }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedActivity, setSelectedActivity] = useState(null);
     const [loading, setLoading] = useState(true);
     const [userData, setUserData] = useState(null);
     const [activities, setActivities] = useState([]);
@@ -156,6 +165,10 @@ export default function DynamicDashboardView({ role = 'client' }) {
         };
         checkMismatch();
         fetchDashboardData();
+
+        const handleOpenDetails = (e) => setSelectedActivity(e.detail);
+        window.addEventListener('openActivityDetails', handleOpenDetails);
+        return () => window.removeEventListener('openActivityDetails', handleOpenDetails);
     }, [role]);
 
     const fetchDashboardData = async () => {
@@ -299,7 +312,11 @@ export default function DynamicDashboardView({ role = 'client' }) {
 
                     <div className="space-y-5">
                         {activities.map((act) => (
-                            <div key={act.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 rounded-3xl border border-slate-50 hover:bg-slate-50/50 transition-all cursor-pointer group shadow-sm gap-4">
+                            <div 
+                                key={act.id} 
+                                onClick={() => setSelectedActivity(act)}
+                                className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 rounded-3xl border border-slate-50 hover:bg-slate-50/50 transition-all cursor-pointer group shadow-sm gap-4"
+                            >
                                 <div className="flex items-center gap-4 sm:gap-5">
                                     <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-slate-900 text-white flex items-center justify-center overflow-hidden shrink-0 group-hover:rotate-3 transition-all shadow-lg ring-4 ring-white">
                                         {act.metadata?.image ? (
@@ -345,6 +362,67 @@ export default function DynamicDashboardView({ role = 'client' }) {
                 onClose={() => setIsModalOpen(false)}
                 activities={activities}
             />
+
+            {/* Modal Détails Activité */}
+            <AnimatePresence>
+                {selectedActivity && (
+                    <div className="fixed inset-0 z-[101] flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setSelectedActivity(null)}
+                            className="absolute inset-0 bg-slate-900/40 backdrop-blur-md"
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="bg-white rounded-[2rem] shadow-2xl relative z-10 w-full max-w-sm flex flex-col border border-slate-100 overflow-hidden"
+                            style={{ maxWidth: '384px' }}
+                        >
+                            <div className="p-8 md:p-10 overflow-y-auto">
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Détails de l'activité</h3>
+                                    <button onClick={() => setSelectedActivity(null)} className="p-2 bg-slate-50 text-slate-400 hover:text-slate-900 rounded-full transition-colors">
+                                        <X className="w-6 h-6" />
+                                    </button>
+                                </div>
+
+                                <div className="space-y-6">
+                                    <div className="flex flex-col p-5 bg-amber-50 rounded-2xl border border-amber-100/50">
+                                        <span className="text-[10px] font-black text-amber-900/50 uppercase tracking-widest mb-1">Montant</span>
+                                        <span className="text-3xl font-black text-amber-600">{(selectedActivity.amount || 0).toLocaleString()} <span className="text-sm">FCFA</span></span>
+                                        <span className={`mt-3 self-start px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${selectedActivity.status === 'payee' || selectedActivity.status === 'confirmee' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-200/50 text-amber-800'}`}>
+                                            Statut: {selectedActivity.status === 'en_attente_paiement' ? 'en attente' : (selectedActivity.status || '...').replace(/_/g, ' ')}
+                                        </span>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 gap-4">
+                                        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Logement / Service</span>
+                                            <span className="text-sm font-bold text-slate-900 block truncate" title={selectedActivity.metadata?.title || selectedActivity.item_type || 'Réservation'}>
+                                                {selectedActivity.metadata?.title || selectedActivity.item_type || 'Réservation'}
+                                            </span>
+                                            {selectedActivity.start_date && (
+                                                <span className="text-[10px] font-medium text-slate-500 block mt-1">
+                                                    Du {new Date(selectedActivity.start_date).toLocaleDateString()} au {new Date(selectedActivity.end_date).toLocaleDateString()}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Date de l'opération</span>
+                                            <span className="text-sm font-bold text-slate-900">
+                                                {new Date(selectedActivity.created_at).toLocaleDateString()}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
