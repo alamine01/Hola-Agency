@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 import { usePlatformCommission } from '@/app/context/PlatformCommissionContext';
+import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 
 export default function AdminSettingsPage() {
@@ -24,9 +25,13 @@ export default function AdminSettingsPage() {
     }
     setLoading(true);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
       const res = await fetch('/api/admin/settings', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`
+        },
         body: JSON.stringify({ commission_percent: Number(inputValue) }),
       });
       const data = await res.json();

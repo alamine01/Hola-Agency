@@ -1,8 +1,23 @@
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
+
+const createScopedClient = (request: Request) => {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      global: {
+        headers: {
+          Authorization: request.headers.get('Authorization') || '',
+        },
+      },
+    }
+  );
+};
 
 // GET current commission percent
 export async function GET(request: Request) {
+  const supabase = createScopedClient(request);
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
     return NextResponse.json({ error: 'Unauthenticated' }, { status: 401 });
@@ -19,6 +34,7 @@ export async function GET(request: Request) {
 
 // PUT to update commission percent (admin only)
 export async function PUT(request: Request) {
+  const supabase = createScopedClient(request);
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
     return NextResponse.json({ error: 'Unauthenticated' }, { status: 401 });
