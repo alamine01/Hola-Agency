@@ -363,11 +363,11 @@ export default function AdminRevenusView() {
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white rounded-[2rem] shadow-2xl z-[101] overflow-hidden flex flex-col max-h-[90vh]"
+                            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-md bg-white rounded-[2rem] shadow-2xl z-[101] overflow-hidden flex flex-col max-h-[90vh]"
                         >
-                            <div className="p-6 md:p-8 overflow-y-auto">
-                                <div className="flex items-center justify-between mb-6">
-                                    <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">Détails du paiement</h3>
+                            <div className="p-5 md:p-6 overflow-y-auto">
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Détails du paiement</h3>
                                     <button onClick={() => setSelectedBooking(null)} className="p-2 bg-slate-50 text-slate-400 hover:text-slate-900 rounded-full transition-colors">
                                         <XCircle className="w-6 h-6" />
                                     </button>
