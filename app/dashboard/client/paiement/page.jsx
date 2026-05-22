@@ -18,6 +18,7 @@ import {
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
+import { usePlatformCommission } from '@/app/context/PlatformCommissionContext';
 
 function PaymentContent() {
     const searchParams = useSearchParams();
@@ -41,6 +42,7 @@ function PaymentContent() {
     const [isPolling, setIsPolling] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [user, setUser] = useState(null);
+    const { commission: platformCommission } = usePlatformCommission();
 
     useEffect(() => {
         supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
@@ -74,7 +76,7 @@ function PaymentContent() {
                     status: 'en_attente_paiement',
                     start_date: startDate ? new Date(startDate) : null,
                     end_date: endDate ? new Date(endDate) : null,
-                    metadata: { title, guests, image, location, client_name: clientName }
+                    metadata: { title, guests, image, location, client_name: clientName, commission_rate: platformCommission }
                 }])
                 .select()
                 .single();

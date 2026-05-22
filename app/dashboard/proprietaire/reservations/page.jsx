@@ -29,7 +29,8 @@ const BookingDetailModal = ({ isOpen, onClose, reservation, platformCommission }
     if (!isOpen || !reservation) return null;
 
     const details = reservation.metadata || {};
-    const netPayout = Math.floor(reservation.amount * (1 - (platformCommission / 100)));
+    const txCommissionRate = reservation.metadata?.commission_rate ?? 15;
+    const netPayout = Math.floor(reservation.amount * (1 - (txCommissionRate / 100)));
     const commission = reservation.amount - netPayout;
 
     return (
@@ -100,8 +101,8 @@ const BookingDetailModal = ({ isOpen, onClose, reservation, platformCommission }
                             <p className="text-2xl font-black">{reservation.amount.toLocaleString()} <span className="text-xs">FCFA</span></p>
                         </div>
                         <div className="text-right">
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Commission HOLA ({platformCommission}%)</p>
-                            <p className="text-lg font-bold text-slate-400 italic">-{commission.toLocaleString()} <span className="text-[10px]">FCFA</span></p>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Commission HOLA ({txCommissionRate}%)</p>
+                            <p className="text-2xl font-black text-rose-500">-{Math.floor(reservation.amount * (txCommissionRate / 100)).toLocaleString()} <span className="text-xs">FCFA</span></p>
                         </div>
                     </div>
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
@@ -146,7 +147,8 @@ const HistoryModal = ({ isOpen, onClose, platformCommission }) => {
 
                 <div className="flex-1 overflow-y-auto pr-2 space-y-4 custom-scrollbar">
                     {historyItems.map((item, idx) => {
-                        const netAmount = Math.floor(parseInt(item.amount.replace(/[^0-9]/g, '')) * (1 - (platformCommission / 100)));
+                        const txCommissionRate = item.metadata?.commission_rate ?? 15;
+                        const netAmount = Math.floor(parseInt(item.amount.replace(/[^0-9]/g, '')) * (1 - (txCommissionRate / 100)));
                         return (
                             <div key={idx} className="flex items-center justify-between p-4 rounded-2xl border border-slate-50 hover:bg-slate-50/50 transition-all group">
                                 <div className="flex items-center gap-4">
@@ -193,7 +195,8 @@ const ReservationItem = ({ reservation, onStatusUpdate, onViewDetails, onOpenCha
     };
 
     const priceValue = reservation.amount;
-    const netPayout = Math.floor(priceValue * (1 - (platformCommission / 100)));
+    const txCommissionRate = reservation.metadata?.commission_rate ?? 15;
+    const netPayout = Math.floor(priceValue * (1 - (txCommissionRate / 100)));
 
     const formattedDate = reservation.start_date
         ? new Date(reservation.start_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })

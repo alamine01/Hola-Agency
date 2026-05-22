@@ -9,6 +9,7 @@ import {
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import { usePlatformCommission } from '@/app/context/PlatformCommissionContext';
 
 // Mock function to get property by ID (simulating database call)
 // Removed mock function as we now fetch from Supabase
@@ -24,6 +25,7 @@ export default function PropertyDetailPage() {
         endDate: '',
         guests: 1
     });
+    const { commission: platformCommission } = usePlatformCommission();
 
     useEffect(() => {
         const fetchProperty = async () => {
@@ -84,7 +86,8 @@ export default function PropertyDetailPage() {
                     metadata: {
                         title: property.title,
                         image: property.image,
-                        location: property.location
+                        location: property.location,
+                        commission_rate: platformCommission
                     }
                 })
                 .select()

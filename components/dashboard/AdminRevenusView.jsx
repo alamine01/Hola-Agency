@@ -150,16 +150,18 @@ export default function AdminRevenusView() {
     useEffect(() => {
         let total = 0;
         let pending = 0;
+        let commission = 0;
 
         filteredBookings.forEach(b => {
             if (b.status === 'payee' || b.status === 'confirmee') {
                 total += b.amount;
+                const txCommissionRate = b.metadata?.commission_rate ?? 15;
+                commission += Math.floor(b.amount * (txCommissionRate / 100));
             } else if (b.status === 'en_attente') {
                 pending += b.amount;
             }
         });
 
-        const commission = Math.floor(total * (platformCommission / 100));
         const net = total - commission;
 
         setStats({ total, pending, commission, net });

@@ -27,7 +27,8 @@ const RequestDetailsModal = ({ isOpen, onClose, request, onStatusUpdate, platfor
     if (!isOpen || !request) return null;
 
     const details = request.metadata || {};
-    const netPayout = Math.floor(request.amount * (1 - (platformCommission / 100)));
+    const txCommissionRate = details.commission_rate ?? 15;
+    const netPayout = Math.floor(request.amount * (1 - (txCommissionRate / 100)));
 
     return (
         <AnimatePresence>
@@ -92,7 +93,7 @@ const RequestDetailsModal = ({ isOpen, onClose, request, onStatusUpdate, platfor
 
                         <div className="p-6 bg-slate-900 rounded-[2rem] text-white flex items-center justify-between shadow-2xl shadow-slate-200">
                             <div>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Votre Gain Net (-{platformCommission}%)</p>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Votre Gain Net (-{txCommissionRate}%)</p>
                                 <p className="text-2xl font-black">{netPayout.toLocaleString()} <span className="text-xs">FCFA</span></p>
                             </div>
                             <div className="text-right">

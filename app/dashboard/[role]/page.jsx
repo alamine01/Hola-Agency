@@ -187,12 +187,15 @@ export default function DashboardPage({ params }) {
             } else if (role === 'proprietaire') {
                 const [villasCount, bookingsData, lastBookings] = await Promise.all([
                     supabase.from('villas').select('*', { count: 'exact', head: true }).eq('owner_id', user.id),
-                    supabase.from('bookings').select('amount').eq('owner_id', user.id).neq('item_type', 'Service').in('status', ['confirmee', 'payee']),
+                    supabase.from('bookings').select('amount, metadata').eq('owner_id', user.id).neq('item_type', 'Service').in('status', ['confirmee', 'payee']),
                     supabase.from('bookings').select('*').eq('owner_id', user.id).neq('item_type', 'Service').order('created_at', { ascending: false }).limit(3)
                 ]);
 
                 const totalGain = (bookingsData.data || []).reduce((acc, curr) => acc + curr.amount, 0);
-                const netGain = Math.floor(totalGain * (1 - (platformCommission / 100)));
+                const netGain = (bookingsData.data || []).reduce((acc, curr) => {
+                    const txRate = curr.metadata?.commission_rate ?? 15;
+                    return acc + Math.floor(curr.amount * (1 - (txRate / 100)));
+                }, 0);
                 const formatRevenue = (val) => {
                     if (val >= 1000000) return `${(val / 1000000).toFixed(2)}M FCFA`;
                     if (val >= 1000) return `${Math.floor(val / 1000)}k FCFA`;
@@ -200,7 +203,7 @@ export default function DashboardPage({ params }) {
                 };
 
                 dashboardStats = [
-                    { title: "Revenu Net Global", value: formatRevenue(netGain), change: null, icon: TrendingUp, color: "bg-emerald-600", subtitle: `Total net versé après commission ${platformCommission}%` },
+                    { title: "Revenu Net Global", value: formatRevenue(netGain), change: null, icon: TrendingUp, color: "bg-emerald-600", subtitle: "Total net versé après commissions" },
                     { title: "Mes Villas", value: villasCount.count || 0, change: null, icon: Home, color: "bg-slate-900" },
                     { title: "Réservations", value: (bookingsData.data || []).length, change: null, icon: Calendar, color: "bg-indigo-600" },
                 ];
@@ -209,15 +212,18 @@ export default function DashboardPage({ params }) {
             } else if (role === 'prestataire') {
                 const [servicesCount, bookingsData, lastBookings] = await Promise.all([
                     supabase.from('services').select('*', { count: 'exact', head: true }).eq('provider_id', user.id),
-                    supabase.from('bookings').select('amount').eq('owner_id', user.id).eq('item_type', 'Service').in('status', ['confirmee', 'payee']),
+                    supabase.from('bookings').select('amount, metadata').eq('owner_id', user.id).eq('item_type', 'Service').in('status', ['confirmee', 'payee']),
                     supabase.from('bookings').select('*').eq('owner_id', user.id).eq('item_type', 'Service').order('created_at', { ascending: false }).limit(3)
                 ]);
 
                 const totalGain = (bookingsData.data || []).reduce((acc, curr) => acc + curr.amount, 0);
-                const netGain = Math.floor(totalGain * (1 - (platformCommission / 100)));
+                const netGain = (bookingsData.data || []).reduce((acc, curr) => {
+                    const txRate = curr.metadata?.commission_rate ?? 15;
+                    return acc + Math.floor(curr.amount * (1 - (txRate / 100)));
+                }, 0);
 
                 dashboardStats = [
-                    { title: "Gains de Service", value: `${(netGain / 1000).toFixed(0)}k FCFA`, change: null, icon: TrendingUp, color: "bg-emerald-600", subtitle: `Après commission HOLA (-${platformCommission}%)` },
+                    { title: "Gains de Service", value: `${(netGain / 1000).toFixed(0)}k FCFA`, change: null, icon: TrendingUp, color: "bg-emerald-600", subtitle: "Après commissions HOLA" },
                     { title: "Mes Prestations", value: servicesCount.count || 0, change: null, icon: Star, color: "bg-amber-500" },
                     { title: "Demandes", value: (bookingsData.data || []).length, change: null, icon: Users, color: "bg-slate-900" },
                 ];

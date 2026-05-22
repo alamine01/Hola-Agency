@@ -75,7 +75,8 @@ export default function DynamicRevenusView({ role = 'client' }) {
             let withdrawn = 0;
 
             (bookingsData || []).forEach(b => {
-                const net = Math.floor(b.amount * (1 - (platformCommission / 100)));
+                const txCommissionRate = b.metadata?.commission_rate ?? 15;
+                const net = Math.floor(b.amount * (1 - (txCommissionRate / 100)));
                 if (b.is_validated) {
                     available += net;
                 } else {
@@ -141,7 +142,8 @@ export default function DynamicRevenusView({ role = 'client' }) {
     const transactions = useMemo(() => {
         const list = [
             ...bookings.map(b => {
-                const net = Math.floor(b.amount * (1 - (platformCommission / 100)));
+                const txCommissionRate = b.metadata?.commission_rate ?? 15;
+                const net = Math.floor(b.amount * (1 - (txCommissionRate / 100)));
                 const commission = b.amount - net;
                 return {
                     id: b.id,
@@ -151,7 +153,7 @@ export default function DynamicRevenusView({ role = 'client' }) {
                     amount: net,
                     brutAmount: b.amount,
                     commissionAmount: commission,
-                    commissionPercentage: platformCommission,
+                    commissionPercentage: txCommissionRate,
                     status: b.is_validated ? 'validated' : 'pending',
                     subtitle: b.item_type
                 };
