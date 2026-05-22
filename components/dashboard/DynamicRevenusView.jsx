@@ -140,15 +140,22 @@ export default function DynamicRevenusView({ role = 'client' }) {
 
     const transactions = useMemo(() => {
         const list = [
-            ...bookings.map(b => ({
-                id: b.id,
-                date: b.created_at,
-                type: 'income',
-                title: `Réservation #${b.id.slice(0, 5)}`,
-                amount: Math.floor(b.amount * (1 - (platformCommission / 100))),
-                status: b.is_validated ? 'validated' : 'pending',
-                subtitle: b.item_type
-            })),
+            ...bookings.map(b => {
+                const net = Math.floor(b.amount * (1 - (platformCommission / 100)));
+                const commission = b.amount - net;
+                return {
+                    id: b.id,
+                    date: b.created_at,
+                    type: 'income',
+                    title: `Réservation #${b.id.slice(0, 5)}`,
+                    amount: net,
+                    brutAmount: b.amount,
+                    commissionAmount: commission,
+                    commissionPercentage: platformCommission,
+                    status: b.is_validated ? 'validated' : 'pending',
+                    subtitle: b.item_type
+                };
+            }),
             ...payouts.map(p => ({
                 id: p.id,
                 date: p.created_at,
@@ -499,14 +506,35 @@ export default function DynamicRevenusView({ role = 'client' }) {
                                     </div>
                                 </div>
 
-                                <div className="p-8 bg-slate-900 rounded-[2.5rem] text-white flex items-center justify-between shadow-xl shadow-slate-200">
-                                    <div className="space-y-1">
-                                        <p className="text-[10px] font-black text-amber-300 uppercase tracking-[0.2em]">Montant Total</p>
-                                        <p className="text-xs text-amber-400 font-medium italic">Commission incluse</p>
-                                    </div>
-                                    <p className="text-xl sm:text-2xl font-black tracking-tighter text-right">
-                                        {selectedTx.amount.toLocaleString()} <span className="text-xs sm:text-sm font-bold">FCFA</span>
-                                    </p>
+                                <div className="p-6 md:p-8 bg-slate-900 rounded-[2.5rem] text-white shadow-xl shadow-slate-200">
+                                    {selectedTx.type === 'income' ? (
+                                        <div className="space-y-4">
+                                            <div className="flex items-center justify-between">
+                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Payé par le client</p>
+                                                <p className="text-sm font-bold text-slate-300">{(selectedTx.brutAmount || 0).toLocaleString()} FCFA</p>
+                                            </div>
+                                            <div className="flex items-center justify-between">
+                                                <p className="text-[10px] font-black text-rose-400 uppercase tracking-[0.2em]">Commission HOLA ({selectedTx.commissionPercentage || 0}%)</p>
+                                                <p className="text-sm font-bold text-rose-400">-{(selectedTx.commissionAmount || 0).toLocaleString()} FCFA</p>
+                                            </div>
+                                            <div className="pt-4 border-t border-slate-700/50 flex items-center justify-between">
+                                                <p className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em]">Votre revenu net</p>
+                                                <p className="text-xl sm:text-2xl font-black tracking-tighter text-emerald-400">
+                                                    {(selectedTx.amount || 0).toLocaleString()} <span className="text-xs sm:text-sm font-bold">FCFA</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center justify-between">
+                                            <div className="space-y-1">
+                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Montant Retiré</p>
+                                                <p className="text-xs text-slate-500 font-medium italic">Fonds transférés</p>
+                                            </div>
+                                            <p className="text-xl sm:text-2xl font-black tracking-tighter text-right">
+                                                {(selectedTx.amount || 0).toLocaleString()} <span className="text-xs sm:text-sm font-bold">FCFA</span>
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </motion.div>
