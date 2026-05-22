@@ -391,12 +391,32 @@ export default function DynamicDashboardView({ role = 'client' }) {
 
                                 <div className="space-y-6">
                                     <div className="flex flex-col p-5 bg-amber-50 rounded-2xl border border-amber-100/50">
-                                        <span className="text-[10px] font-black text-amber-900/50 uppercase tracking-widest mb-1">Montant</span>
+                                        <span className="text-[10px] font-black text-amber-900/50 uppercase tracking-widest mb-1">Montant Global</span>
                                         <span className="text-3xl font-black text-amber-600">{(selectedActivity.amount || 0).toLocaleString()} <span className="text-sm">FCFA</span></span>
                                         <span className={`mt-3 self-start px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${selectedActivity.status === 'payee' || selectedActivity.status === 'confirmee' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-200/50 text-amber-800'}`}>
                                             Statut: {selectedActivity.status === 'en_attente_paiement' ? 'en attente' : (selectedActivity.status || '...').replace(/_/g, ' ')}
                                         </span>
                                     </div>
+
+                                    {(role === 'proprietaire' || role === 'prestataire') && (
+                                        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-3">Répartition Financière</span>
+                                            <div className="space-y-2">
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-[10px] font-bold text-slate-500 uppercase">Montant global</span>
+                                                    <span className="text-xs font-black text-slate-900">{(selectedActivity.amount || 0).toLocaleString()} FCFA</span>
+                                                </div>
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-[10px] font-bold text-slate-500 uppercase">Commission HOLA (15%)</span>
+                                                    <span className="text-xs font-black text-red-500">-{Math.floor((selectedActivity.amount || 0) * 0.15).toLocaleString()} FCFA</span>
+                                                </div>
+                                                <div className="pt-2 border-t border-slate-200 flex justify-between items-center">
+                                                    <span className="text-[10px] font-black text-slate-900 uppercase">Votre Revenu Net</span>
+                                                    <span className="text-sm font-black text-emerald-600">{Math.floor((selectedActivity.amount || 0) * 0.85).toLocaleString()} FCFA</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
 
                                     <div className="grid grid-cols-1 gap-4">
                                         <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
