@@ -28,6 +28,7 @@ export default function AdminRevenusView() {
     const [bookings, setBookings] = useState([]);
     const [payouts, setPayouts] = useState([]);
     const [selectedTx, setSelectedTx] = useState(null);
+    const [selectedBooking, setSelectedBooking] = useState(null);
     const [filter, setFilter] = useState('all');
     const [activeTab, setActiveTab] = useState('incomes'); // 'incomes' | 'payouts'
     const [stats, setStats] = useState({
@@ -47,7 +48,7 @@ export default function AdminRevenusView() {
             // Fetch Bookings
             const { data: bData, error: bError } = await supabase
                 .from('bookings')
-                .select('*')
+                .select('*, payments(*)')
                 .order('created_at', { ascending: false });
 
             // Fetch Payouts
@@ -234,14 +235,18 @@ export default function AdminRevenusView() {
 
                             <div className="space-y-4">
                                 {filteredBookings.map((book) => (
-                                    <div key={book.id} className="p-4 md:p-6 bg-white rounded-[2rem] border border-slate-50 hover:border-slate-200 transition-all shadow-sm">
+                                    <div 
+                                        key={book.id} 
+                                        onClick={() => setSelectedBooking(book)}
+                                        className="p-4 md:p-6 bg-white rounded-[2rem] border border-slate-50 hover:border-amber-600/30 transition-all shadow-sm cursor-pointer hover:shadow-lg"
+                                    >
                                         <div className="flex items-center justify-between mb-4">
                                             <div className="flex items-center gap-3 md:gap-6">
                                                 <div className={`w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg ${book.status === 'payee' || book.status === 'confirmee' ? (book.is_validated ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-50 text-slate-400') : 'bg-amber-50 text-amber-600'}`}>
                                                     <ArrowDownLeft className="w-5 h-5 md:w-6 md:h-6" />
                                                 </div>
                                                 <div>
-                                                    <h4 className="font-black text-slate-900 uppercase tracking-tight text-[11px] md:text-sm mb-0.5 md:mb-1">{book.item_type} #{book.id.slice(0, 5)}</h4>
+                                                    <h4 className="font-black text-slate-900 uppercase tracking-tight text-[11px] md:text-sm mb-0.5 md:mb-1">{book.metadata?.title || book.item_type} #{book.id.slice(0, 5)}</h4>
                                                     <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest">{new Date(book.created_at).toLocaleDateString()}</p>
                                                 </div>
                                             </div>
@@ -258,7 +263,7 @@ export default function AdminRevenusView() {
                                             </div>
                                             {(!book.is_validated && (book.status === 'payee' || book.status === 'confirmee')) && (
                                                 <button
-                                                    onClick={() => handleValidateBooking(book.id)}
+                                                    onClick={(e) => { e.stopPropagation(); handleValidateBooking(book.id); }}
                                                     className="px-5 md:px-8 py-2 md:py-3 bg-emerald-600 text-white rounded-xl md:rounded-2xl font-black uppercase text-[9px] hover:bg-slate-900 transition-all shadow-lg shadow-emerald-50 active:scale-95"
                                                 >
                                                     Valider
@@ -324,6 +329,95 @@ export default function AdminRevenusView() {
                     )}
                 </div>
             </div>
+
+            {/* Modal Détails Réservation / Paiement */}
+            <AnimatePresence>
+                {selectedBooking && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setSelectedBooking(null)}
+                            className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100]"
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white rounded-[2rem] shadow-2xl z-[101] overflow-hidden flex flex-col max-h-[90vh]"
+                        >
+                            <div className="p-6 md:p-8 overflow-y-auto">
+                                <div className="flex items-center justify-between mb-6">
+                                    <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">Détails du paiement</h3>
+                                    <button onClick={() => setSelectedBooking(null)} className="p-2 bg-slate-50 text-slate-400 hover:text-slate-900 rounded-full transition-colors">
+                                        <XCircle className="w-6 h-6" />
+                                    </button>
+                                </div>
+
+                                <div className="space-y-6">
+                                    <div className="flex flex-col p-5 bg-amber-50 rounded-2xl border border-amber-100/50">
+                                        <span className="text-[10px] font-black text-amber-900/50 uppercase tracking-widest mb-1">Montant Total</span>
+                                        <span className="text-3xl font-black text-amber-600">{selectedBooking.amount.toLocaleString()} <span className="text-sm">FCFA</span></span>
+                                        <span className={`mt-3 self-start px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${selectedBooking.status === 'payee' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-200/50 text-amber-800'}`}>
+                                            Statut: {selectedBooking.status.replace(/_/g, ' ')}
+                                        </span>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Client</span>
+                                            <span className="text-sm font-bold text-slate-900 block truncate" title={selectedBooking.metadata?.client_name}>
+                                                {selectedBooking.metadata?.client_name || 'Inconnu'}
+                                            </span>
+                                        </div>
+                                        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Date</span>
+                                            <span className="text-sm font-bold text-slate-900">
+                                                {new Date(selectedBooking.created_at).toLocaleDateString()}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Logement / Service</span>
+                                        <span className="text-sm font-bold text-slate-900 block truncate" title={selectedBooking.metadata?.title || selectedBooking.item_type}>
+                                            {selectedBooking.metadata?.title || selectedBooking.item_type}
+                                        </span>
+                                        {selectedBooking.start_date && (
+                                            <span className="text-[10px] font-medium text-slate-500 block mt-1">
+                                                Du {new Date(selectedBooking.start_date).toLocaleDateString()} au {new Date(selectedBooking.end_date).toLocaleDateString()}
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {selectedBooking.payments && selectedBooking.payments.length > 0 ? (
+                                        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-3">Historique Transaction</span>
+                                            {selectedBooking.payments.map((payment) => (
+                                                <div key={payment.id} className="flex items-center justify-between py-2 border-t border-slate-200/60 first:border-0 first:pt-0">
+                                                    <div>
+                                                        <p className="text-[10px] font-black text-slate-900 uppercase">{payment.provider}</p>
+                                                        <p className="text-[8px] font-bold text-slate-400">{payment.provider_id || 'ID N/A'}</p>
+                                                    </div>
+                                                    <span className={`text-[9px] font-black uppercase px-2 py-1 rounded ${payment.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-500'}`}>
+                                                        {payment.status}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-2">
+                                            <AlertCircle className="w-4 h-4 text-slate-400" />
+                                            <span className="text-xs font-bold text-slate-500">Aucune donnée de transaction liée.</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
