@@ -37,6 +37,17 @@ export default function AdminRevenusView() {
         net: 0
     });
 
+    // Helper: récupère le vrai nom du partenaire (pas le rôle)
+    const ROLE_NAMES = ['proprietaire', 'propriétaire', 'prestataire', 'client', 'admin'];
+    const getPartnerName = (profile) => {
+        if (!profile) return '—';
+        const name = profile.display_name?.trim();
+        if (!name || ROLE_NAMES.includes(name.toLowerCase())) {
+            return profile.email?.split('@')[0] || '—';
+        }
+        return name;
+    };
+
     useEffect(() => {
         fetchAdminData();
     }, []);
@@ -57,7 +68,8 @@ export default function AdminRevenusView() {
                     *,
                     profiles:user_id (
                         display_name,
-                        email
+                        email,
+                        role
                     )
                 `)
                 .order('created_at', { ascending: false });
@@ -148,7 +160,7 @@ export default function AdminRevenusView() {
 
         const rows = activeTab === 'incomes'
             ? dataToExport.map(b => [b.id, b.item_type, b.amount, b.status, new Date(b.created_at).toLocaleDateString()])
-            : dataToExport.map(p => [p.id, p.profiles?.display_name, p.amount, p.method, p.status, new Date(p.created_at).toLocaleDateString()]);
+            : dataToExport.map(p => [p.id, getPartnerName(p.profiles), p.amount, p.method, p.status, new Date(p.created_at).toLocaleDateString()]);
 
         const csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -281,7 +293,7 @@ export default function AdminRevenusView() {
                                                     <ArrowUpLeft className="w-5 h-5 md:w-6 md:h-6" />
                                                 </div>
                                                 <div>
-                                                    <h4 className="font-black text-slate-900 uppercase tracking-tight text-[11px] md:text-sm mb-0.5 md:mb-1 truncate max-w-[120px] md:max-w-none">{p.profiles?.display_name || 'Utilisateur'}</h4>
+                                                    <h4 className="font-black text-slate-900 uppercase tracking-tight text-[11px] md:text-sm mb-0.5 md:mb-1 truncate max-w-[120px] md:max-w-none">{getPartnerName(p.profiles)}</h4>
                                                     <p className="text-[9px] md:text-[10px] font-black text-amber-600 uppercase tracking-widest">{p.method}</p>
                                                 </div>
                                             </div>
