@@ -39,9 +39,14 @@ export async function PUT(request: Request) {
   if (!user) {
     return NextResponse.json({ error: 'Unauthenticated' }, { status: 401 });
   }
-  // Assume role stored in app_metadata.role or user_metadata.role
-  const role = (user?.app_metadata?.role ?? user?.user_metadata?.role) as string;
-  if (role !== 'admin') {
+  // Fetch role from profiles table
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  if (profileError || profile?.role !== 'admin') {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   const body = await request.json();
