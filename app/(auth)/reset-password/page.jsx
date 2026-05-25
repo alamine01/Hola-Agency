@@ -65,7 +65,7 @@ export default function ResetPasswordPage() {
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="w-full max-w-[420px] bg-white p-8 md:p-10 rounded-3xl shadow-2xl border border-slate-100"
+                className="w-full max-w-[360px] bg-white p-6 md:p-8 rounded-3xl shadow-2xl border border-slate-100"
             >
                 <div className="flex justify-center mb-8">
                     <Link href="/" className="flex items-center gap-2 text-[#D4AF37] hover:text-amber-500 transition-colors">
