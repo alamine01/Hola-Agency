@@ -21,17 +21,15 @@ import {
     Loader2,
     Shield
 } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
-import { usePlatformCommission } from '@/app/context/PlatformCommissionContext';
 
-const BookingDetailModal = ({ isOpen, onClose, reservation, platformCommission }) => {
+const BookingDetailModal = ({ isOpen, onClose, reservation }) => {
     if (!isOpen || !reservation) return null;
 
     const details = reservation.metadata || {};
-    const txCommissionRate = reservation.metadata?.commission_rate ?? 15;
-    const netPayout = Math.floor(reservation.amount * (1 - (txCommissionRate / 100)));
+    const netPayout = Math.floor(reservation.amount * 0.85);
     const commission = reservation.amount - netPayout;
 
     return (
@@ -39,8 +37,7 @@ const BookingDetailModal = ({ isOpen, onClose, reservation, platformCommission }
             <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="modal-hola bg-white rounded-[3rem] p-6 md:p-8 shadow-2xl relative max-h-[90vh] flex flex-col overflow-hidden w-full"
-                style={{ width: '100%', maxWidth: '550px' }}
+                className="modal-hola bg-white rounded-[3rem] p-8 md:p-10 shadow-2xl relative max-h-[90vh] flex flex-col overflow-hidden"
             >
                 <button onClick={onClose} className="absolute top-6 right-6 p-2.5 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-100 z-10 border border-slate-50">
                     <X className="w-5 h-5" />
@@ -103,8 +100,8 @@ const BookingDetailModal = ({ isOpen, onClose, reservation, platformCommission }
                             <p className="text-2xl font-black">{reservation.amount.toLocaleString()} <span className="text-xs">FCFA</span></p>
                         </div>
                         <div className="text-right">
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Commission HOLA ({txCommissionRate}%)</p>
-                            <p className="text-2xl font-black text-rose-500">-{Math.floor(reservation.amount * (txCommissionRate / 100)).toLocaleString()} <span className="text-xs">FCFA</span></p>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Commission HOLA (15%)</p>
+                            <p className="text-lg font-bold text-slate-400 italic">-{commission.toLocaleString()} <span className="text-[10px]">FCFA</span></p>
                         </div>
                     </div>
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
@@ -124,7 +121,7 @@ const BookingDetailModal = ({ isOpen, onClose, reservation, platformCommission }
     );
 };
 
-const HistoryModal = ({ isOpen, onClose, platformCommission }) => {
+const HistoryModal = ({ isOpen, onClose }) => {
     if (!isOpen) return null;
 
     const historyItems = [
@@ -137,23 +134,19 @@ const HistoryModal = ({ isOpen, onClose, platformCommission }) => {
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
-            <div 
-                className="modal-hola bg-white rounded-[2.5rem] p-6 md:p-8 shadow-2xl relative max-h-[85vh] flex flex-col overflow-hidden w-full"
-                style={{ width: '100%', maxWidth: '500px' }}
-            >
+            <div className="modal-hola bg-white rounded-[2.5rem] p-6 md:p-10 shadow-2xl relative max-h-[85vh] flex flex-col overflow-hidden">
                 <button onClick={onClose} className="absolute top-6 right-6 p-2.5 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-100 z-10 border border-slate-50">
                     <X className="w-5 h-5" />
                 </button>
 
                 <div className="mb-8 shrink-0">
                     <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-2 tracking-tight uppercase">Historique Complet</h2>
-                    <p className="text-slate-500 font-medium text-sm italic">Retrouvez le détail de vos transactions passées (Net calculé à {100 - platformCommission}% du brut).</p>
+                    <p className="text-slate-500 font-medium text-sm italic">"Retrouvez le détail de vos transactions passées (Net calculé à 85% du brut)."</p>
                 </div>
 
                 <div className="flex-1 overflow-y-auto pr-2 space-y-4 custom-scrollbar">
                     {historyItems.map((item, idx) => {
-                        const txCommissionRate = item.metadata?.commission_rate ?? 15;
-                        const netAmount = Math.floor(parseInt(item.amount.replace(/[^0-9]/g, '')) * (1 - (txCommissionRate / 100)));
+                        const netAmount = Math.floor(parseInt(item.amount.replace(/[^0-9]/g, '')) * 0.85);
                         return (
                             <div key={idx} className="flex items-center justify-between p-4 rounded-2xl border border-slate-50 hover:bg-slate-50/50 transition-all group">
                                 <div className="flex items-center gap-4">
@@ -188,7 +181,7 @@ const HistoryModal = ({ isOpen, onClose, platformCommission }) => {
     );
 };
 
-const ReservationItem = ({ reservation, onStatusUpdate, onViewDetails, onOpenChat, platformCommission }) => {
+const ReservationItem = ({ reservation, onStatusUpdate, onViewDetails, onOpenChat }) => {
     const [showMenu, setShowMenu] = useState(false);
     const details = reservation.metadata || {};
 
@@ -200,8 +193,7 @@ const ReservationItem = ({ reservation, onStatusUpdate, onViewDetails, onOpenCha
     };
 
     const priceValue = reservation.amount;
-    const txCommissionRate = reservation.metadata?.commission_rate ?? 15;
-    const netPayout = Math.floor(priceValue * (1 - (txCommissionRate / 100)));
+    const netPayout = Math.floor(priceValue * 0.85);
 
     const formattedDate = reservation.start_date
         ? new Date(reservation.start_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
@@ -295,11 +287,11 @@ const ReservationItem = ({ reservation, onStatusUpdate, onViewDetails, onOpenCha
 };
 
 export default function ProprietaireReservationsPage() {
+    const [isHistoryOpen, setIsHistoryOpen] = useState(false);
     const [selectedReservation, setSelectedReservation] = useState(null);
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
-    const { commission: platformCommission } = usePlatformCommission();
 
     useEffect(() => {
         fetchBookings();
@@ -375,7 +367,7 @@ export default function ProprietaireReservationsPage() {
             }
         } catch (err) {
             console.error("Unexpected error:", err);
-            alert("Une erreur inattendue est survenue lors de la synchronisation: " + (err.message || String(err)));
+            alert("Une erreur inattendue est survenue lors de la synchronisation.");
         }
         setLoading(false);
     };
@@ -412,7 +404,7 @@ export default function ProprietaireReservationsPage() {
             <div className="mb-8 md:mb-12 text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                     <h1 className="text-2xl md:text-4xl font-black text-slate-900 mb-2 tracking-tight uppercase">Demandes & Réservations</h1>
-                    <p className="text-sm md:text-base text-slate-500 font-medium italic opacity-80">Gérez vos revenus locatifs en accord avec le règlement HOLA (-{platformCommission}% commission).</p>
+                    <p className="text-sm md:text-base text-slate-500 font-medium italic opacity-80">Gérez vos revenus locatifs en accord avec le règlement HOLA (-15% commission).</p>
                 </div>
                 {loading && <div className="flex items-center gap-2 text-amber-500 font-black text-[10px] uppercase tracking-widest"><Loader2 className="w-4 h-4 animate-spin" /> Synchronisation...</div>}
             </div>
@@ -426,7 +418,6 @@ export default function ProprietaireReservationsPage() {
                             onStatusUpdate={handleStatusUpdate}
                             onViewDetails={setSelectedReservation}
                             onOpenChat={handleOpenChat}
-                            platformCommission={platformCommission}
                         />
                     ))
                 ) : !loading ? (
@@ -443,11 +434,34 @@ export default function ProprietaireReservationsPage() {
                 )}
             </div>
 
+            <div className="mt-20 bg-gradient-to-br from-white to-slate-50/50 rounded-[3rem] border border-slate-100 p-10 md:p-14 text-center group transition-all relative overflow-hidden shadow-sm">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl -translate-y-10 translate-x-10"></div>
+                <div className="absolute bottom-0 left-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl translate-y-10 -translate-x-10"></div>
+
+                <div className="w-20 h-20 bg-white shadow-2xl shadow-slate-200/50 rounded-3xl flex items-center justify-center mx-auto mb-8 text-amber-500 group-hover:scale-110 transition-transform relative z-10 ring-4 ring-slate-50/50">
+                    <Shield className="w-10 h-10" />
+                </div>
+
+                <h3 className="text-2xl font-black text-slate-900 mb-4 tracking-tight relative z-10 transition-colors group-hover:text-amber-600 uppercase tracking-widest text-lg text-center">Gestion Comptable</h3>
+                <p className="text-slate-500 font-medium max-w-sm mx-auto mb-10 leading-relaxed relative z-10 italic">"Consultez vos relevés de revenus nets et gérez vos justificatifs de versement."</p>
+
+                <button
+                    onClick={() => setIsHistoryOpen(true)}
+                    className="px-10 py-5 bg-slate-900 text-white rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-[10px] hover:bg-amber-600 hover:shadow-2xl hover:shadow-amber-200 transition-all active:scale-95 relative z-10"
+                >
+                    Voir tout l'historique
+                </button>
+            </div>
+
+            <HistoryModal
+                isOpen={isHistoryOpen}
+                onClose={() => setIsHistoryOpen(false)}
+            />
+
             <BookingDetailModal
                 isOpen={!!selectedReservation}
                 reservation={selectedReservation}
                 onClose={() => setSelectedReservation(null)}
-                platformCommission={platformCommission}
             />
         </div>
     );

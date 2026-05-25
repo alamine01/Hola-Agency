@@ -16,26 +16,22 @@ export async function POST(req) {
         }
 
         // 1. Mettre à jour les métadonnées de la réservation
-        const { data: currentBooking } = await supabase.from('bookings').select('metadata').eq('id', bookingId).single();
-        const currentMeta = currentBooking?.metadata || {};
-
         await supabase
             .from('bookings')
             .update({ 
                 metadata: { 
-                    ...currentMeta,
                     phoneNumber, 
                     accountHolder, 
-                    payment_method: paymentMethod === 'wave' ? 'Wave' : (paymentMethod === 'orange' ? 'Orange Money' : paymentMethod),
+                    paymentMethod,
                     updated_at: new Date().toISOString() 
                 } 
             })
             .eq('id', bookingId);
 
-        const requestOrigin = req.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'https://www.holaluxe.com';
-        const isLocal = requestOrigin.includes('localhost');
-        const validSiteUrl = isLocal ? 'http://localhost:3000' : requestOrigin;
-        const callbackUrl = `${validSiteUrl}/api/webhooks/paytech`;
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+        const isLocal = siteUrl.includes('localhost');
+        const callbackUrl = isLocal ? 'https://holaluxe.com/api/webhooks/paytech' : `${siteUrl}/api/webhooks/paytech`;
+        const validSiteUrl = isLocal ? 'https://holaluxe.com' : siteUrl;
         
         // TENTATIVE DE MODE 100% DIRECT (Intech API)
         if (paymentMethod === 'wave' || paymentMethod === 'orange') {
@@ -50,7 +46,7 @@ export async function POST(req) {
                 service: codeService,
                 phoneNumber: cleanPhone,
                 amount: Math.round(Number(amount)),
-                externalId: bookingId,
+                externalId: bookingId.replace(/-/g, '').slice(0, 20),
                 callbackUrl: callbackUrl,
                 data: "{}"
             };

@@ -21,14 +21,12 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
-import { usePlatformCommission } from '@/app/context/PlatformCommissionContext';
 
-const RequestDetailsModal = ({ isOpen, onClose, request, onStatusUpdate, platformCommission }) => {
+const RequestDetailsModal = ({ isOpen, onClose, request, onStatusUpdate }) => {
     if (!isOpen || !request) return null;
 
     const details = request.metadata || {};
-    const txCommissionRate = details.commission_rate ?? 15;
-    const netPayout = Math.floor(request.amount * (1 - (txCommissionRate / 100)));
+    const netPayout = Math.floor(request.amount * 0.85);
 
     return (
         <AnimatePresence>
@@ -44,8 +42,7 @@ const RequestDetailsModal = ({ isOpen, onClose, request, onStatusUpdate, platfor
                     initial={{ opacity: 0, scale: 0.95, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                    className="modal-hola bg-white rounded-[2.5rem] p-5 md:p-6 shadow-2xl relative z-10 max-h-[90vh] flex flex-col overflow-y-auto overflow-hidden w-[95%]"
-                    style={{ maxWidth: '400px' }}
+                    className="modal-hola bg-white rounded-[2.5rem] p-6 md:p-10 shadow-2xl relative z-10 max-h-[90vh] flex flex-col overflow-hidden"
                 >
                     <button onClick={onClose} className="absolute top-6 right-6 p-2.5 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-50 border border-slate-50">
                         <X className="w-5 h-5" />
@@ -94,7 +91,7 @@ const RequestDetailsModal = ({ isOpen, onClose, request, onStatusUpdate, platfor
 
                         <div className="p-6 bg-slate-900 rounded-[2rem] text-white flex items-center justify-between shadow-2xl shadow-slate-200">
                             <div>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Votre Gain Net (-{txCommissionRate}%)</p>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Votre Gain Net (-15%)</p>
                                 <p className="text-2xl font-black">{netPayout.toLocaleString()} <span className="text-xs">FCFA</span></p>
                             </div>
                             <div className="text-right">
@@ -139,8 +136,7 @@ const GuideModal = ({ isOpen, onClose }) => {
             <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="modal-hola relative bg-white rounded-[2.5rem] p-6 md:p-8 shadow-2xl relative max-h-[90vh] flex flex-col overflow-hidden w-[95%]"
-                style={{ maxWidth: '400px' }}
+                className="modal-hola relative bg-white rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative max-h-[90vh] flex flex-col overflow-hidden"
             >
                 <button onClick={onClose} className="absolute top-6 right-6 p-2.5 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-100 z-10 border border-slate-50">
                     <X className="w-6 h-6" />
@@ -248,7 +244,6 @@ export default function DemandesPage() {
     const [isGuideOpen, setIsGuideOpen] = useState(false);
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
-    const { commission: platformCommission } = usePlatformCommission();
 
     useEffect(() => {
         fetchRequests();
@@ -407,7 +402,6 @@ export default function DemandesPage() {
                 onClose={() => setIsModalOpen(false)}
                 request={selectedRequest}
                 onStatusUpdate={handleStatusUpdate}
-                platformCommission={platformCommission}
             />
         </div>
     );

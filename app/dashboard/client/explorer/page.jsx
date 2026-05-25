@@ -58,8 +58,7 @@ export default function ClientExplorerPage() {
                 id: v.id,
                 title: v.name,
                 location: v.location || 'Sénégal',
-                price: v.price || 0,
-                sale_price: v.sale_price || 0,
+                price: `${(v.price || 0).toLocaleString()} FCFA`,
                 image: v.image,
                 type: v.type || 'Villa',
                 beds: v.rooms || 0,
@@ -71,8 +70,7 @@ export default function ClientExplorerPage() {
                 id: s.id,
                 title: s.name,
                 location: s.location || 'Sénégal',
-                price: s.price || 0,
-                sale_price: s.sale_price || 0,
+                price: `${(s.price || 0).toLocaleString()} FCFA`,
                 image: s.image,
                 type: 'Service',
                 rating: s.rating || 4.7
@@ -101,12 +99,7 @@ export default function ClientExplorerPage() {
                 user_id: user.id,
                 item_id: item.id.toString(),
                 item_type: item.type.toLowerCase(),
-                metadata: { 
-                    title: item.title, 
-                    image: item.image, 
-                    price: `${(item.sale_price && item.sale_price > 0 ? item.sale_price : item.price).toLocaleString()} FCFA`, 
-                    location: item.location 
-                }
+                metadata: { title: item.title, image: item.image, price: item.price, location: item.location }
             }]);
             if (error) alert("Erreur favoris : Table manquante dans Supabase.");
         }
@@ -160,15 +153,8 @@ export default function ClientExplorerPage() {
                         >
                             <div className="relative h-48 overflow-hidden">
                                 <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                                <div className="absolute top-4 left-4 flex flex-col gap-2">
-                                    <div className="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-[10px] font-black uppercase tracking-widest text-slate-900 shadow-sm italic self-start">
-                                        {item.type}
-                                    </div>
-                                    {item.sale_price && item.sale_price > 0 && (
-                                        <div className="bg-amber-500 px-2 py-1 rounded-full text-[9px] font-black text-white tracking-widest uppercase shadow-xl animate-pulse self-start">
-                                            - {Math.round((1 - item.sale_price / item.price) * 100)}%
-                                        </div>
-                                    )}
+                                <div className="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-[10px] font-black uppercase tracking-widest text-slate-900 shadow-sm italic">
+                                    {item.type}
                                 </div>
                                 <div className="absolute top-4 right-4 flex flex-col gap-2">
                                     <button
@@ -200,16 +186,7 @@ export default function ClientExplorerPage() {
                                 <div className="flex items-center justify-between pt-6 border-t border-slate-50">
                                     <div>
                                         <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-0.5">Prix</p>
-                                        <div className="flex items-baseline gap-2">
-                                            <p className="text-md font-black text-amber-600">
-                                                {(item.sale_price && item.sale_price > 0 ? item.sale_price : item.price).toLocaleString()} FCFA
-                                            </p>
-                                            {item.sale_price && item.sale_price > 0 && (
-                                                <p className="text-[10px] text-slate-400 line-through italic">
-                                                    {item.price.toLocaleString()} FCFA
-                                                </p>
-                                            )}
-                                        </div>
+                                        <p className="text-md font-black text-amber-600">{item.price}</p>
                                     </div>
                                     <Link
                                         href={`/dashboard/client/explorer/${item.id}`}

@@ -30,7 +30,7 @@ const NotificationDropdown = ({ isOpen, onClose, notifications, onMarkAllRead })
 
     return (
         <>
-            <div className="absolute top-full -right-4 mt-3 w-[calc(100vw-2rem)] max-w-[360px] sm:w-96 sm:right-0 sm:max-w-none bg-white border border-slate-100 rounded-[2rem] shadow-2xl z-[60] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ring-4 ring-slate-900/5">
+            <div className="fixed md:absolute top-20 md:top-full left-4 right-4 md:left-auto md:right-0 mt-3 md:w-96 min-w-[300px] bg-white border border-slate-100 rounded-[2rem] shadow-2xl z-[60] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ring-4 ring-slate-900/5">
                 <div className="p-5 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
                     <h3 className="font-black text-slate-900 text-sm uppercase tracking-widest whitespace-nowrap">Notifications</h3>
                     {notifications.filter(n => !n.is_read).length > 0 && (
@@ -51,10 +51,10 @@ const NotificationDropdown = ({ isOpen, onClose, notifications, onMarkAllRead })
                                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${getColor(notif.type)} group-hover:scale-110 transition-transform`}>
                                             <Icon className="w-5 h-5" />
                                         </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-start justify-between mb-1 gap-2">
-                                                <p className="font-bold text-slate-900 text-xs flex-1 min-w-0 leading-tight">{notif.title}</p>
-                                                <p className="text-[10px] text-slate-400 font-medium whitespace-nowrap shrink-0">
+                                        <div className="flex-1">
+                                            <div className="flex items-center justify-between mb-1">
+                                                <p className="font-bold text-slate-900 text-xs">{notif.title}</p>
+                                                <p className="text-[10px] text-slate-400 font-medium">
                                                     {new Date(notif.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                 </p>
                                             </div>

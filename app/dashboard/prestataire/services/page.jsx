@@ -23,16 +23,13 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
-import { usePlatformCommission } from '@/app/context/PlatformCommissionContext';
 
 const ServiceCard = ({ service, onEdit, onDelete }) => {
-    const { commission: platformCommission } = usePlatformCommission();
-    
-    // Calcul du net
+    // Calcul du net (85% comme pour les villas)
     const priceValue = service.price || 0;
     const salePrice = service.sale_price;
     const activePrice = salePrice && salePrice > 0 ? salePrice : priceValue;
-    const netPrice = Math.floor(activePrice * (1 - (platformCommission / 100)));
+    const netPrice = Math.floor(activePrice * 0.85);
 
     return (
         <div className="bg-white rounded-[2rem] border border-slate-100 p-6 hover:shadow-xl transition-all group overflow-hidden relative shadow-sm">
@@ -217,8 +214,7 @@ const AddServiceModal = ({ isOpen, onClose, onRefresh, initialData }) => {
             <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="modal-hola bg-white rounded-[2.5rem] p-5 md:p-6 shadow-2xl relative max-h-[90vh] flex flex-col overflow-y-auto overflow-hidden"
-                style={{ width: '95%', maxWidth: '400px' }}
+                className="modal-hola bg-white rounded-[2.5rem] p-6 md:p-8 shadow-2xl relative max-h-[90vh] flex flex-col overflow-hidden"
             >
                 <button onClick={onClose} className="absolute top-6 right-6 p-2.5 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-100 z-10 border border-slate-50">
                     <X className="w-5 h-5" />
@@ -253,7 +249,7 @@ const AddServiceModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                     </div>
 
                     <div className="space-y-4">
-                        <div className="grid grid-cols-1 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-1">
                                 <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest pl-1">Titre de la prestation</label>
                                 <input
@@ -282,7 +278,7 @@ const AddServiceModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-1">
                                 <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest pl-1">Ville d'exercice</label>
                                 <div className="relative">
@@ -364,8 +360,7 @@ const TipsModal = ({ isOpen, onClose }) => {
             <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="modal-hola relative bg-white rounded-[2.5rem] p-6 md:p-8 shadow-2xl relative max-h-[90vh] flex flex-col overflow-hidden w-[95%]"
-                style={{ maxWidth: '400px' }}
+                className="modal-hola relative bg-white rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative max-h-[90vh] flex flex-col overflow-hidden"
             >
                 <button onClick={onClose} className="absolute top-6 right-6 p-2.5 text-slate-400 hover:text-slate-900 rounded-2xl transition-all hover:bg-slate-100 z-10 border border-slate-50">
                     <X className="w-6 h-6" />

@@ -61,7 +61,6 @@ const Sidebar = ({ role }) => {
             { id: 'overview', label: 'Tableau de bord', icon: LayoutDashboard, href: '/dashboard/admin' },
             { id: 'revenue', label: 'Validation Paiements', icon: CreditCard, href: '/dashboard/admin/revenus' },
             { id: 'users', label: 'Utilisateurs', icon: User, href: '/dashboard/admin/utilisateurs' },
-            { id: 'settings', label: 'Paramètres', icon: Settings, href: '/dashboard/admin/settings' },
             { id: 'profile', label: 'Mon profil', icon: User, href: '/dashboard/admin/profil' },
         ]
     };

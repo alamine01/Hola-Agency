@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server';
-import { supabaseAdmin as supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import { sendPaymentConfirmation } from '@/lib/brevo';
 import Stripe from 'stripe';
 
 export const dynamic = 'force-dynamic';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
-const rawWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
-const STRIPE_WEBHOOK_SECRET = rawWebhookSecret.trim().replace(/^["']|["']$/g, '');
+const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
 
 export async function POST(req) {
     try {

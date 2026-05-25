@@ -15,28 +15,22 @@ export default function PremiumServices() {
     }, []);
 
     const fetchFeatured = async () => {
-    // Verify Supabase configuration
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-        console.warn('Supabase env vars missing – fetch skipped');
-        setLoading(false);
-        return;
-    }
-    try {
-        const { data, error } = await supabase
-            .from('services')
-            .select('*')
-            .eq('status', 'active')
-            .eq('is_featured', true)
-            .limit(3); // On en garde 3 comme demandé
+        try {
+            const { data, error } = await supabase
+                .from('services')
+                .select('*')
+                .eq('status', 'active')
+                .eq('is_featured', true)
+                .limit(3); // On en garde 3 comme demandé
 
-        if (error) throw error;
-        setServices(data || []);
-    } catch (error) {
-        console.error('Error fetching premium services:', error);
-    } finally {
-        setLoading(false);
-    }
-};
+            if (error) throw error;
+            setServices(data || []);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <section id="services" className="py-24 bg-slate-50 relative overflow-hidden">

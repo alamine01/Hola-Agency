@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabaseAdmin as supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import { sendPaymentConfirmation } from '@/lib/brevo';
 
 const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID || '';
@@ -28,24 +28,16 @@ export async function POST(req) {
 
         if (!orderId) throw new Error("ID de commande PayPal manquant.");
 
-        let capture = { status: '' };
-        
-        if (orderId.startsWith('MOCK_ORDER_')) {
-            // SIMULATION POUR LES TESTS
-            capture.status = 'COMPLETED';
-            capture.purchase_units = [{ payments: { captures: [{ id: 'TEST_CAPTURE_' + Date.now() }] } }];
-        } else {
-            // Appel à l'API PayPal pour capturer réellement les fonds
-            const accessToken = await getAccessToken();
-            const response = await fetch(`${PAYPAL_API}/v2/checkout/orders/${orderId}/capture`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                }
-            });
-            capture = await response.json();
-        }
+        // Appel à l'API PayPal pour capturer réellement les fonds
+        const accessToken = await getAccessToken();
+        const response = await fetch(`${PAYPAL_API}/v2/checkout/orders/${orderId}/capture`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            }
+        });
+        const capture = await response.json();
 
         if (capture.status === 'COMPLETED') {
             // Mettre à jour la réservation

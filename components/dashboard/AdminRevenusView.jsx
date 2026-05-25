@@ -22,14 +22,12 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
-import { usePlatformCommission } from '@/app/context/PlatformCommissionContext';
 
 export default function AdminRevenusView() {
     const [loading, setLoading] = useState(true);
     const [bookings, setBookings] = useState([]);
     const [payouts, setPayouts] = useState([]);
     const [selectedTx, setSelectedTx] = useState(null);
-    const [selectedBooking, setSelectedBooking] = useState(null);
     const [filter, setFilter] = useState('all');
     const [activeTab, setActiveTab] = useState('incomes'); // 'incomes' | 'payouts'
     const [stats, setStats] = useState({
@@ -38,14 +36,12 @@ export default function AdminRevenusView() {
         commission: 0,
         net: 0
     });
-    const { commission: platformCommission } = usePlatformCommission();
 
     // Helper: récupère le vrai nom du partenaire (pas le rôle)
     const ROLE_NAMES = ['proprietaire', 'propriétaire', 'prestataire', 'client', 'admin'];
     const getPartnerName = (profile) => {
         if (!profile) return '—';
         const name = profile.display_name?.trim();
-        // Si display_name est vide ou correspond à un nom de rôle, utiliser l'email
         if (!name || ROLE_NAMES.includes(name.toLowerCase())) {
             return profile.email?.split('@')[0] || '—';
         }
@@ -65,10 +61,6 @@ export default function AdminRevenusView() {
                 .select('*')
                 .order('created_at', { ascending: false });
 
-            if (bError) {
-                console.error("Erreur de récupération des réservations:", bError);
-            }
-
             // Fetch Payouts
             const { data: pData, error: pError } = await supabase
                 .from('payouts')
@@ -82,12 +74,10 @@ export default function AdminRevenusView() {
                 `)
                 .order('created_at', { ascending: false });
 
-            if (pError) {
-                console.error("Erreur de récupération des paiements (payouts):", pError);
-            }
+            if (pError) console.error("Payouts Error:", pError);
 
-            setBookings(bData || []);
-            setPayouts(pData || []);
+            if (bData) setBookings(bData);
+            if (pData) setPayouts(pData);
         } catch (error) {
             console.error(error);
         }
@@ -105,24 +95,6 @@ export default function AdminRevenusView() {
             fetchAdminData();
         } catch (error) {
             alert("Erreur validation: " + error.message);
-        }
-    };
-
-    const handleSelectBooking = async (book) => {
-        setSelectedBooking(book); // Show modal immediately
-        
-        // Fetch payments separately to avoid missing foreign key relation errors
-        const { data: payments, error } = await supabase
-            .from('payments')
-            .select('*')
-            .eq('booking_id', book.id);
-            
-        if (!error && payments) {
-            setSelectedBooking(prev => {
-                // Prevent overriding if user closed modal already
-                if (!prev || prev.id !== book.id) return prev;
-                return { ...prev, payments };
-            });
         }
     };
 
@@ -163,22 +135,20 @@ export default function AdminRevenusView() {
     useEffect(() => {
         let total = 0;
         let pending = 0;
-        let commission = 0;
 
         filteredBookings.forEach(b => {
             if (b.status === 'payee' || b.status === 'confirmee') {
                 total += b.amount;
-                const txCommissionRate = b.metadata?.commission_rate ?? 15;
-                commission += Math.floor(b.amount * (txCommissionRate / 100));
             } else if (b.status === 'en_attente') {
                 pending += b.amount;
             }
         });
 
+        const commission = Math.floor(total * 0.15);
         const net = total - commission;
 
         setStats({ total, pending, commission, net });
-    }, [filteredBookings, platformCommission]);
+    }, [filteredBookings]);
 
     const exportToCSV = () => {
         const dataToExport = activeTab === 'incomes' ? filteredBookings : payouts;
@@ -222,7 +192,7 @@ export default function AdminRevenusView() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 {[
                     { label: "Volume Global", value: stats.total, icon: Wallet, color: "bg-amber-600" },
-                    { label: `Commissions (${platformCommission}%)`, value: stats.commission, icon: Briefcase, color: "bg-amber-500" },
+                    { label: "Commissions (15%)", value: stats.commission, icon: Briefcase, color: "bg-amber-500" },
                     { label: "Transactions Net", value: stats.net, icon: TrendingUp, color: "bg-emerald-600" },
                     { label: "Flux en attente", value: stats.pending, icon: Clock, color: "bg-slate-900" }
                 ].map((s, i) => (
@@ -276,18 +246,14 @@ export default function AdminRevenusView() {
 
                             <div className="space-y-4">
                                 {filteredBookings.map((book) => (
-                                    <div 
-                                        key={book.id} 
-                                        onClick={() => handleSelectBooking(book)}
-                                        className="p-4 md:p-6 bg-white rounded-[2rem] border border-slate-50 hover:border-amber-600/30 transition-all shadow-sm cursor-pointer hover:shadow-lg"
-                                    >
+                                    <div key={book.id} className="p-4 md:p-6 bg-white rounded-[2rem] border border-slate-50 hover:border-slate-200 transition-all shadow-sm">
                                         <div className="flex items-center justify-between mb-4">
                                             <div className="flex items-center gap-3 md:gap-6">
                                                 <div className={`w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg ${book.status === 'payee' || book.status === 'confirmee' ? (book.is_validated ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-50 text-slate-400') : 'bg-amber-50 text-amber-600'}`}>
                                                     <ArrowDownLeft className="w-5 h-5 md:w-6 md:h-6" />
                                                 </div>
                                                 <div>
-                                                    <h4 className="font-black text-slate-900 uppercase tracking-tight text-[11px] md:text-sm mb-0.5 md:mb-1">{book.metadata?.title || book.item_type} #{book.id.slice(0, 5)}</h4>
+                                                    <h4 className="font-black text-slate-900 uppercase tracking-tight text-[11px] md:text-sm mb-0.5 md:mb-1">{book.item_type} #{book.id.slice(0, 5)}</h4>
                                                     <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest">{new Date(book.created_at).toLocaleDateString()}</p>
                                                 </div>
                                             </div>
@@ -304,7 +270,7 @@ export default function AdminRevenusView() {
                                             </div>
                                             {(!book.is_validated && (book.status === 'payee' || book.status === 'confirmee')) && (
                                                 <button
-                                                    onClick={(e) => { e.stopPropagation(); handleValidateBooking(book.id); }}
+                                                    onClick={() => handleValidateBooking(book.id)}
                                                     className="px-5 md:px-8 py-2 md:py-3 bg-emerald-600 text-white rounded-xl md:rounded-2xl font-black uppercase text-[9px] hover:bg-slate-900 transition-all shadow-lg shadow-emerald-50 active:scale-95"
                                                 >
                                                     Valider
@@ -370,123 +336,6 @@ export default function AdminRevenusView() {
                     )}
                 </div>
             </div>
-
-            {/* Modal Détails Réservation / Paiement */}
-            <AnimatePresence>
-                {selectedBooking && (
-                    <>
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setSelectedBooking(null)}
-                            className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100]"
-                        />
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] bg-white rounded-3xl shadow-2xl z-[101] overflow-hidden flex flex-col max-h-[85vh] border border-slate-100"
-                            style={{ maxWidth: '420px' }}
-                        >
-                            <div className="p-6 overflow-y-auto">
-                                <div className="flex items-center justify-between mb-6">
-                                    <h3 className="text-base font-black text-slate-900 uppercase tracking-tight">Détails du paiement</h3>
-                                    <button onClick={() => setSelectedBooking(null)} className="p-1.5 bg-slate-50 text-slate-400 hover:text-slate-900 rounded-full transition-colors">
-                                        <XCircle className="w-5 h-5" />
-                                    </button>
-                                </div>
-
-                                <div className="space-y-4">
-                                    <div className="flex flex-col p-4 bg-amber-50 rounded-2xl border border-amber-100/50">
-                                        <span className="text-[9px] font-black text-amber-900/50 uppercase tracking-widest mb-0.5">Montant Total</span>
-                                        <span className="text-2xl font-black text-amber-600">{selectedBooking.amount.toLocaleString()} <span className="text-xs">FCFA</span></span>
-                                        <span className={`mt-2 self-start px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest ${selectedBooking.status === 'payee' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-200/50 text-amber-800'}`}>
-                                            Statut: {selectedBooking.status.replace(/_/g, ' ')}
-                                        </span>
-                                    </div>
-
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                                            <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Client</span>
-                                            <span className="text-xs font-bold text-slate-900 block truncate" title={selectedBooking.metadata?.client_name}>
-                                                {selectedBooking.metadata?.client_name || 'Inconnu'}
-                                            </span>
-                                        </div>
-                                        <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                                            <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Date</span>
-                                            <span className="text-xs font-bold text-slate-900 block truncate">
-                                                {new Date(selectedBooking.created_at).toLocaleDateString()}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-1">Logement / Service</span>
-                                        <span className="text-xs font-bold text-slate-900 block truncate" title={selectedBooking.metadata?.title || selectedBooking.item_type}>
-                                            {selectedBooking.metadata?.title || selectedBooking.item_type}
-                                        </span>
-                                        {selectedBooking.start_date && (
-                                            <span className="text-[9px] font-medium text-slate-500 block mt-0.5">
-                                                Du {new Date(selectedBooking.start_date).toLocaleDateString()} au {new Date(selectedBooking.end_date).toLocaleDateString()}
-                                            </span>
-                                        )}
-                                    </div>
-
-                                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-2">Répartition Financière</span>
-                                        <div className="space-y-1.5">
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-[9px] font-bold text-slate-500 uppercase">Payé par client</span>
-                                                <span className="text-[10px] font-black text-slate-900">{selectedBooking.amount.toLocaleString()} FCFA</span>
-                                            </div>
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-[9px] font-bold text-slate-500 uppercase">Commission HOLA ({platformCommission}%)</span>
-                                                <span className="text-[10px] font-black text-amber-600">+{Math.floor(selectedBooking.amount * (platformCommission / 100)).toLocaleString()} FCFA</span>
-                                            </div>
-                                            <div className="pt-1.5 border-t border-slate-200 flex justify-between items-center">
-                                                <span className="text-[9px] font-black text-slate-900 uppercase">Revenu net</span>
-                                                <span className="text-xs font-black text-emerald-600">{Math.floor(selectedBooking.amount * (1 - (platformCommission / 100))).toLocaleString()} FCFA</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {selectedBooking.payments && selectedBooking.payments.length > 0 ? (
-                                        <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                                            <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-2">Historique</span>
-                                            {selectedBooking.payments.map((payment) => (
-                                                <div key={payment.id} className="flex items-center justify-between py-1.5 border-t border-slate-200/60 first:border-0 first:pt-0">
-                                                    <div>
-                                                        <p className="text-[9px] font-black text-slate-900 uppercase">{payment.provider}</p>
-                                                        <p className="text-[7px] font-bold text-slate-400">{payment.provider_id || 'ID N/A'}</p>
-                                                    </div>
-                                                    <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded ${payment.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-500'}`}>
-                                                        {payment.status}
-                                                    </span>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    ) : (selectedBooking.status === 'payee' || selectedBooking.status === 'confirmee') ? (
-                                        <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-100 flex items-center gap-2">
-                                            <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
-                                                <CheckCircle2 className="w-3 h-3" />
-                                            </div>
-                                            <p className="text-[10px] font-bold text-emerald-800 leading-tight">Paiement validé avec succès.</p>
-                                        </div>
-                                    ) : (
-                                        <div className="p-3 bg-amber-50 rounded-xl border border-amber-100 flex items-center gap-2">
-                                            <div className="w-6 h-6 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
-                                                <Clock className="w-3 h-3" />
-                                            </div>
-                                            <p className="text-[10px] font-bold text-amber-800 leading-tight">Le client n'a pas encore procédé au paiement.</p>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
         </div>
     );
 }

@@ -15,12 +15,6 @@ export default function FeaturedProperties() {
     }, []);
 
     const fetchFeatured = async () => {
-        // Verify Supabase configuration
-        if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-            console.warn('Supabase env vars missing – fetch skipped');
-            setLoading(false);
-            return;
-        }
         try {
             const { data, error } = await supabase
                 .from('villas')
@@ -32,7 +26,7 @@ export default function FeaturedProperties() {
             if (error) throw error;
             setProperties(data || []);
         } catch (error) {
-            console.error('Error fetching featured properties:', error);
+            console.error(error);
         } finally {
             setLoading(false);
         }

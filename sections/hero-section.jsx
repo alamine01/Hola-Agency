@@ -19,7 +19,7 @@ export default function HeroSection() {
     };
 
     return (
-        <section className="flex flex-col items-center justify-center relative min-h-[70vh] sm:min-h-[80vh] md:min-h-screen overflow-hidden py-12 sm:py-16 md:py-24 bg-[#fafafa]">
+        <section className="flex flex-col items-center justify-center relative min-h-[100svh] overflow-hidden py-24 bg-[#fafafa]">
             {/* Background Image & Overlay */}
             <div className="absolute inset-0 z-0">
                 <img
@@ -53,7 +53,7 @@ export default function HeroSection() {
                 variants={fadeUp}
                 initial="hidden"
                 animate="visible"
-                className="z-10 text-4xl sm:text-5xl md:text-7xl text-center font-bold max-w-4xl mt-2 text-slate-900 tracking-tight px-4"
+                className="z-10 text-5xl md:text-7xl/tight text-center font-bold max-w-4xl mt-2 text-slate-900 tracking-tight px-4"
             >
                 L'immobilier premium & <br />
                 <span className="bg-gradient-to-r from-[#D4AF37] via-amber-500 to-[#b38f26] bg-clip-text text-transparent italic pr-4">services d'exception.</span>
@@ -64,10 +64,9 @@ export default function HeroSection() {
                 initial="hidden"
                 animate="visible"
                 transition={{ delay: 0.2, duration: 0.8 }}
-                className="z-10 text-slate-500 text-base sm:text-lg md:text-xl text-center max-w-full sm:max-w-xl md:max-w-2xl mt-8 px-4 font-light leading-relaxed break-words hyphens-auto"
+                className="z-10 text-slate-500 md:text-xl text-center max-w-2xl mt-8 px-4 font-light leading-relaxed"
             >
-                Pénétrez dans un univers où luxe rime avec simplicité. <br />
-                Réservez votre prochaine villa de rêve ou proposez vos services exclusifs à une clientèle de prestige.
+                Pénétrez dans un univers où luxe rime avec simplicité. Réservez votre prochaine villa de rêve ou proposez vos services exclusifs à une clientèle de prestige.
             </motion.p>
 
             {/* Roles Grid */}
@@ -81,7 +80,7 @@ export default function HeroSection() {
                 {/* Client Card */}
                 <motion.div variants={fadeUp} whileHover={{ y: -8 }} className="group relative">
                     <div className="absolute inset-0 bg-gradient-to-b from-[#D4AF37]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl blur-xl"></div>
-                    <Link href="/register?role=client" className="relative flex flex-col items-center p-8 bg-gradient-to-br from-[#D4AF37]/5 to-amber-500/5 backdrop-blur-xl border border-[#D4AF37]/20 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 h-full">
+                    <Link href="/register?role=client" className="relative flex flex-col items-center p-8 bg-gradient-to-br from-[#D4AF37]/5 to-amber-500/5 backdrop-blur-xl border border-[#D4AF37]/20 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(212,175,55,0.15)] hover:border-[#D4AF37]/50 transition-all duration-300 h-full">
                         <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200 flex items-center justify-center text-amber-600 group-hover:text-white group-hover:bg-gradient-to-br group-hover:from-[#D4AF37] group-hover:to-amber-500 shadow-sm transition-all duration-500 mb-6">
                             <User className="w-7 h-7" strokeWidth={1.5} />
                         </div>
@@ -98,7 +97,7 @@ export default function HeroSection() {
                 {/* Propriétaire Card */}
                 <motion.div variants={fadeUp} whileHover={{ y: -8 }} className="group relative">
                     <div className="absolute inset-0 bg-gradient-to-b from-slate-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl blur-xl"></div>
-                    <Link href="/register?role=proprietaire" className="relative flex flex-col items-center p-8 bg-gradient-to-br from-slate-800/5 to-slate-900/5 backdrop-blur-xl border border-slate-800/20 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 h-full">
+                    <Link href="/register?role=proprietaire" className="relative flex flex-col items-center p-8 bg-gradient-to-br from-slate-800/5 to-slate-900/5 backdrop-blur-xl border border-slate-800/20 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(15,23,42,0.1)] hover:border-slate-800/50 transition-all duration-300 h-full">
                         <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 border border-slate-300 flex items-center justify-center text-slate-800 group-hover:text-white group-hover:bg-gradient-to-br group-hover:from-slate-800 group-hover:to-slate-900 shadow-sm transition-all duration-500 mb-6">
                             <Home className="w-7 h-7" strokeWidth={1.5} />
                         </div>
@@ -115,7 +114,7 @@ export default function HeroSection() {
                 {/* Prestataire Card */}
                 <motion.div variants={fadeUp} whileHover={{ y: -8 }} className="group relative">
                     <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl blur-xl"></div>
-                    <Link href="/register?role=prestataire" className="relative flex flex-col items-center p-8 bg-gradient-to-br from-indigo-500/5 to-blue-600/5 backdrop-blur-xl border border-indigo-500/20 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 h-full">
+                    <Link href="/register?role=prestataire" className="relative flex flex-col items-center p-8 bg-gradient-to-br from-indigo-500/5 to-blue-600/5 backdrop-blur-xl border border-indigo-500/20 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(99,102,241,0.15)] hover:border-indigo-500/50 transition-all duration-300 h-full">
                         <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-50 to-indigo-100 border border-indigo-200 flex items-center justify-center text-indigo-600 group-hover:text-white group-hover:bg-gradient-to-br group-hover:from-indigo-500 group-hover:to-blue-600 shadow-sm transition-all duration-500 mb-6">
                             <Briefcase className="w-7 h-7" strokeWidth={1.5} />
                         </div>
