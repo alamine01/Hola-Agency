@@ -65,9 +65,15 @@ export default function ResetPasswordPage() {
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="w-full bg-white p-5 md:p-6 rounded-3xl shadow-2xl border border-slate-100"
+                className="w-full bg-white p-5 md:p-6 rounded-3xl shadow-2xl border border-slate-100 reset-password-card"
                 style={{ maxWidth: '320px' }}
             >
+                <style dangerouslySetInnerHTML={{ __html: `
+                    .reset-password-card, .modal-hola {
+                        max-width: 320px !important;
+                        width: 100% !important;
+                    }
+                `}} />
                 <div className="flex justify-center mb-8">
                     <Link href="/" className="flex items-center gap-2 text-[#D4AF37] hover:text-amber-500 transition-colors">
                         <Home className="w-8 h-8" />
