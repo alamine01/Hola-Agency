@@ -37,7 +37,8 @@ export default function ForgotPasswordPage() {
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="w-full max-w-[320px] bg-white p-5 md:p-6 rounded-3xl shadow-2xl border border-slate-100"
+                className="w-full bg-white p-5 md:p-6 rounded-3xl shadow-2xl border border-slate-100"
+                style={{ maxWidth: '320px' }}
             >
                 <div className="flex justify-center mb-8">
                     <Link href="/" className="flex items-center gap-2 text-[#D4AF37] hover:text-amber-500 transition-colors">
