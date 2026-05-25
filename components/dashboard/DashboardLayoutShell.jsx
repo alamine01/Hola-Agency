@@ -30,7 +30,7 @@ const NotificationDropdown = ({ isOpen, onClose, notifications, onMarkAllRead })
 
     return (
         <>
-            <div className="fixed md:absolute top-20 md:top-full left-4 right-4 md:left-auto md:right-0 mt-3 md:w-96 min-w-[300px] bg-white border border-slate-100 rounded-[2rem] shadow-2xl z-[60] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ring-4 ring-slate-900/5">
+            <div className="absolute top-full -right-4 mt-3 w-[calc(100vw-2rem)] max-w-[360px] sm:w-96 sm:right-0 sm:max-w-none bg-white border border-slate-100 rounded-[2rem] shadow-2xl z-[60] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ring-4 ring-slate-900/5">
                 <div className="p-5 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
                     <h3 className="font-black text-slate-900 text-sm uppercase tracking-widest whitespace-nowrap">Notifications</h3>
                     {notifications.filter(n => !n.is_read).length > 0 && (
@@ -51,10 +51,10 @@ const NotificationDropdown = ({ isOpen, onClose, notifications, onMarkAllRead })
                                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${getColor(notif.type)} group-hover:scale-110 transition-transform`}>
                                             <Icon className="w-5 h-5" />
                                         </div>
-                                        <div className="flex-1">
-                                            <div className="flex items-center justify-between mb-1">
-                                                <p className="font-bold text-slate-900 text-xs">{notif.title}</p>
-                                                <p className="text-[10px] text-slate-400 font-medium">
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-start justify-between mb-1 gap-2">
+                                                <p className="font-bold text-slate-900 text-xs flex-1 min-w-0 leading-tight">{notif.title}</p>
+                                                <p className="text-[10px] text-slate-400 font-medium whitespace-nowrap shrink-0">
                                                     {new Date(notif.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                 </p>
                                             </div>
@@ -104,98 +104,69 @@ export default function DashboardLayoutShell({ children, forcedRole }) {
     const activeRole = forcedRole || profile?.role || urlRole;
 
     useEffect(() => {
-        let cleanupChannels = null;
-
-        const loadProfile = async (userId) => {
-            // Fetch Profile
-            const { data: profData } = await supabase
-                .from('profiles')
-                .select('display_name, avatar_url, role')
-                .eq('id', userId)
-                .single();
-
-            if (profData) {
-                setProfile(profData);
-            }
-
-            // Fetch Notifications
-            const { data: notifData } = await supabase
-                .from('notifications')
-                .select('*')
-                .eq('user_id', userId)
-                .order('created_at', { ascending: false })
-                .limit(10);
-            if (notifData) setNotifications(notifData);
-
-            // Realtime Notifications
-            const notifChannel = supabase
-                .channel(`notif_realtime_${userId}_${Math.random().toString(36).substring(7)}`)
-                .on('postgres_changes', {
-                    event: 'INSERT',
-                    schema: 'public',
-                    table: 'notifications',
-                    filter: `user_id=eq.${userId}`
-                }, (payload) => {
-                    setNotifications(prev => [payload.new, ...prev]);
-                })
-                .subscribe();
-
-            // Realtime Profile
-            const profileChannel = supabase
-                .channel(`profile_realtime_${userId}_${Math.random().toString(36).substring(7)}`)
-                .on('postgres_changes', {
-                    event: 'UPDATE',
-                    schema: 'public',
-                    table: 'profiles',
-                    filter: `id=eq.${userId}`
-                }, (payload) => {
-                    setProfile(prev => ({
-                        ...prev,
-                        display_name: payload.new.display_name,
-                        avatar_url: payload.new.avatar_url,
-                        role: payload.new.role
-                    }));
-                })
-                .subscribe();
-
-            cleanupChannels = () => {
-                supabase.removeChannel(notifChannel);
-                supabase.removeChannel(profileChannel);
-            };
-        };
-
         const fetchInitialData = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
-                await loadProfile(user.id);
+                // Fetch Profile
+                const { data: profData } = await supabase
+                    .from('profiles')
+                    .select('display_name, avatar_url, role')
+                    .eq('id', user.id)
+                    .single();
+
+                if (profData) {
+                    setProfile(profData);
+                }
+
+                // Fetch Notifications
+                const { data: notifData } = await supabase
+                    .from('notifications')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .order('created_at', { ascending: false })
+                    .limit(10);
+                if (notifData) setNotifications(notifData);
+
+                // Realtime Notifications
+                const notifChannel = supabase
+                    .channel(`notif_realtime_${user.id}_${Math.random().toString(36).substring(7)}`)
+                    .on('postgres_changes', {
+                        event: 'INSERT',
+                        schema: 'public',
+                        table: 'notifications',
+                        filter: `user_id=eq.${user.id}`
+                    }, (payload) => {
+                        setNotifications(prev => [payload.new, ...prev]);
+                    })
+                    .subscribe();
+
+                // Realtime Profile
+                const profileChannel = supabase
+                    .channel(`profile_realtime_${user.id}_${Math.random().toString(36).substring(7)}`)
+                    .on('postgres_changes', {
+                        event: 'UPDATE',
+                        schema: 'public',
+                        table: 'profiles',
+                        filter: `id=eq.${user.id}`
+                    }, (payload) => {
+                        setProfile(prev => ({
+                            ...prev,
+                            display_name: payload.new.display_name,
+                            avatar_url: payload.new.avatar_url,
+                            role: payload.new.role
+                        }));
+                    })
+                    .subscribe();
+
+                return () => {
+                    supabase.removeChannel(notifChannel);
+                    supabase.removeChannel(profileChannel);
+                };
             }
             setLoading(false);
         };
 
         fetchInitialData();
-
-        // Listen to auth state changes (session refresh, sign out, etc.)
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-            if (event === 'SIGNED_OUT' || !session) {
-                setProfile(null);
-                router.push('/login');
-            } else if (event === 'TOKEN_REFRESHED' && session?.user) {
-                // Re-fetch profile on token refresh to prevent stale 'HOLA User'
-                const { data: profData } = await supabase
-                    .from('profiles')
-                    .select('display_name, avatar_url, role')
-                    .eq('id', session.user.id)
-                    .single();
-                if (profData) {
-                    setProfile(profData);
-                }
-            }
-        });
-
-        return () => {
-            subscription?.unsubscribe();
-            cleanupChannels?.();
-        };
     }, []);
 
     const handleMarkAllRead = async () => {
@@ -221,7 +192,14 @@ export default function DashboardLayoutShell({ children, forcedRole }) {
                 <header className="h-20 bg-white border-b border-slate-100 sticky top-0 z-40 w-full px-4 md:px-6">
                     <div className="container-dashboard flex items-center justify-between h-full">
                         <div className="flex items-center gap-4 flex-1">
-                            {/* Search bar removed per user request */}
+                            <div className="hidden md:flex items-center bg-slate-50 border border-slate-100 rounded-full px-5 py-2.5 w-full max-w-md focus-within:border-amber-600/30 focus-within:bg-white transition-all group shadow-sm shadow-slate-100">
+                                <Search className="w-4 h-4 text-slate-400 mr-2 group-focus-within:text-amber-600 transition-colors" />
+                                <input
+                                    type="text"
+                                    placeholder="Rechercher une réservation, un logement..."
+                                    className="bg-transparent border-none outline-none text-xs font-semibold w-full placeholder:text-slate-400"
+                                />
+                            </div>
                         </div>
 
                         <div className="flex items-center gap-4">
