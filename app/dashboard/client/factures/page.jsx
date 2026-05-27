@@ -24,24 +24,25 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
  
     const handleDownloadPDF = async () => {
         setDownloading(true);
-        let mocked = false;
+        const styleElements = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'));
+        const savedStyles = [];
         try {
-            // Temporarily mock document.styleSheets to return an empty array.
-            // This is a bulletproof and elegant solution: html2canvas parses all stylesheets
-            // in document.styleSheets (even if disabled) to find matching rules.
-            // By returning an empty list, html2canvas bypasses all external/Tailwind stylesheets
-            // (preventing the lab() color parsing crash) while keeping the parent page
-            // perfectly styled and visible (no FOUC/visual flash) since the browser's
-            // underlying rendering engine remains unaffected.
-            try {
-                Object.defineProperty(document, 'styleSheets', {
-                    get: () => [],
-                    configurable: true
+            // Dual-layer bypass solution for html2canvas / html2pdf.js:
+            // 1. Temporarily remove all style and link tags from the parent document's DOM.
+            // This guarantees document.styleSheets becomes completely empty during the asynchronous capture,
+            // preventing html2canvas from trying to parse Tailwind CSS v4's lab() color functions and crashing.
+            styleElements.forEach(el => {
+                savedStyles.push({
+                    element: el,
+                    parent: el.parentNode,
+                    sibling: el.nextSibling
                 });
-                mocked = true;
-            } catch (e) {
-                console.warn("Could not mock document.styleSheets:", e);
-            }
+                try {
+                    el.remove();
+                } catch (err) {
+                    // Ignore
+                }
+            });
 
             const element = document.createElement('div');
             element.style.position = 'absolute';
@@ -92,7 +93,19 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
                 margin:       15,
                 filename:     `Facture-${invoice.ref}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true },
+                html2canvas:  { 
+                    scale: 2, 
+                    useCORS: true,
+                    onclone: (clonedDoc) => {
+                        // 2. Also remove style/link tags from the cloned document itself.
+                        try {
+                            const clonedStyles = clonedDoc.querySelectorAll('style, link[rel="stylesheet"]');
+                            clonedStyles.forEach(el => el.remove());
+                        } catch (err) {
+                            // Ignore
+                        }
+                    }
+                },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
@@ -105,14 +118,16 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
             console.error("PDF Generation Error:", error);
             alert("Erreur lors de la génération du PDF : " + (error.message || error));
         } finally {
-            // Restore document.styleSheets back to normal
-            if (mocked) {
-                try {
-                    delete document.styleSheets;
-                } catch (e) {
-                    console.error("Failed to restore document.styleSheets:", e);
+            // 3. Always restore all style and link elements back to their exact original locations.
+            savedStyles.forEach(({ element, parent, sibling }) => {
+                if (parent) {
+                    try {
+                        parent.insertBefore(element, sibling);
+                    } catch (e) {
+                        console.error("Failed to restore style tag:", e);
+                    }
                 }
-            }
+            });
             setDownloading(false);
         }
     };
