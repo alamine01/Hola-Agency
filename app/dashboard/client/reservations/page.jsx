@@ -187,8 +187,7 @@ export default function ClientActivityPage() {
             const { data: existing } = await supabase
                 .from('conversations')
                 .select('id')
-                .or(`participant_1.eq.${user.id},participant_2.eq.${user.id}`)
-                .or(`participant_1.eq.${hostId},participant_2.eq.${hostId}`)
+                .or(`and(participant_1.eq.${user.id},participant_2.eq.${hostId}),and(participant_1.eq.${hostId},participant_2.eq.${user.id})`)
                 .maybeSingle();
 
             if (existing) {

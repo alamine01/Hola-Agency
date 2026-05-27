@@ -49,12 +49,17 @@ const MessageItem = ({ text, time, sent }) => {
     const isImage = isImageUrl(text);
     return (
         <div className={`flex flex-col ${sent ? 'items-end' : 'items-start'} mb-6`}>
-            <div className={`max-w-[75%] p-4 rounded-2xl text-sm ${sent
+            <div className={`${isImage ? 'max-w-[280px] sm:max-w-md overflow-hidden rounded-2xl border border-slate-100/50 shadow-md bg-white p-1' : `max-w-[75%] p-4 rounded-2xl text-sm ${sent
                 ? 'bg-slate-900 text-white rounded-tr-none shadow-md'
                 : 'bg-white text-slate-700 border border-slate-100 rounded-tl-none shadow-sm'
-                }`}>
+                }`}`}>
                 {isImage ? (
-                    <img src={text} alt="Image" className="rounded-lg max-w-full h-auto cursor-pointer" onClick={() => window.open(text, '_blank')} />
+                    <img 
+                        src={text} 
+                        alt="Image" 
+                        className="rounded-xl w-full max-h-[320px] object-cover cursor-pointer hover:scale-[1.02] transition-transform duration-300" 
+                        onClick={() => window.open(text, '_blank')} 
+                    />
                 ) : (
                     text && <p className="leading-relaxed">{text}</p>
                 )}

@@ -18,6 +18,7 @@ import {
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
+import { checkVillaAvailability } from '@/lib/checkAvailability';
 
 function PaymentContent() {
     const searchParams = useSearchParams();
@@ -61,7 +62,20 @@ function PaymentContent() {
         }
 
         try {
-            // 1. Créer la réservation avec statut "en attente de paiement"
+            // 1. Vérifier la disponibilité (uniquement pour les villas, pas les services)
+            if (itemType && itemType.toLowerCase() !== 'service' && itemId && startDate && endDate) {
+                const { available, conflictingBooking } = await checkVillaAvailability(itemId, startDate, endDate);
+                if (!available) {
+                    const depDate = conflictingBooking?.end_date
+                        ? new Date(conflictingBooking.end_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+                        : 'une date prochaine';
+                    alert(`Cette villa n'est pas disponible pour les dates sélectionnées.\n\nElle est déjà réservée jusqu'au ${depDate}. Vous pouvez réserver à partir du lendemain.`);
+                    setIsProcessing(false);
+                    return;
+                }
+            }
+
+            // 2. Créer la réservation avec statut "en attente de paiement"
             console.log("Démarrage de la réservation Supabase...");
             const { data: booking, error: bookingError } = await supabase
                 .from('bookings')

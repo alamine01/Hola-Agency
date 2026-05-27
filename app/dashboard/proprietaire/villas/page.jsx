@@ -54,6 +54,27 @@ const VillaCard = ({ villa, onEdit, onDelete }) => {
                         <Building2 className="w-12 h-12" />
                     </div>
                 )}
+                {/* Status Badge */}
+                <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-20">
+                    {(!villa.status || villa.status === 'pending') && (
+                        <span className="px-3 py-1.5 bg-amber-500/90 backdrop-blur rounded-xl text-[9px] font-black uppercase tracking-wider text-white shadow-sm flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                            En attente
+                        </span>
+                    )}
+                    {villa.status === 'active' && (
+                        <span className="px-3 py-1.5 bg-emerald-600/90 backdrop-blur rounded-xl text-[9px] font-black uppercase tracking-wider text-white shadow-sm flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                            Publiée
+                        </span>
+                    )}
+                    {villa.status === 'rejected' && (
+                        <span className="px-3 py-1.5 bg-rose-600/90 backdrop-blur rounded-xl text-[9px] font-black uppercase tracking-wider text-white shadow-sm flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                            Refusée
+                        </span>
+                    )}
+                </div>
                 <div className="absolute top-3 right-3 px-3 py-1.5 bg-white/90 backdrop-blur rounded-xl text-[10px] font-black uppercase tracking-[0.1em] text-slate-800 shadow-sm border border-white/50 italic">
                     {villa.type || 'Hébergement'}
                 </div>
@@ -222,7 +243,7 @@ const AddVillaModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                 payment_methods: formData.payment_methods,
                 amenities: formData.amenities,
                 image: imageUrl,
-                status: 'active'
+                status: 'pending'
             };
 
             let error;

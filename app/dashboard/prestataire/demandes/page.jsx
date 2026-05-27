@@ -258,8 +258,7 @@ export default function DemandesPage() {
             const { data: existing } = await supabase
                 .from('conversations')
                 .select('id')
-                .or(`participant_1.eq.${user.id},participant_2.eq.${user.id}`)
-                .or(`participant_1.eq.${clientId},participant_2.eq.${clientId}`)
+                .or(`and(participant_1.eq.${user.id},participant_2.eq.${clientId}),and(participant_1.eq.${clientId},participant_2.eq.${user.id})`)
                 .maybeSingle();
 
             if (existing) {

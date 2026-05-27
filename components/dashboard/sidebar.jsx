@@ -62,6 +62,7 @@ const Sidebar = ({ role, isCollapsed, setIsCollapsed }) => {
             { id: 'overview', label: 'Tableau de bord', icon: LayoutDashboard, href: '/dashboard/admin' },
             { id: 'revenue', label: 'Validation Paiements', icon: CreditCard, href: '/dashboard/admin/revenus' },
             { id: 'users', label: 'Utilisateurs', icon: User, href: '/dashboard/admin/utilisateurs' },
+            { id: 'contacts', label: 'Messages Contact', icon: MessageSquare, href: '/dashboard/admin/contacts' },
             { id: 'profile', label: 'Mon profil', icon: User, href: '/dashboard/admin/profil' },
         ]
     };

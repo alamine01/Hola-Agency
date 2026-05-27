@@ -9,6 +9,7 @@ import {
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import { checkVillaAvailability } from '@/lib/checkAvailability';
 
 // Mock function to get property by ID (simulating database call)
 // Removed mock function as we now fetch from Supabase
@@ -69,6 +70,20 @@ export default function PropertyDetailPage() {
         }
 
         try {
+            // Vérification des doublons de réservation (uniquement pour les villas)
+            const { available, conflictingBooking } = await checkVillaAvailability(
+                id,
+                bookingData.startDate,
+                bookingData.endDate
+            );
+
+            if (!available) {
+                const depDate = conflictingBooking?.end_date
+                    ? new Date(conflictingBooking.end_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+                    : 'une date prochaine';
+                alert(`Cette villa n'est pas disponible pour les dates sélectionnées.\n\nElle est déjà réservée jusqu'au ${depDate}. Vous pouvez réserver à partir du lendemain.`);
+                return;
+            }
             // Création de la réservation en attente de paiement
             const { data: booking, error } = await supabase
                 .from('bookings')
@@ -293,19 +308,31 @@ export default function PropertyDetailPage() {
                                     </div>
                                 </div>
 
-                                <button
-                                    onClick={handleBooking}
-                                    className="w-full py-4 sm:py-5 px-2 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black text-sm shadow-xl shadow-slate-200 transition-all hover:scale-[1.02] active:scale-95 mb-4 uppercase tracking-[0.2em] flex items-center justify-center text-center"
-                                >
-                                    Réserver
-                                </button>
+                                {property.status && property.status !== 'active' ? (
+                                    <div className="bg-amber-50 border border-amber-100 p-5 rounded-2xl text-center shadow-sm">
+                                        <p className="text-amber-700 font-black text-xs uppercase tracking-widest mb-1.5 flex items-center justify-center gap-1.5">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                                            Validation en cours
+                                        </p>
+                                        <p className="text-slate-500 text-[10px] font-medium leading-relaxed italic">Ce logement est en attente de validation par l'administration et n'est pas encore ouvert aux réservations.</p>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <button
+                                            onClick={handleBooking}
+                                            className="w-full py-4 sm:py-5 px-2 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black text-sm shadow-xl shadow-slate-200 transition-all hover:scale-[1.02] active:scale-95 mb-4 uppercase tracking-[0.2em] flex items-center justify-center text-center"
+                                        >
+                                            Réserver
+                                        </button>
 
-                                <button
-                                    onClick={handleContact}
-                                    className="w-full py-4 px-2 bg-white border-2 border-slate-900 text-slate-900 hover:bg-slate-50 rounded-2xl font-black text-sm transition-all active:scale-95 mb-6 uppercase tracking-[0.2em] flex items-center justify-center text-center"
-                                >
-                                    Contacter
-                                </button>
+                                        <button
+                                            onClick={handleContact}
+                                            className="w-full py-4 px-2 bg-white border-2 border-slate-900 text-slate-900 hover:bg-slate-50 rounded-2xl font-black text-sm transition-all active:scale-95 mb-6 uppercase tracking-[0.2em] flex items-center justify-center text-center"
+                                        >
+                                            Contacter
+                                        </button>
+                                    </>
+                                )}
 
                                 {calculateTotal() > 0 && (
                                     <div className="space-y-3 pt-6 border-t border-slate-100">

@@ -17,20 +17,6 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 
-const loadHtml2Pdf = () => {
-    return new Promise((resolve, reject) => {
-        if (typeof window === 'undefined') return reject('Window undefined');
-        if (window.html2pdf) {
-            resolve(window.html2pdf);
-            return;
-        }
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
-        script.onload = () => resolve(window.html2pdf);
-        script.onerror = (err) => reject(err);
-        document.body.appendChild(script);
-    });
-};
 
 function InvoiceModal({ isOpen, onClose, invoice }) {
     if (!invoice) return null;
@@ -86,7 +72,7 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            const html2pdf = await loadHtml2Pdf();
+            const html2pdf = (await import('html2pdf.js')).default;
             await html2pdf().from(element).set(opt).save();
         } catch (error) {
             console.error("PDF Generation Error:", error);

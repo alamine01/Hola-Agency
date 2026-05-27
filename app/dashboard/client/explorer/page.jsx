@@ -50,7 +50,7 @@ export default function ClientExplorerPage() {
         setLoading(true);
         try {
             const [villasResp, servicesResp] = await Promise.all([
-                supabase.from('villas').select('*'),
+                supabase.from('villas').select('*').eq('status', 'active'),
                 supabase.from('services').select('*')
             ]);
 
