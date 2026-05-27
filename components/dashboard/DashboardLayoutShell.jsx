@@ -94,6 +94,23 @@ export default function DashboardLayoutShell({ children, forcedRole }) {
     const [notifications, setNotifications] = useState([]);
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [isCollapsed, setIsCollapsed] = useState(false);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const stored = localStorage.getItem('sidebar-collapsed');
+            if (stored) {
+                setIsCollapsed(stored === 'true');
+            }
+        }
+    }, []);
+
+    const handleToggleCollapse = (collapsed) => {
+        setIsCollapsed(collapsed);
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('sidebar-collapsed', String(collapsed));
+        }
+    };
 
     const normalize = (r) => {
         if (!r) return 'client';
@@ -188,9 +205,9 @@ export default function DashboardLayoutShell({ children, forcedRole }) {
 
     return (
         <div className="min-h-screen bg-slate-50 flex overflow-x-hidden w-full">
-            <Sidebar role={activeRole} />
+            <Sidebar role={activeRole} isCollapsed={isCollapsed} setIsCollapsed={handleToggleCollapse} />
 
-            <div className="flex-1 lg:ml-[280px] flex flex-col min-h-screen w-full max-w-full overflow-x-hidden">
+            <div className={`flex-1 transition-all duration-300 ${isCollapsed ? 'lg:ml-[80px]' : 'lg:ml-[280px]'} flex flex-col min-h-screen w-full max-w-full overflow-x-hidden`}>
                 <header className="h-20 bg-white border-b border-slate-100 sticky top-0 z-40 w-full px-4 md:px-6">
                     <div className="container-dashboard flex items-center justify-between h-full">
                         <div className="flex items-center gap-4 flex-1">
