@@ -18,14 +18,40 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 
 
+const loadHtml2Pdf = () => {
+    return new Promise((resolve, reject) => {
+        if (typeof window === 'undefined') return reject('Window undefined');
+        if (window.html2pdf) {
+            resolve(window.html2pdf);
+            return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+        script.onload = () => {
+            if (window.html2pdf) {
+                resolve(window.html2pdf);
+            } else {
+                reject('html2pdf not found on window');
+            }
+        };
+        script.onerror = (err) => reject(err);
+        document.body.appendChild(script);
+    });
+};
+
 function InvoiceModal({ isOpen, onClose, invoice }) {
     if (!invoice) return null;
     const [downloading, setDownloading] = useState(false);
-
+ 
     const handleDownloadPDF = async () => {
         setDownloading(true);
         try {
             const element = document.createElement('div');
+            element.style.position = 'absolute';
+            element.style.left = '-9999px';
+            element.style.top = '-9999px';
+            element.style.width = '794px';
+            element.style.background = '#ffffff';
             element.innerHTML = `
                 <div style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 40px; color: #1e293b; line-height: 1.5; background: #ffffff;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 3px solid #D4AF37; padding-bottom: 20px;">
@@ -63,7 +89,8 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
                     </div>
                 </div>
             `;
-
+            document.body.appendChild(element);
+ 
             const opt = {
                 margin:       15,
                 filename:     `Facture-${invoice.ref}.pdf`,
@@ -71,9 +98,10 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
                 html2canvas:  { scale: 2, useCORS: true },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
-
-            const html2pdf = (await import('html2pdf.js')).default;
+ 
+            const html2pdf = await loadHtml2Pdf();
             await html2pdf().from(element).set(opt).save();
+            document.body.removeChild(element);
         } catch (error) {
             console.error("PDF Generation Error:", error);
             alert("Erreur lors de la génération du PDF. Veuillez réessayer.");
