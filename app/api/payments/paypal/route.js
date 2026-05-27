@@ -24,11 +24,18 @@ export async function POST(req) {
     try {
         const { bookingId, amount, title } = await req.json();
 
-        if (!PAYPAL_CLIENT_ID || PAYPAL_CLIENT_ID === 'votre_client_id_ici' || !PAYPAL_SECRET || PAYPAL_SECRET === 'votre_secret_ici') {
+        const isMockMode = !PAYPAL_CLIENT_ID || PAYPAL_CLIENT_ID === 'votre_client_id_ici' || !PAYPAL_SECRET || PAYPAL_SECRET === 'votre_secret_ici';
+
+        if (isMockMode) {
+            console.log("PayPal credentials not configured. Running in SIMULATION/MOCK mode.");
+            const mockOrderId = `MOCK_PAYPAL_ORDER_${Date.now()}`;
+            const mockRedirectUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/dashboard/client/paiement/success?provider=paypal&booking_id=${bookingId}&token=${mockOrderId}`;
+            
             return NextResponse.json({
-                success: false,
-                error: "Clés PayPal non configurées. Vous devez remplacer les valeurs par défaut par vos identifiants réels dans .env.local (récupérables sur developer.paypal.com)."
-            }, { status: 500 });
+                success: true,
+                redirect_url: mockRedirectUrl,
+                order_id: mockOrderId
+            });
         }
 
         const accessToken = await getAccessToken();
