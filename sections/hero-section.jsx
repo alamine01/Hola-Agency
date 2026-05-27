@@ -66,7 +66,7 @@ export default function HeroSection() {
                 transition={{ delay: 0.2, duration: 0.8 }}
                 className="z-10 text-slate-500 md:text-xl text-center max-w-2xl mt-8 px-4 font-light leading-relaxed"
             >
-                Pénétrez dans un univers où luxe rime avec simplicité. Réservez votre prochaine villa de rêve ou proposez vos services exclusifs à une clientèle de prestige.
+                Pénétrez dans un univers où luxe rime avec simplicité.<br className="hidden md:inline" /> Réservez votre prochaine villa de rêve ou proposez vos services exclusifs à une clientèle de prestige.
             </motion.p>
 
             {/* Roles Grid */}
