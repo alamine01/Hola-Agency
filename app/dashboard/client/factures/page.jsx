@@ -17,82 +17,82 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 
+const loadHtml2Pdf = () => {
+    return new Promise((resolve, reject) => {
+        if (typeof window === 'undefined') return reject('Window undefined');
+        if (window.html2pdf) {
+            resolve(window.html2pdf);
+            return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+        script.onload = () => resolve(window.html2pdf);
+        script.onerror = (err) => reject(err);
+        document.body.appendChild(script);
+    });
+};
+
 function InvoiceModal({ isOpen, onClose, invoice }) {
     if (!invoice) return null;
+    const [downloading, setDownloading] = useState(false);
 
-    const handleDownloadPDF = () => {
-        const html = `
-        <!DOCTYPE html>
-        <html lang="fr">
-        <head>
-            <meta charset="UTF-8">
-            <title>Facture ${invoice.ref}</title>
-            <style>
-                body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 40px; color: #1e293b; line-height: 1.5; }
-                .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 3px solid #D4AF37; padding-bottom: 20px; }
-                .brand { display: flex; align-items: center; gap: 12px; }
-                .brand-name { font-size: 24px; font-weight: 900; color: #1e293b; letter-spacing: 2px; }
-                .ref { text-align: right; } .ref p { margin: 4px 0; font-size: 13px; color: #64748b; }
-                .ref .id { font-size: 18px; font-weight: 800; color: #1e293b; letter-spacing: 1px; }
-                .section { margin-bottom: 30px; } .section-title { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; margin-bottom: 10px; }
-                .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px; }
-                .grid-item p { margin: 4px 0; } .grid-item .label { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; }
-                .grid-item .value { font-size: 16px; font-weight: 700; color: #334155; }
-                .total-box { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 20px; padding: 30px; display: flex; justify-content: space-between; align-items: center; margin-top: 30px; }
-                .total-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; }
-                .total-value { font-size: 32px; font-weight: 900; color: #1e293b; }
-                .status { display: inline-block; padding: 8px 20px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-                .paid { background: #ecfdf5; color: #059669; } .pending { background: #fffbeb; color: #d97706; } .cancelled { background: #fef2f2; color: #dc2626; }
-                .footer { margin-top: 80px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 30px; }
-                @media print { body { padding: 20px; } .no-print { display: none; } }
-            </style>
-        </head>
-        <body>
-            <div class="header">
-                <div class="brand">
-                    <img src="${window.location.origin}/logo.svg" alt="Logo" style="height: 45px; width: auto; object-fit: contain;">
-                    <span class="brand-name">HOLA AGENCY</span>
+    const handleDownloadPDF = async () => {
+        setDownloading(true);
+        try {
+            const element = document.createElement('div');
+            element.innerHTML = `
+                <div style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 40px; color: #1e293b; line-height: 1.5; background: #ffffff;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 3px solid #D4AF37; padding-bottom: 20px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 24px; font-weight: 900; color: #1e293b; letter-spacing: 2px;">HOLA AGENCY</span>
+                        </div>
+                        <div style="text-align: right;">
+                            <p style="font-size: 18px; font-weight: 800; color: #1e293b; letter-spacing: 1px; margin: 4px 0;">${invoice.ref}</p>
+                            <p style="margin: 4px 0; font-size: 13px; color: #64748b;">${invoice.date}</p>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px;">
+                        <div style="margin-bottom: 20px;"><p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; margin: 4px 0;">Service / Villa</p><p style="font-size: 16px; font-weight: 700; color: #334155; margin: 4px 0;">${invoice.service}</p></div>
+                        <div style="margin-bottom: 20px;"><p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; margin: 4px 0;">Localisation</p><p style="font-size: 16px; font-weight: 700; color: #334155; margin: 4px 0;">${invoice.location}</p></div>
+                        <div style="margin-bottom: 20px;"><p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; margin: 4px 0;">Dates du Séjour</p><p style="font-size: 16px; font-weight: 700; color: #334155; margin: 4px 0;">${invoice.dates}</p></div>
+                        <div style="margin-bottom: 20px;"><p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; margin: 4px 0;">Mode de paiement</p><p style="font-size: 16px; font-weight: 700; color: #334155; margin: 4px 0;">${invoice.method}</p></div>
+                    </div>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; margin-bottom: 10px;">Statut</p>
+                        <span style="display: inline-block; padding: 8px 20px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; ${invoice.isPaid ? 'background: #ecfdf5; color: #059669;' : invoice.status === 'annulee' ? 'background: #fef2f2; color: #dc2626;' : 'background: #fffbeb; color: #d97706;'}">${invoice.statusLabel}</span>
+                    </div>
+                    
+                    <div style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 20px; padding: 30px; display: flex; justify-content: space-between; align-items: center; margin-top: 30px;">
+                        <div>
+                            <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; margin: 4px 0;">Montant Total</p>
+                            <p style="font-size: 32px; font-weight: 900; color: #1e293b; margin: 4px 0;">${invoice.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} FCFA</p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 80px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 30px;">
+                        <p style="margin: 4px 0;">HOLA LUXE — Facture générée automatiquement</p>
+                        <p style="margin: 4px 0;">Pour toute question, contactez contact@holaluxe.com</p>
+                    </div>
                 </div>
-                <div class="ref">
-                    <p class="id">${invoice.ref}</p>
-                    <p>${invoice.date}</p>
-                </div>
-            </div>
-            <div class="grid">
-                <div class="grid-item"><p class="label">Service / Villa</p><p class="value">${invoice.service}</p></div>
-                <div class="grid-item"><p class="label">Localisation</p><p class="value">${invoice.location}</p></div>
-                <div class="grid-item"><p class="label">Dates</p><p class="value">${invoice.dates}</p></div>
-                <div class="grid-item"><p class="label">Mode de paiement</p><p class="value">${invoice.method}</p></div>
-            </div>
-            <div class="section">
-                <p class="section-title">Statut</p>
-                <span class="status ${invoice.isPaid ? 'paid' : invoice.status === 'annulee' ? 'cancelled' : 'pending'}">${invoice.statusLabel}</span>
-            </div>
-            <div class="total-box">
-                <div>
-                    <p class="total-label">Montant Total</p>
-                    <p class="total-value">${invoice.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} FCFA</p>
-                </div>
-            </div>
-            <div class="footer">
-                <p>HOLA LUXE — Facture générée automatiquement</p>
-                <p>Pour toute question, contactez contact@holaluxe.com</p>
-            </div>
-            <script>
-                window.onload = () => {
-                    setTimeout(() => {
-                        window.print();
-                    }, 500);
-                };
-            </script>
-        </body></html>`;
+            `;
 
-        const blob = new Blob([html], { type: 'text/html' });
-        const url = URL.createObjectURL(blob);
-        const win = window.open(url, '_blank');
-        if (!win || win.closed || typeof win.closed === 'undefined') {
-            // If popup blocked, fallback to current window (less ideal but works)
-            window.location.href = url;
+            const opt = {
+                margin:       15,
+                filename:     `Facture-${invoice.ref}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            const html2pdf = await loadHtml2Pdf();
+            await html2pdf().from(element).set(opt).save();
+        } catch (error) {
+            console.error("PDF Generation Error:", error);
+            alert("Erreur lors de la génération du PDF. Veuillez réessayer.");
+        } finally {
+            setDownloading(false);
         }
     };
 
@@ -177,9 +177,19 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
                                     </div>
                                     <button
                                         onClick={handleDownloadPDF}
-                                        className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-amber-600 transition-all active:scale-95 shadow-xl shadow-slate-200 w-full md:w-auto"
+                                        disabled={downloading}
+                                        className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-amber-600 transition-all active:scale-95 shadow-xl shadow-slate-200 w-full md:w-auto disabled:opacity-50"
                                     >
-                                        <Download className="w-5 h-5" /> Télécharger PDF
+                                        {downloading ? (
+                                            <>
+                                                <Loader2 className="w-5 h-5 animate-spin" />
+                                                Génération...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Download className="w-5 h-5" /> Télécharger PDF
+                                            </>
+                                        )}
                                     </button>
                                 </div>
                             </div>
