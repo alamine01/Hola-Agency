@@ -25,14 +25,8 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
     const handleDownloadPDF = async () => {
         setDownloading(true);
         try {
-            const element = document.createElement('div');
-            element.style.position = 'absolute';
-            element.style.left = '-9999px';
-            element.style.top = '-9999px';
-            element.style.width = '794px';
-            element.style.background = '#ffffff';
-            element.innerHTML = `
-                <div style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 40px; color: #1e293b; line-height: 1.5; background: #ffffff;">
+            const invoiceHtml = `
+                <div style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 40px; color: #1e293b; line-height: 1.5; background: #ffffff; width: 714px; box-sizing: border-box;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 3px solid #D4AF37; padding-bottom: 20px;">
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <span style="font-size: 24px; font-weight: 900; color: #1e293b; letter-spacing: 2px;">HOLA AGENCY</span>
@@ -68,7 +62,43 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
                     </div>
                 </div>
             `;
-            document.body.appendChild(element);
+ 
+            // Create a clean sandboxed iframe to completely bypass the parent document's stylesheets
+            // which contain the unsupported Color Module Level 4 "lab()" or "oklab()" functions
+            const iframe = document.createElement('iframe');
+            iframe.style.position = 'absolute';
+            iframe.style.left = '-9999px';
+            iframe.style.top = '-9999px';
+            iframe.style.width = '800px';
+            iframe.style.height = '1200px';
+            iframe.style.border = 'none';
+            document.body.appendChild(iframe);
+ 
+            const iframeDoc = iframe.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write(`
+                <!DOCTYPE html>
+                <html>
+                    <head>
+                        <meta charset="utf-8">
+                        <title>Facture</title>
+                        <style>
+                            body { margin: 0; padding: 0; background: #ffffff; -webkit-print-color-adjust: exact; }
+                        </style>
+                    </head>
+                    <body>
+                        <div id="invoice-target">
+                            ${invoiceHtml}
+                        </div>
+                    </body>
+                </html>
+            `);
+            iframeDoc.close();
+ 
+            // Give DOM parsed inside iframe enough tick space to compute
+            await new Promise(resolve => setTimeout(resolve, 150));
+ 
+            const targetElement = iframeDoc.getElementById('invoice-target');
  
             const opt = {
                 margin:       15,
@@ -81,8 +111,8 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
             const html2pdfModule = await import('html2pdf.js');
             const html2pdf = html2pdfModule.default || html2pdfModule;
             
-            await html2pdf().from(element).set(opt).save();
-            document.body.removeChild(element);
+            await html2pdf().from(targetElement).set(opt).save();
+            document.body.removeChild(iframe);
         } catch (error) {
             console.error("PDF Generation Error:", error);
             alert("Erreur lors de la génération du PDF : " + (error.message || error));
