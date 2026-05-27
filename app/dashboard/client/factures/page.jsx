@@ -24,20 +24,23 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
  
     const handleDownloadPDF = async () => {
         setDownloading(true);
-        const disabledSheets = [];
+        let mocked = false;
         try {
-            // 1. Temporarily disable all document stylesheets to prevent html2canvas
-            // from trying to parse unsupported color functions like "lab()" or "oklab()"
-            for (let i = 0; i < document.styleSheets.length; i++) {
-                const sheet = document.styleSheets[i];
-                try {
-                    if (sheet && !sheet.disabled) {
-                        sheet.disabled = true;
-                        disabledSheets.push(sheet);
-                    }
-                } catch (e) {
-                    // Ignore secure cross-origin stylesheet access errors
-                }
+            // Temporarily mock document.styleSheets to return an empty array.
+            // This is a bulletproof and elegant solution: html2canvas parses all stylesheets
+            // in document.styleSheets (even if disabled) to find matching rules.
+            // By returning an empty list, html2canvas bypasses all external/Tailwind stylesheets
+            // (preventing the lab() color parsing crash) while keeping the parent page
+            // perfectly styled and visible (no FOUC/visual flash) since the browser's
+            // underlying rendering engine remains unaffected.
+            try {
+                Object.defineProperty(document, 'styleSheets', {
+                    get: () => [],
+                    configurable: true
+                });
+                mocked = true;
+            } catch (e) {
+                console.warn("Could not mock document.styleSheets:", e);
             }
 
             const element = document.createElement('div');
@@ -102,14 +105,14 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
             console.error("PDF Generation Error:", error);
             alert("Erreur lors de la génération du PDF : " + (error.message || error));
         } finally {
-            // 2. Always restore all document stylesheets
-            disabledSheets.forEach(sheet => {
+            // Restore document.styleSheets back to normal
+            if (mocked) {
                 try {
-                    sheet.disabled = false;
+                    delete document.styleSheets;
                 } catch (e) {
-                    // Ignore
+                    console.error("Failed to restore document.styleSheets:", e);
                 }
-            });
+            }
             setDownloading(false);
         }
     };
