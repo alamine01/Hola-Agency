@@ -62,18 +62,18 @@ function SuccessContent() {
     };
 
     if (verifying) return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 gap-6">
+        <div className="min-h-[75vh] flex flex-col items-center justify-center gap-6">
             <Loader2 className="w-12 h-12 animate-spin text-emerald-500" />
             <p className="text-slate-500 font-black uppercase tracking-widest text-xs">Vérification de votre paiement...</p>
         </div>
     );
 
     return (
-        <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="min-h-[75vh] flex items-center justify-center py-10 px-4">
             <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="max-w-md w-full bg-white rounded-[3rem] p-10 shadow-2xl border border-slate-100 text-center relative overflow-hidden"
+                className="max-w-[460px] w-full mx-auto bg-white rounded-[3rem] p-8 md:p-10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.08)] border border-slate-100 text-center relative overflow-hidden"
             >
                 <div className="absolute top-0 left-0 w-full h-2 bg-emerald-500" />
 
