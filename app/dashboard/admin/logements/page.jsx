@@ -59,6 +59,21 @@ export default function AdminLogementsPage() {
                 .eq('id', id);
  
             if (error) throw error;
+
+            // Si la villa est rejetée par l'admin, toutes ses réservations actives 
+            // sont annulées ('annulee') pour libérer et réinitialiser complètement 
+            // les dates de disponibilité pour de futurs clients.
+            if (newStatus === 'rejected') {
+                const { error: cancelError } = await supabase
+                    .from('bookings')
+                    .update({ status: 'annulee' })
+                    .eq('item_id', id)
+                    .in('status', ['en_attente_paiement', 'confirmee', 'payee']);
+                
+                if (cancelError) {
+                    console.error("Erreur d'annulation des réservations:", cancelError);
+                }
+            }
  
             // Met à jour l'état local
             setVillas(villas.map(v => v.id === id ? { ...v, status: newStatus } : v));
