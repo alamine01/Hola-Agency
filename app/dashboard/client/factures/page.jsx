@@ -24,113 +24,122 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
  
     const handleDownloadPDF = async () => {
         setDownloading(true);
-        let iframe = null;
         try {
-            // 1. Create an isolated, clean iframe off-screen.
-            // This completely isolates the invoice from the parent document's stylesheets
-            // and avoids any visual flash (FOUC) or layout shift on the main page.
-            iframe = document.createElement('iframe');
-            iframe.style.position = 'absolute';
-            iframe.style.left = '-9999px';
-            iframe.style.top = '-9999px';
-            iframe.style.width = '794px'; // Standard A4 width at 96 DPI
-            iframe.style.height = '1123px'; // Standard A4 height at 96 DPI
-            iframe.style.border = 'none';
-            document.body.appendChild(iframe);
+            const { jsPDF } = await import('jspdf');
+            const doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
 
-            const iframeDoc = iframe.contentWindow.document;
-            iframeDoc.open();
-            iframeDoc.write(`
-                <!DOCTYPE html>
-                <html>
-                    <head>
-                        <meta charset="utf-8">
-                        <title>Facture</title>
-                        <style>
-                            body { margin: 0; padding: 0; background: #ffffff; -webkit-print-color-adjust: exact; }
-                        </style>
-                    </head>
-                    <body>
-                        <div id="invoice-target"></div>
-                    </body>
-                </html>
-            `);
-            iframeDoc.close();
+            // 1. Header & Branding
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(22);
+            doc.setTextColor(30, 41, 59); // #1e293b
+            doc.text('HOLA AGENCY', 20, 30);
 
-            // 2. Insert the styled invoice content into the clean iframe's body.
-            const target = iframeDoc.getElementById('invoice-target');
-            target.innerHTML = `
-                <div style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 40px; color: #1e293b; line-height: 1.5; background: #ffffff;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 3px solid #D4AF37; padding-bottom: 20px;">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <span style="font-size: 24px; font-weight: 900; color: #1e293b; letter-spacing: 2px;">HOLA AGENCY</span>
-                        </div>
-                        <div style="text-align: right;">
-                            <p style="font-size: 18px; font-weight: 800; color: #1e293b; letter-spacing: 1px; margin: 4px 0;">${invoice.ref}</p>
-                            <p style="margin: 4px 0; font-size: 13px; color: #64748b;">${invoice.date}</p>
-                        </div>
-                    </div>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px;">
-                        <div style="margin-bottom: 20px;"><p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; margin: 4px 0;">Service / Villa</p><p style="font-size: 16px; font-weight: 700; color: #334155; margin: 4px 0;">${invoice.service}</p></div>
-                        <div style="margin-bottom: 20px;"><p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; margin: 4px 0;">Localisation</p><p style="font-size: 16px; font-weight: 700; color: #334155; margin: 4px 0;">${invoice.location}</p></div>
-                        <div style="margin-bottom: 20px;"><p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; margin: 4px 0;">Dates du Séjour</p><p style="font-size: 16px; font-weight: 700; color: #334155; margin: 4px 0;">${invoice.dates}</p></div>
-                        <div style="margin-bottom: 20px;"><p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; margin: 4px 0;">Mode de paiement</p><p style="font-size: 16px; font-weight: 700; color: #334155; margin: 4px 0;">${invoice.method}</p></div>
-                    </div>
-                    
-                    <div style="margin-bottom: 30px;">
-                        <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; margin-bottom: 10px;">Statut</p>
-                        <span style="display: inline-block; padding: 8px 20px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; ${invoice.isPaid ? 'background: #ecfdf5; color: #059669;' : invoice.status === 'annulee' ? 'background: #fef2f2; color: #dc2626;' : 'background: #fffbeb; color: #d97706;'}">${invoice.statusLabel}</span>
-                    </div>
-                    
-                    <div style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 20px; padding: 30px; display: flex; justify-content: space-between; align-items: center; margin-top: 30px;">
-                        <div>
-                            <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; margin: 4px 0;">Montant Total</p>
-                            <p style="font-size: 32px; font-weight: 900; color: #1e293b; margin: 4px 0;">${invoice.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} FCFA</p>
-                        </div>
-                    </div>
-                    
-                    <div style="margin-top: 80px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 30px;">
-                        <p style="margin: 4px 0;">HOLA LUXE — Facture générée automatiquement</p>
-                        <p style="margin: 4px 0;">Pour toute question, contactez contact@holaluxe.com</p>
-                    </div>
-                </div>
-            `;
+            // Ref & Date
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(16);
+            doc.setTextColor(30, 41, 59); // #1e293b
+            doc.text(invoice.ref, 190, 27, { align: 'right' });
 
-            // Give the DOM a moment to settle inside the iframe
-            await new Promise(resolve => setTimeout(resolve, 50));
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.setTextColor(100, 116, 139); // #64748b
+            doc.text(invoice.date, 190, 34, { align: 'right' });
 
-            const opt = {
-                margin:       15,
-                filename:     `Facture-${invoice.ref}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { 
-                    scale: 2, 
-                    useCORS: true,
-                    // CRITICAL FIX: explicitly tell html2canvas to render using the iframe's document context.
-                    // This bypasses the parent page's stylesheets entirely, preventing the lab() color crash,
-                    // and eliminates any visual FOUC or flash on the parent page!
-                    document: iframeDoc
-                },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
+            // Divider Line
+            doc.setDrawColor(212, 175, 55); // #D4AF37 (Gold)
+            doc.setLineWidth(1);
+            doc.line(20, 40, 190, 40);
 
-            const html2pdfModule = await import('html2pdf.js');
-            const html2pdf = html2pdfModule.default || html2pdfModule;
-            
-            await html2pdf().from(target).set(opt).save();
+            // 2. Info Grid
+            doc.setFontSize(9);
+            doc.setTextColor(148, 163, 184); // #94a3b8
+            doc.setFont('helvetica', 'bold');
+            doc.text('SERVICE / VILLA', 20, 52);
+            doc.text('LOCALISATION', 110, 52);
+
+            doc.setFontSize(12);
+            doc.setTextColor(51, 65, 85); // #334155
+            doc.setFont('helvetica', 'bold');
+            doc.text(invoice.service, 20, 59);
+            doc.text(invoice.location, 110, 59);
+
+            doc.setFontSize(9);
+            doc.setTextColor(148, 163, 184); // #94a3b8
+            doc.setFont('helvetica', 'bold');
+            doc.text('DATES DU SÉJOUR', 20, 72);
+            doc.text('MODE DE PAIEMENT', 110, 72);
+
+            doc.setFontSize(12);
+            doc.setTextColor(51, 65, 85); // #334155
+            doc.setFont('helvetica', 'bold');
+            doc.text(invoice.dates, 20, 79);
+            doc.text(invoice.method, 110, 79);
+
+            // 3. Status
+            doc.setFontSize(9);
+            doc.setTextColor(148, 163, 184); // #94a3b8
+            doc.setFont('helvetica', 'bold');
+            doc.text('STATUT', 20, 92);
+
+            // Status Badge Calculations
+            const isPaid = invoice.isPaid;
+            const isCancelled = invoice.status === 'annulee';
+            let bgR = 255, bgG = 251, bgB = 235; // Amber soft (Pending)
+            let txtR = 217, txtG = 119, txtB = 6;
+            if (isPaid) {
+                bgR = 236; bgG = 253; bgB = 245; // Emerald soft
+                txtR = 5; txtG = 150; txtB = 105;
+            } else if (isCancelled) {
+                bgR = 254; bgG = 242; bgB = 242; // Red soft
+                txtR = 220; txtG = 38; txtB = 38;
+            }
+
+            // Draw status badge
+            doc.setFillColor(bgR, bgG, bgB);
+            doc.rect(20, 97, 45, 9, 'F');
+
+            doc.setFontSize(10);
+            doc.setTextColor(txtR, txtG, txtB);
+            doc.setFont('helvetica', 'bold');
+            doc.text(invoice.statusLabel.toUpperCase(), 42.5, 103, { align: 'center' });
+
+            // 4. Amount Container
+            doc.setFillColor(248, 250, 252); // #f8fafc
+            doc.setDrawColor(226, 232, 240); // #e2e8f0
+            doc.setLineWidth(0.5);
+            doc.rect(20, 120, 170, 26, 'FD');
+
+            doc.setFontSize(9);
+            doc.setTextColor(148, 163, 184); // #94a3b8
+            doc.setFont('helvetica', 'bold');
+            doc.text('MONTANT TOTAL', 28, 129);
+
+            doc.setFontSize(22);
+            doc.setTextColor(30, 41, 59); // #1e293b
+            doc.setFont('helvetica', 'bold');
+            doc.text(`${invoice.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} FCFA`, 28, 139);
+
+            // 5. Footer Section
+            doc.setDrawColor(226, 232, 240); // #e2e8f0
+            doc.setLineWidth(0.5);
+            doc.line(20, 255, 190, 255);
+
+            doc.setFontSize(9);
+            doc.setTextColor(148, 163, 184); // #94a3b8
+            doc.setFont('helvetica', 'normal');
+            doc.text('HOLA LUXE — Facture générée automatiquement', 20, 263);
+            doc.text('Pour toute question, contactez contact@holaluxe.com', 20, 268);
+
+            // 6. Direct Save
+            doc.save(`Facture-${invoice.ref}.pdf`);
         } catch (error) {
             console.error("PDF Generation Error:", error);
             alert("Erreur lors de la génération du PDF : " + (error.message || error));
         } finally {
-            // 3. Clean up and remove the iframe from the DOM.
-            if (iframe) {
-                try {
-                    document.body.removeChild(iframe);
-                } catch (e) {
-                    // Ignore
-                }
-            }
             setDownloading(false);
         }
     };
