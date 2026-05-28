@@ -20,6 +20,7 @@ export default function PropertyDetailPage() {
     const [property, setProperty] = useState(null);
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
+    const [existingBookings, setExistingBookings] = useState([]);
     const [bookingData, setBookingData] = useState({
         startDate: '',
         endDate: '',
@@ -45,9 +46,49 @@ export default function PropertyDetailPage() {
             }
         };
 
+        const fetchBookings = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from('bookings')
+                    .select('start_date, end_date, status')
+                    .eq('item_id', id)
+                    .in('status', ['en_attente_paiement', 'confirmee', 'payee']);
+                if (!error && data) {
+                    setExistingBookings(data);
+                }
+            } catch (err) {
+                console.error("Erreur chargement réservations existantes:", err);
+            }
+        };
+
         fetchProperty();
+        fetchBookings();
         supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
     }, [id]);
+
+    const isDateOccupied = (dateStr) => {
+        if (!dateStr || existingBookings.length === 0) return false;
+        const targetDate = new Date(dateStr);
+        targetDate.setHours(0, 0, 0, 0);
+
+        for (const b of existingBookings) {
+            if (!b.start_date || !b.end_date) continue;
+            const start = new Date(b.start_date);
+            start.setHours(0, 0, 0, 0);
+            const end = new Date(b.end_date);
+            end.setHours(0, 0, 0, 0);
+
+            // 1-day logistics buffer after departure
+            const endWithBuffer = new Date(end);
+            endWithBuffer.setDate(endWithBuffer.getDate() + 1);
+            endWithBuffer.setHours(0, 0, 0, 0);
+
+            if (targetDate >= start && targetDate < endWithBuffer) {
+                return b;
+            }
+        }
+        return false;
+    };
 
     const calculateTotal = () => {
         if (!bookingData.startDate || !bookingData.endDate || !property) return 0;
@@ -279,16 +320,39 @@ export default function PropertyDetailPage() {
                                             <label className="block text-[10px] uppercase font-black text-slate-400 tracking-widest mb-1">Arrivée</label>
                                             <input
                                                 type="date"
+                                                min={new Date().toISOString().split('T')[0]}
                                                 className="bg-transparent text-sm font-bold text-slate-900 outline-none w-full cursor-pointer"
-                                                onChange={(e) => setBookingData({ ...bookingData, startDate: e.target.value })}
+                                                value={bookingData.startDate}
+                                                onChange={(e) => {
+                                                    const date = e.target.value;
+                                                    const conflict = isDateOccupied(date);
+                                                    if (conflict) {
+                                                        const depDate = new Date(conflict.end_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+                                                        alert(`Cette date d'arrivée n'est pas disponible.\nLa villa est déjà réservée. Elle se libère le ${depDate} (réservable dès le lendemain).`);
+                                                        setBookingData(prev => ({ ...prev, startDate: '' }));
+                                                    } else {
+                                                        setBookingData(prev => ({ ...prev, startDate: date }));
+                                                    }
+                                                }}
                                             />
                                         </div>
                                         <div className="p-4 bg-slate-50/30">
                                             <label className="block text-[10px] uppercase font-black text-slate-400 tracking-widest mb-1">Départ</label>
                                             <input
                                                 type="date"
+                                                min={bookingData.startDate ? new Date(new Date(bookingData.startDate).getTime() + 86400000).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]}
                                                 className="bg-transparent text-sm font-bold text-slate-900 outline-none w-full cursor-pointer"
-                                                onChange={(e) => setBookingData({ ...bookingData, endDate: e.target.value })}
+                                                value={bookingData.endDate}
+                                                onChange={(e) => {
+                                                    const date = e.target.value;
+                                                    const conflict = isDateOccupied(date);
+                                                    if (conflict) {
+                                                        alert(`Cette date de départ n'est pas disponible car la villa est déjà occupée sur cette période.`);
+                                                        setBookingData(prev => ({ ...prev, endDate: '' }));
+                                                    } else {
+                                                        setBookingData(prev => ({ ...prev, endDate: date }));
+                                                    }
+                                                }}
                                             />
                                         </div>
                                     </div>
@@ -306,6 +370,23 @@ export default function PropertyDetailPage() {
                                             ))}
                                         </select>
                                     </div>
+
+                                    {existingBookings.length > 0 && (
+                                        <div className="p-4 bg-amber-50/40 rounded-2xl border border-amber-100/50 mt-4">
+                                            <label className="block text-[9px] uppercase font-black text-amber-600 tracking-widest mb-2 leading-none">Indisponible aux dates suivantes :</label>
+                                            <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto custom-scrollbar pr-1">
+                                                {existingBookings.map((b, idx) => {
+                                                    const startStr = new Date(b.start_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+                                                    const endStr = new Date(b.end_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+                                                    return (
+                                                        <span key={idx} className="inline-flex items-center px-2 py-0.5 rounded-lg text-[9px] font-bold bg-amber-100/60 text-amber-700 border border-amber-100 whitespace-nowrap">
+                                                            {startStr} au {endStr}
+                                                        </span>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {property.status && property.status !== 'active' ? (
