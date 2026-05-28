@@ -24,33 +24,42 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
  
     const handleDownloadPDF = async () => {
         setDownloading(true);
-        const styleElements = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'));
-        const savedStyles = [];
+        let iframe = null;
         try {
-            // Dual-layer bypass solution for html2canvas / html2pdf.js:
-            // 1. Temporarily remove all style and link tags from the parent document's DOM.
-            // This guarantees document.styleSheets becomes completely empty during the asynchronous capture,
-            // preventing html2canvas from trying to parse Tailwind CSS v4's lab() color functions and crashing.
-            styleElements.forEach(el => {
-                savedStyles.push({
-                    element: el,
-                    parent: el.parentNode,
-                    sibling: el.nextSibling
-                });
-                try {
-                    el.remove();
-                } catch (err) {
-                    // Ignore
-                }
-            });
+            // 1. Create an isolated, clean iframe off-screen.
+            // This completely isolates the invoice from the parent document's stylesheets
+            // and avoids any visual flash (FOUC) or layout shift on the main page.
+            iframe = document.createElement('iframe');
+            iframe.style.position = 'absolute';
+            iframe.style.left = '-9999px';
+            iframe.style.top = '-9999px';
+            iframe.style.width = '794px'; // Standard A4 width at 96 DPI
+            iframe.style.height = '1123px'; // Standard A4 height at 96 DPI
+            iframe.style.border = 'none';
+            document.body.appendChild(iframe);
 
-            const element = document.createElement('div');
-            element.style.position = 'absolute';
-            element.style.left = '-9999px';
-            element.style.top = '-9999px';
-            element.style.width = '794px';
-            element.style.background = '#ffffff';
-            element.innerHTML = `
+            const iframeDoc = iframe.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write(`
+                <!DOCTYPE html>
+                <html>
+                    <head>
+                        <meta charset="utf-8">
+                        <title>Facture</title>
+                        <style>
+                            body { margin: 0; padding: 0; background: #ffffff; -webkit-print-color-adjust: exact; }
+                        </style>
+                    </head>
+                    <body>
+                        <div id="invoice-target"></div>
+                    </body>
+                </html>
+            `);
+            iframeDoc.close();
+
+            // 2. Insert the styled invoice content into the clean iframe's body.
+            const target = iframeDoc.getElementById('invoice-target');
+            target.innerHTML = `
                 <div style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 40px; color: #1e293b; line-height: 1.5; background: #ffffff;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 3px solid #D4AF37; padding-bottom: 20px;">
                         <div style="display: flex; align-items: center; gap: 12px;">
@@ -87,7 +96,9 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
                     </div>
                 </div>
             `;
-            document.body.appendChild(element);
+
+            // Give the DOM a moment to settle inside the iframe
+            await new Promise(resolve => setTimeout(resolve, 50));
 
             const opt = {
                 margin:       15,
@@ -96,15 +107,10 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
                 html2canvas:  { 
                     scale: 2, 
                     useCORS: true,
-                    onclone: (clonedDoc) => {
-                        // 2. Also remove style/link tags from the cloned document itself.
-                        try {
-                            const clonedStyles = clonedDoc.querySelectorAll('style, link[rel="stylesheet"]');
-                            clonedStyles.forEach(el => el.remove());
-                        } catch (err) {
-                            // Ignore
-                        }
-                    }
+                    // CRITICAL FIX: explicitly tell html2canvas to render using the iframe's document context.
+                    // This bypasses the parent page's stylesheets entirely, preventing the lab() color crash,
+                    // and eliminates any visual FOUC or flash on the parent page!
+                    document: iframeDoc
                 },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
@@ -112,22 +118,19 @@ function InvoiceModal({ isOpen, onClose, invoice }) {
             const html2pdfModule = await import('html2pdf.js');
             const html2pdf = html2pdfModule.default || html2pdfModule;
             
-            await html2pdf().from(element).set(opt).save();
-            document.body.removeChild(element);
+            await html2pdf().from(target).set(opt).save();
         } catch (error) {
             console.error("PDF Generation Error:", error);
             alert("Erreur lors de la génération du PDF : " + (error.message || error));
         } finally {
-            // 3. Always restore all style and link elements back to their exact original locations.
-            savedStyles.forEach(({ element, parent, sibling }) => {
-                if (parent) {
-                    try {
-                        parent.insertBefore(element, sibling);
-                    } catch (e) {
-                        console.error("Failed to restore style tag:", e);
-                    }
+            // 3. Clean up and remove the iframe from the DOM.
+            if (iframe) {
+                try {
+                    document.body.removeChild(iframe);
+                } catch (e) {
+                    // Ignore
                 }
-            });
+            }
             setDownloading(false);
         }
     };
