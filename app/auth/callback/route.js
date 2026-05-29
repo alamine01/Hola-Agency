@@ -44,6 +44,19 @@ export async function GET(request) {
             if (!profile || !profile.role) {
                 return NextResponse.redirect(`${requestUrl.origin}/auth/onboarding`)
             }
+
+            // Stocker le rôle dans un cookie pour le middleware de sécurité
+            const normalizedRole = profile.role.toLowerCase()
+                .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-z0-9]/g, "");
+
+            const redirectResponse = NextResponse.redirect(`${requestUrl.origin}/dashboard/${normalizedRole}`)
+            redirectResponse.cookies.set('x-user-role', normalizedRole, {
+                path: '/',
+                maxAge: 60 * 60 * 24 * 7, // 7 jours
+                sameSite: 'lax',
+            })
+            return redirectResponse
         }
     }
 

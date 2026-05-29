@@ -60,6 +60,10 @@ function LoginForm() {
             const role = rawRole.toLowerCase()
                 .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
                 .replace(/[^a-z0-9]/g, "");
+
+            // Stocker le rôle dans un cookie pour le middleware de sécurité
+            document.cookie = `x-user-role=${role}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+
             router.push(`/dashboard/${role}`);
 
         } catch (error) {

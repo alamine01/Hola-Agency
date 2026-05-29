@@ -123,70 +123,95 @@ export default function DashboardLayoutShell({ children, forcedRole }) {
     const activeRole = forcedRole || profile?.role || urlRole;
 
     useEffect(() => {
+        let notifChannel = null;
+        let profileChannel = null;
+
         const fetchInitialData = async () => {
             const { data: { user } } = await supabase.auth.getUser();
-            if (user) {
-                // Fetch Profile
-                const { data: profData } = await supabase
-                    .from('profiles')
-                    .select('display_name, avatar_url, role')
-                    .eq('id', user.id)
-                    .single();
 
-                if (profData) {
-                    setProfile(profData);
-                }
-
-                // Fetch Notifications
-                const { data: notifData } = await supabase
-                    .from('notifications')
-                    .select('*')
-                    .eq('user_id', user.id)
-                    .order('created_at', { ascending: false })
-                    .limit(10);
-                if (notifData) setNotifications(notifData);
-
-                // Realtime Notifications
-                const notifChannel = supabase
-                    .channel(`notif_realtime_${user.id}_${Math.random().toString(36).substring(7)}`)
-                    .on('postgres_changes', {
-                        event: 'INSERT',
-                        schema: 'public',
-                        table: 'notifications',
-                        filter: `user_id=eq.${user.id}`
-                    }, (payload) => {
-                        setNotifications(prev => [payload.new, ...prev]);
-                    })
-                    .subscribe();
-
-                // Realtime Profile
-                const profileChannel = supabase
-                    .channel(`profile_realtime_${user.id}_${Math.random().toString(36).substring(7)}`)
-                    .on('postgres_changes', {
-                        event: 'UPDATE',
-                        schema: 'public',
-                        table: 'profiles',
-                        filter: `id=eq.${user.id}`
-                    }, (payload) => {
-                        setProfile(prev => ({
-                            ...prev,
-                            display_name: payload.new.display_name,
-                            avatar_url: payload.new.avatar_url,
-                            role: payload.new.role
-                        }));
-                    })
-                    .subscribe();
-
-                return () => {
-                    supabase.removeChannel(notifChannel);
-                    supabase.removeChannel(profileChannel);
-                };
+            // ── SÉCURITÉ : Rediriger si non connecté ──
+            if (!user) {
+                router.push('/login');
+                return;
             }
+
+            // ── Récupérer le profil ──
+            const { data: profData } = await supabase
+                .from('profiles')
+                .select('display_name, avatar_url, role')
+                .eq('id', user.id)
+                .single();
+
+            if (profData) {
+                setProfile(profData);
+
+                // ── SÉCURITÉ : Mettre à jour le cookie de rôle (synchro avec middleware) ──
+                const userRole = normalize(profData.role);
+                document.cookie = `x-user-role=${userRole}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+
+                // ── SÉCURITÉ : Vérifier que le rôle correspond à la route ──
+                // L'admin a accès à tous les dashboards
+                if (forcedRole && userRole !== 'admin' && userRole !== normalize(forcedRole)) {
+                    router.push(`/dashboard/${userRole}`);
+                    return;
+                }
+            } else {
+                // Pas de profil → onboarding
+                router.push('/auth/onboarding');
+                return;
+            }
+
+            // ── Récupérer les notifications ──
+            const { data: notifData } = await supabase
+                .from('notifications')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false })
+                .limit(10);
+            if (notifData) setNotifications(notifData);
+
+            // ── Realtime Notifications ──
+            notifChannel = supabase
+                .channel(`notif_realtime_${user.id}_${Math.random().toString(36).substring(7)}`)
+                .on('postgres_changes', {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'notifications',
+                    filter: `user_id=eq.${user.id}`
+                }, (payload) => {
+                    setNotifications(prev => [payload.new, ...prev]);
+                })
+                .subscribe();
+
+            // ── Realtime Profile ──
+            profileChannel = supabase
+                .channel(`profile_realtime_${user.id}_${Math.random().toString(36).substring(7)}`)
+                .on('postgres_changes', {
+                    event: 'UPDATE',
+                    schema: 'public',
+                    table: 'profiles',
+                    filter: `id=eq.${user.id}`
+                }, (payload) => {
+                    setProfile(prev => ({
+                        ...prev,
+                        display_name: payload.new.display_name,
+                        avatar_url: payload.new.avatar_url,
+                        role: payload.new.role
+                    }));
+                })
+                .subscribe();
+
             setLoading(false);
         };
 
         fetchInitialData();
-    }, []);
+
+        // Cleanup des channels realtime
+        return () => {
+            if (notifChannel) supabase.removeChannel(notifChannel);
+            if (profileChannel) supabase.removeChannel(profileChannel);
+        };
+    }, [router, forcedRole]);
 
     const handleMarkAllRead = async () => {
         const { data: { user } } = await supabase.auth.getUser();
@@ -202,6 +227,18 @@ export default function DashboardLayoutShell({ children, forcedRole }) {
             setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
         }
     };
+
+    // ── Écran de chargement sécurisé pendant la vérification d'auth ──
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+                <div className="text-center">
+                    <Loader2 className="w-10 h-10 animate-spin text-[#D4AF37] mx-auto mb-4" />
+                    <p className="text-slate-500 font-medium italic text-sm">Vérification de votre session sécurisée...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-slate-50 flex overflow-x-hidden w-full">

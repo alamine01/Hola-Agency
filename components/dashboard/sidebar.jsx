@@ -30,6 +30,8 @@ const Sidebar = ({ role, isCollapsed, setIsCollapsed }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const handleLogout = async () => {
+        // Supprimer le cookie de rôle utilisé par le middleware
+        document.cookie = 'x-user-role=; path=/; max-age=0; SameSite=Lax';
         await supabase.auth.signOut();
         router.push('/login');
     };

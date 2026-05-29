@@ -214,6 +214,7 @@ export default function DynamicProfileView({ role = 'client' }) {
         setIsSaving(true);
         const { error } = await supabase.from('profiles').update({ bio: 'DELETED_ACCOUNT' }).eq('id', user.id);
         if (!error) {
+            document.cookie = 'x-user-role=; path=/; max-age=0; SameSite=Lax';
             await supabase.auth.signOut();
             router.push('/login');
         }
@@ -221,6 +222,7 @@ export default function DynamicProfileView({ role = 'client' }) {
     };
 
     const handleSignOut = async () => {
+        document.cookie = 'x-user-role=; path=/; max-age=0; SameSite=Lax';
         await supabase.auth.signOut();
         router.push('/login');
     };
