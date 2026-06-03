@@ -261,10 +261,9 @@ export default function CheckoutPage() {
                                 />
                                 <PaymentMethod
                                     id="paypal"
-                                    title="PayPal"
-                                    description="Portefeuille & Compte"
-                                    image="/assets/payment/paypal.png"
-                                    icon={Wallet}
+                                    title="Simulation de paiement"
+                                    description="Tester sans payer (Simulation)"
+                                    icon={ShieldCheck}
                                     color="blue"
                                     active={selectedMethod === 'paypal'}
                                     onClick={setSelectedMethod}
@@ -295,8 +294,7 @@ export default function CheckoutPage() {
                                 { name: 'wave', url: '/assets/payment/wave.webp' },
                                 { name: 'orange', url: '/assets/payment/orange_money.jpg' },
                                 { name: 'visa', url: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg' },
-                                { name: 'mastercard', url: 'https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg' },
-                                { name: 'paypal', url: '/assets/payment/paypal.png' }
+                                { name: 'mastercard', url: 'https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg' }
                             ].map((logo) => (
                                 <div key={logo.name} className="h-6">
                                     <img src={logo.url} alt={logo.name} className="h-full object-contain" />

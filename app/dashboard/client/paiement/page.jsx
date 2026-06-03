@@ -305,18 +305,18 @@ function PaymentContent() {
                                 </div>
                             </button>
 
-                            {/* PayPal */}
+                            {/* Simulation de Paiement */}
                             <button
                                 onClick={() => setMethod('paypal')}
                                 className={`p-6 rounded-3xl border-2 transition-all flex items-center justify-between group h-24 ${method === 'paypal' ? 'border-sky-600 bg-sky-50 shadow-lg' : 'border-slate-100 hover:border-slate-200'}`}
                             >
                                 <div className="flex items-center gap-4">
-                                    <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm border border-slate-50 overflow-hidden">
-                                        <img src="/assets/payment/paypal.png" alt="PayPal" className="w-full h-full object-contain p-2" />
+                                    <div className="w-14 h-14 bg-sky-100 rounded-2xl flex items-center justify-center text-sky-600">
+                                        <ShieldCheck className="w-7 h-7" />
                                     </div>
                                     <div className="text-left">
-                                        <p className="font-black text-slate-900 text-sm">PayPal</p>
-                                        <p className="text-[9px] text-slate-400 uppercase font-black tracking-widest">Compte & Cartes</p>
+                                        <p className="font-black text-slate-900 text-sm">Simulation de paiement</p>
+                                        <p className="text-[9px] text-slate-400 uppercase font-black tracking-widest">Tester sans payer (Simulation)</p>
                                     </div>
                                 </div>
                                 <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${method === 'paypal' ? 'border-sky-600' : 'border-slate-200'}`}>

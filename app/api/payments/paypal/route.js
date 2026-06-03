@@ -24,7 +24,8 @@ export async function POST(req) {
     try {
         const { bookingId, amount, title } = await req.json();
 
-        const isMockMode = !PAYPAL_CLIENT_ID || PAYPAL_CLIENT_ID === 'votre_client_id_ici' || !PAYPAL_SECRET || PAYPAL_SECRET === 'votre_secret_ici';
+        // Toujours forcé en mode simulation/test pour tester sans payer
+        const isMockMode = true;
 
         if (isMockMode) {
             console.log("PayPal credentials not configured. Running in SIMULATION/MOCK mode.");
