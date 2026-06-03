@@ -33,6 +33,27 @@ function getRoleFromPath(pathname) {
     return null;
 }
 
+/**
+ * Crée une réponse de redirection en conservant les cookies de la réponse Supabase.
+ */
+function createRedirectResponse(request, url, supabaseResponse) {
+    const redirectResponse = NextResponse.redirect(new URL(url, request.url));
+    if (supabaseResponse) {
+        supabaseResponse.cookies.getAll().forEach(cookie => {
+            redirectResponse.cookies.set(cookie.name, cookie.value, {
+                path: cookie.path,
+                domain: cookie.domain,
+                maxAge: cookie.maxAge,
+                expires: cookie.expires,
+                secure: cookie.secure,
+                httpOnly: cookie.httpOnly,
+                sameSite: cookie.sameSite,
+            });
+        });
+    }
+    return redirectResponse;
+}
+
 export async function middleware(request) {
     const { pathname } = request.nextUrl;
 
@@ -58,8 +79,7 @@ export async function middleware(request) {
             // L'utilisateur est déjà connecté, le rediriger vers son dashboard
             const userRole = request.cookies.get('x-user-role')?.value;
             const role = normalizeRole(userRole) || 'client';
-            const redirectUrl = new URL(`/dashboard/${role}`, request.url);
-            return NextResponse.redirect(redirectUrl);
+            return createRedirectResponse(request, `/dashboard/${role}`, response);
         }
         // Pas connecté → laisser accéder aux pages d'auth
         return response;
@@ -72,7 +92,7 @@ export async function middleware(request) {
             const loginUrl = new URL('/login', request.url);
             // Conserver l'URL demandée pour rediriger après login
             loginUrl.searchParams.set('redirect', pathname);
-            return NextResponse.redirect(loginUrl);
+            return createRedirectResponse(request, loginUrl, response);
         }
 
         // 4b. Vérifier le rôle
@@ -99,8 +119,7 @@ export async function middleware(request) {
 
         // Un non-admin ne peut accéder qu'à son propre dashboard
         if (pathRole !== userRole && VALID_ROLES.includes(pathRole)) {
-            const redirectUrl = new URL(`/dashboard/${userRole}`, request.url);
-            return NextResponse.redirect(redirectUrl);
+            return createRedirectResponse(request, `/dashboard/${userRole}`, response);
         }
 
         return response;
@@ -109,7 +128,7 @@ export async function middleware(request) {
     // --- 5. Route d'onboarding : vérifier que l'utilisateur est connecté ---
     if (pathname.startsWith('/auth/onboarding')) {
         if (!user) {
-            return NextResponse.redirect(new URL('/login', request.url));
+            return createRedirectResponse(request, '/login', response);
         }
         return response;
     }
